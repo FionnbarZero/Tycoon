@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07121e" />
+    <title>Amusement Park Tycoon</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="game" class="game-shell">
+      <header class="topbar">
+        <div class="brand-block">
+          <div class="brand-badge"><span>AP</span><i></i></div>
+          <div><p class="kicker">LOT 01 · DISTRICT 7</p><h1>AMUSEMENT PARK <em>TYCOON</em></h1></div>
+        </div>
+        <div class="resource-strip">
+          <button class="resource" id="moneyCard"><small>AVAILABLE CASH</small><strong id="moneyValue">$0</strong><span id="cashFlow">REGISTER TO BEGIN</span></button>
+          <div class="resource"><small>GUESTS</small><strong id="guestValue">0</strong><span id="parkCapacity">LOT CAPACITY 80</span></div>
+          <div class="resource"><small>REPUTATION</small><strong id="reputationValue">—</strong><span id="reputationLabel">UNRATED</span></div>
+          <div class="resource power-resource"><small>GRID LOAD</small><strong id="powerValue">0 / 100 kW</strong><span class="mini-meter"><i id="powerFill"></i></span></div>
+        </div>
+        <div class="time-cluster">
+          <div><small id="weatherValue">CLEAR · 68°F</small><strong id="clockValue">8:00 AM</strong></div>
+          <div class="speed-controls" aria-label="Simulation speed">
+            <button data-speed="0" title="Pause">Ⅱ</button><button data-speed="1" class="active" title="Normal speed">▶</button><button data-speed="2" title="Fast speed">▶▶</button><button data-speed="4" title="Maximum speed">▶▶▶</button>
+          </div>
+          <button id="menuButton" class="round-button" aria-label="Open game menu">•••</button>
+        </div>
+      </header>
+
+      <main class="world-shell">
+        <canvas id="world" aria-label="Interactive amusement park construction lot"></canvas>
+
+        <section id="objectivePanel" class="glass-panel objective-panel">
+          <div class="panel-cap"><span>STARTER BLUEPRINT</span><b id="objectiveStep">01 / 08</b></div>
+          <h2 id="objectiveTitle">Report to the job shack</h2>
+          <p id="objectiveText">Walk through your empty lot and register at the blueprints desk.</p>
+          <div class="objective-progress"><i id="objectiveFill"></i></div>
+          <div class="objective-controls"><kbd>WASD</kbd><span>Move</span><kbd>E</kbd><span>Interact</span></div>
+        </section>
+
+        <section id="telemetry" class="glass-panel telemetry-panel">
+          <div class="telemetry-title"><span>LOT TELEMETRY</span><i id="statusLight"></i></div>
+          <div class="telemetry-grid">
+            <div><small>LEVEL</small><strong id="levelValue">L1</strong></div>
+            <div><small>ATMOSPHERE</small><strong id="atmosphereValue">0</strong></div>
+            <div><small>CLEANLINESS</small><strong id="cleanValue">100%</strong></div>
+            <div><small>DAILY PROFIT</small><strong id="profitValue">$0</strong></div>
+          </div>
+          <button id="walkToggle" class="mode-button active"><span>◆</span> WALK MODE <kbd>V</kbd></button>
+        </section>
+
+        <div id="worldMessage" class="world-message hidden"></div>
+        <div id="hoverTooltip" class="hover-tooltip hidden"></div>
+        <div id="eventStack" class="event-stack" aria-live="polite"></div>
+
+        <aside id="inspector" class="inspector hidden" aria-label="Context inspector">
+          <div class="inspector-top"><div><p class="kicker" id="inspectorKicker">CONTEXT INSPECTOR</p><h2 id="inspectorTitle">Selection</h2></div><button id="closeInspector">×</button></div>
+          <div id="inspectorBody"></div>
+        </aside>
+
+        <section id="buildDock" class="build-dock locked">
+          <nav class="dock-tabs" aria-label="Build categories">
+            <button data-tab="infrastructure" class="active blue"><kbd>1</kbd><span>Infrastructure</span></button>
+            <button data-tab="attractions" class="red"><kbd>2</kbd><span>Attractions</span></button>
+            <button data-tab="commerce" class="orange"><kbd>3</kbd><span>Commerce</span></button>
+            <button data-tab="atmosphere" class="green"><kbd>4</kbd><span>Atmosphere</span></button>
+            <button data-tab="finance" class="gold"><kbd>5</kbd><span>Finance</span></button>
+          </nav>
+          <div class="dock-content">
+            <div class="dock-mode">
+              <small id="dockCategory">BLUEPRINT INVENTORY</small>
+              <strong id="dockInstruction">Register and collect your toolkit</strong>
+            </div>
+            <div id="buildItems" class="build-items"></div>
+            <div class="dock-actions">
+              <button id="levelDown" title="Level down"><kbd>Q</kbd><span>− LEVEL</span></button>
+              <div class="level-readout"><small>BUILD LEVEL</small><strong id="buildLevel">L1</strong></div>
+              <button id="levelUp" title="Level up"><kbd>E</kbd><span>+ LEVEL</span></button>
+              <button id="rotateButton"><kbd>R</kbd><span>ROTATE</span></button>
+              <button id="demolishButton"><kbd>⌫</kbd><span>DEMOLISH</span></button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="statusbar">
+        <div><i class="online-dot"></i><span id="saveStatus">Local save ready</span></div>
+        <div id="controlHint">WASD move · E interact · drag to look around</div>
+        <div><span id="coordsValue">LOT 01 · L1</span></div>
+      </footer>
+    </div>
+
+    <div id="modalLayer" class="modal-layer hidden">
+      <div id="modal" class="modal"></div>
+    </div>
+
+    <div id="intro" class="intro-screen">
+      <div class="intro-grid"></div>
+      <div class="intro-glow"></div>
+      <div class="intro-card">
+        <p class="kicker">OFFICIAL STARTER TUTORIAL · LOT START</p>
+        <div class="intro-mark"><span>AP</span><i></i></div>
+        <h1>BUILD AN EMPIRE<br/><em>FROM THE GROUND UP.</em></h1>
+        <p>You have a fenced lot, a job shack, and a road into the Manufacturing District. Register on-site, source real machinery, and build every path, platform, and ride yourself.</p>
+        <div class="intro-features">
+          <div><b>01</b><span>Walk the district</span></div><div><b>02</b><span>Source & ship</span></div><div><b>03</b><span>Build vertically</span></div>
+        </div>
+        <button id="enterGame">ENTER YOUR PARK LOT <span>→</span></button>
+        <small>Progress is saved automatically in this browser.</small>
+      </div>
+    </div>
+
+    <script src="game.js"></script>
+  </body>
+</html>
