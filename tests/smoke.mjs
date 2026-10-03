@@ -166,6 +166,11 @@ expect(loaded.rating.includes('4.3') && loaded.rating.includes('2 REVIEWS'), "Sa
 expect(loaded.capacity === 'LOT CAPACITY 220', "Expanded park capacity was not restored");
 expect(loaded.reviewTicker, "Latest guest review should be visible in the live review ticker");
 expect(loaded.timberAvailable, "Timber Ridge should be available directly from the construction ledger");
+await evaluate("document.querySelector('[data-item=skywheel]').click(); true");
+expect(await evaluate("document.querySelector('#modal').textContent.includes('REMOTE RIDE MARKETPLACE') && Boolean(document.querySelector('#dockBuyRide'))"), "An unowned ride should be purchasable directly from the Attractions build tab");
+await evaluate("document.querySelector('#dockBuyRide').click(); true");
+await wait(50);
+expect(await evaluate("document.querySelector('[data-item=skywheel] small').textContent.includes('IN TRANSIT') && JSON.parse(localStorage.getItem('amusement-park-tycoon-v1')).shipments.some(shipment => shipment.ride === 'skywheel')"), "Build-tab purchase should automatically ship and remain visible in Attractions");
 await evaluate("document.querySelector('#menuButton').click(); true");
 expect(await evaluate("Boolean(document.querySelector('#parkRegion')) && document.querySelectorAll('#parkRegion option').length === 4"), "Park management should allow region changes after entering the game");
 await evaluate("document.querySelector('[data-close]').click(); true");

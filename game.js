@@ -20,6 +20,7 @@
     alpine: { name: "Alpine Ridge", description: "Cool mountain grass, rocky ledges, pines, and a dramatic highland skyline.", lot: "#5f7c62", outer: "#465d51", sky: ["#668ca6","#cad8d2"] },
     desert: { name: "Desert Springs", description: "Warm canyon soil, scattered cacti, red rocks, and clear golden skies.", lot: "#a9784e", outer: "#77543d", sky: ["#c07850","#e6c493"] }
   };
+  const STARTER_RIDE_IDS = ["carousel","whirlybird","wave","safari","skywheel","bumper","dropTower"];
 
   const RIDES = {
     timber: { name: "Timber Ridge Hybrid", icon: "⌁", family: "Hybrid Coaster", coaster: true, ledgerBuild: true, maxSpeed: 70, maxHeight: 4, cost: 32000, freight: 0, delivery: 0, w: 8, h: 5, capacity: 24, cycle: 130, excitement: 7.1, intensity: 6.8, nausea: 4.2, reliability: 84, power: 20, color: "#b77942", description: "A wood-and-steel baseline coaster with a chain lift and compact airtime profile." },
@@ -129,10 +130,10 @@
   const TOUR_STEPS = [
     ["Report to the job shack", "Walk to the construction trailer and press E at the blueprints desk."],
     ["Collect the Starter Toolkit", "Open the equipment locker inside the shack to unlock your build dock."],
-    ["Visit the Used Ride Lot", "Leave through the gates and walk east to the red Used Ride Lot."],
-    ["Purchase a starter ride", "Buy a Retro Carousel or another affordable attraction."],
+    ["Open the Attractions marketplace", "Press 2 and choose any catalog ride directly from the Build Menu."],
+    ["Purchase a starter ride", "Buy and ship a Retro Carousel or another affordable attraction from its ride card."],
     ["Acquire path blueprints", "Visit the blue Fabricator and buy Concrete and Queue blueprint packs."],
-    ["Arrange freight shipping", "Take your pending ride to the yellow shipping desk and dispatch it."],
+    ["Track the freight shipment", "Remote purchases dispatch automatically. Watch its countdown in Attractions."],
     ["Pave the main path", "Return to the lot, switch to Build Mode, and place concrete from the gate inward."],
     ["Sign for the delivery", "When the truck arrives, return to the Freight Depot and press E."],
     ["Anchor the ride blueprint", "Choose the delivered ride from Attractions and place its hologram beside your path."],
@@ -883,15 +884,29 @@
     return state.toolkit;
   }
 
+  function rideShopUnlocked(id){return STARTER_RIDE_IDS.includes(id)||(id==="spinner"||id==="skid"?state.lotTier>1:!!state.unlocked[id]);}
+
+  function rideBuildStatus(item){
+    if(item.ledgerBuild)return `${money(item.cost)} LEDGER`;
+    const count=state.rideInventory[item.id]||0;if(count)return `DELIVERED · ×${count}`;
+    if(state.pendingOrders.some(order=>order.ride===item.id))return "PURCHASED · DISPATCH";
+    const shipment=[...state.shipments].reverse().find(entry=>entry.ride===item.id&&["transit","arrived"].includes(entry.status));
+    if(shipment?.status==="arrived")return "READY TO COLLECT";
+    if(shipment?.status==="transit")return `${Math.ceil(shipment.remaining)}s · IN TRANSIT`;
+    return rideShopUnlocked(item.id)?`${money(item.cost+item.freight)} BUY + SHIP`:"LOCKED · VIEW REQUIREMENT";
+  }
+
   function renderBuildItems() {
     const items=ITEMS[state.activeTab]||[];
     $("#buildItems").innerHTML=items.map(item=>{
       const available=isItemAvailable(item);
       const count=item.kind==="ride"?(state.rideInventory[item.id]||0):(state.materials?.[item.id]||0);
-      return `<button class="build-item ${available?"":"locked"} ${state.activeTool===item.id?"active":""}" data-item="${item.id}" title="${item.description}"><span class="item-icon">${item.icon}</span><strong>${item.name}</strong><small>${item.kind==="ride"?(item.ledgerBuild?`${money(item.cost)} LEDGER`:available?"DELIVERED":"SHOP / FREIGHT"):count?"STOCKED":money(item.cost)}</small>${count?`<i class="count">×${count}</i>`:""}</button>`;
+      const catalogRide=item.kind==="ride"&&!item.ledgerBuild;
+      return `<button class="build-item ${available||catalogRide?"":"locked"} ${catalogRide&&!available?"catalog":""} ${state.activeTool===item.id?"active":""}" data-item="${item.id}" title="${item.description}"><span class="item-icon">${item.icon}</span><strong>${item.name}</strong><small>${item.kind==="ride"?rideBuildStatus(item):count?"STOCKED":money(item.cost)}</small>${count?`<i class="count">×${count}</i>`:""}</button>`;
     }).join("");
     $$(".build-item").forEach(button=>button.addEventListener("click",()=>{
       const item=getItem(button.dataset.item);
+      if(item.kind==="ride"&&!item.ledgerBuild&&!isItemAvailable(item)){openBuildRideShop(item);return;}
       if(!isItemAvailable(item)){showWorldMessage(item.kind==="ride"?"Purchase and collect this ride in the Supply District":"Blueprint not yet acquired");return;}
       if(item.coaster){openCoasterBuilder(item);return;}
       if(item.kind==="ride"){openRideNaming(item);return;}
@@ -977,7 +992,7 @@
   function openUsedRideLot() {
     selectedShopVisited=true;if(state.tutorial===2)advanceTutorial(3);
     refreshCoasterUnlocks();
-    const base=["carousel","whirlybird","wave","safari","skywheel","bumper","dropTower"],shop=Object.entries(RIDES).filter(([id,ride])=>!ride.ledgerBuild),cards=shop.map(([id,ride])=>{const unlocked=base.includes(id)||(id==="spinner"||id==="skid"?state.lotTier>1:!!state.unlocked[id]);let action=`<button data-buy-ride="${id}" ${!unlocked||state.cash<ride.cost?"disabled":""}>${unlocked?`PURCHASE · FREIGHT ${money(ride.freight)}`:"LOCKED"}</button>`;
+    const shop=Object.entries(RIDES).filter(([id,ride])=>!ride.ledgerBuild),cards=shop.map(([id,ride])=>{const unlocked=rideShopUnlocked(id);let action=`<button data-buy-ride="${id}" ${!unlocked||state.cash<ride.cost?"disabled":""}>${unlocked?`PURCHASE · FREIGHT ${money(ride.freight)}`:"LOCKED"}</button>`;
       if(id==="hairpin"&&!state.coasterLicenses.hairpin)action=`<button data-license="hairpin" ${parkNetWorth()<50000||state.cash<10000?"disabled":""}>LICENSE BLUEPRINT · $10,000</button>`;
       if(id==="flyer"&&!state.coasterLicenses.flyer)action=`<button disabled>VISIT LEGAL DISTRICT OFFICES</button>`;
       return `<article class="shop-card"><header><h3>${ride.icon} ${ride.name}</h3><strong>${money(ride.cost)}</strong></header><p>${ride.description}</p><div class="shop-stats"><span>EXC ${ride.excitement}</span><span>REL ${ride.reliability}%</span><span>${ride.coaster?`${ride.maxSpeed} MPH · H${ride.maxHeight}`:`${ride.w}×${ride.h}`}</span></div>${unlocked?action:`<p class="inspector-copy">${coasterRequirement(id)}</p>${action}`}</article>`;}).join("");
@@ -999,12 +1014,38 @@
 
   function purchaseCoasterLicense(id){const cost=id==="hairpin"?10000:25000;if(state.cash<cost)return;if(id==="hairpin"&&parkNetWorth()<50000)return;if(id==="flyer"&&state.atmosphere<80)return;state.cash-=cost;state.stats.expenses+=cost;state.coasterLicenses[id]=true;refreshCoasterUnlocks();notify(`${RIDES[id].name} licensed`,"Manufacturing hardware is now available for purchase.");openUsedRideLot();updateUI();}
 
-  function openLegalOffice(){const licensed=!!state.coasterLicenses.flyer,eligible=state.atmosphere>=80&&state.cash>=25000;openModal(modalShell("SPECIALTY LICENSING · LEGAL DISTRICT","Pyrotechnic flight contract",`<p class="modal-copy">The Arena Flyer requires an 80-point park Atmosphere rating, a specialty effects indemnity, and a $25,000 premium manufacturing license.</p><div class="stat-row"><span>Atmosphere requirement</span><strong>${Math.round(state.atmosphere)} / 80</strong></div><div class="stat-row"><span>Contract status</span><strong>${licensed?"SIGNED":"PENDING"}</strong></div>`,`<button class="modal-button" data-close>Leave office</button><button id="signFlyerLicense" class="modal-button primary" ${licensed||!eligible?"disabled":""}>${licensed?"LICENSE ACTIVE":"SIGN CONTRACT · $25,000"}</button>`),()=>{$$("[data-close]").forEach(button=>button.onclick=closeModal);$("#signFlyerLicense").onclick=()=>{const cost=25000;if(state.atmosphere<80||state.cash<cost)return;state.cash-=cost;state.stats.expenses+=cost;state.coasterLicenses.flyer=true;refreshCoasterUnlocks();closeModal();notify("Arena Flyer contract signed","Specialty hardware is now available at the Used Ride Lot.");updateUI();};});}
+  function openLegalOffice(){const licensed=!!state.coasterLicenses.flyer,eligible=state.atmosphere>=80&&state.cash>=25000;openModal(modalShell("SPECIALTY LICENSING · LEGAL DISTRICT","Pyrotechnic flight contract",`<p class="modal-copy">The Arena Flyer requires an 80-point park Atmosphere rating, a specialty effects indemnity, and a $25,000 premium manufacturing license.</p><div class="stat-row"><span>Atmosphere requirement</span><strong>${Math.round(state.atmosphere)} / 80</strong></div><div class="stat-row"><span>Contract status</span><strong>${licensed?"SIGNED":"PENDING"}</strong></div>`,`<button class="modal-button" data-close>Leave office</button><button id="signFlyerLicense" class="modal-button primary" ${licensed||!eligible?"disabled":""}>${licensed?"LICENSE ACTIVE":"SIGN CONTRACT · $25,000"}</button>`),()=>{$$("[data-close]").forEach(button=>button.onclick=closeModal);$("#signFlyerLicense").onclick=()=>{const cost=25000;if(state.atmosphere<80||state.cash<cost)return;state.cash-=cost;state.stats.expenses+=cost;state.coasterLicenses.flyer=true;refreshCoasterUnlocks();closeModal();notify("Arena Flyer contract signed","Specialty hardware is now available in the Attractions marketplace.");updateUI();};});}
 
   function buyRide(id) {
     const ride=RIDES[id];if(!ride||state.cash<ride.cost)return;
     state.cash-=ride.cost;state.stats.expenses+=ride.cost;state.pendingOrders.push({id:uid("order"),ride:id,purchased:state.day});
     notify(`${ride.name} purchased`,`Awaiting ${money(ride.freight)} freight dispatch at the shipping desk.`);if(state.tutorial===3)advanceTutorial(4);closeModal();updateUI();saveTimer=99;save();
+  }
+
+  function buyAndShipFromBuildMenu(id){
+    const ride=RIDES[id],total=(ride?.cost||0)+(ride?.freight||0);if(!ride||!rideShopUnlocked(id)||state.cash<total)return;
+    state.cash-=ride.cost;state.stats.expenses+=ride.cost;const order={id:uid("order"),ride:id,purchased:state.day};state.pendingOrders.push(order);
+    notify(`${ride.name} purchased in Build Mode`,`${money(ride.cost)} machinery order approved. Freight dispatch is automatic.`);if(state.tutorial===3)advanceTutorial(4);dispatchOrder(order.id);save(true);
+  }
+
+  function openBuildRideShop(item){
+    if(state.tutorial===2)advanceTutorial(3);refreshCoasterUnlocks();
+    const order=state.pendingOrders.find(entry=>entry.ride===item.id),shipment=[...state.shipments].reverse().find(entry=>entry.ride===item.id&&["transit","arrived"].includes(entry.status));let status="AVAILABLE FROM THE REMOTE CATALOG",action="";
+    if(order){status="PURCHASED · AWAITING FREIGHT";action=`<button id="dockDispatchRide" class="modal-button primary" ${state.cash<item.freight?"disabled":""}>DISPATCH · ${money(item.freight)}</button>`;}
+    else if(shipment?.status==="transit"){const cost=Math.ceil(item.freight*.5*(shipment.rushes+1));status=`IN TRANSIT · ${Math.ceil(shipment.remaining)} SECONDS`;action=`<button id="dockRushRide" class="modal-button primary" ${state.cash<cost?"disabled":""}>EXPEDITE · ${money(cost)}</button>`;}
+    else if(shipment?.status==="arrived"){status="ARRIVED · READY TO ADD TO BUILD INVENTORY";action=`<button id="dockCollectRide" class="modal-button primary">COLLECT BLUEPRINT</button>`;}
+    else if(rideShopUnlocked(item.id)){const total=item.cost+item.freight;action=`<button id="dockBuyRide" class="modal-button primary" ${state.cash<total?"disabled":""}>BUY & SHIP · ${money(total)}</button>`;}
+    else if(item.id==="hairpin"&&!state.coasterLicenses?.hairpin){status=coasterRequirement(item.id);action=`<button id="dockLicenseRide" class="modal-button primary" ${parkNetWorth()<50000||state.cash<10000?"disabled":""}>LICENSE BLUEPRINT · $10,000</button>`;}
+    else status=coasterRequirement(item.id);
+    const body=`<p class="modal-copy">Buy and manage this attraction directly from the Attractions build tab. The Used Ride Lot is optional.</p><div class="shop-card"><header><h3>${item.icon} ${item.name}</h3><strong>${money(item.cost)}</strong></header><p>${item.description}</p><div class="shop-stats"><span>EXC ${item.excitement}</span><span>REL ${item.reliability}%</span><span>FREIGHT ${money(item.freight)}</span></div><div class="stat-row"><span>BUILD INVENTORY STATUS</span><strong>${status}</strong></div></div>`;
+    openModal(modalShell("ATTRACTIONS · REMOTE RIDE MARKETPLACE",item.name,body,`<button class="modal-button" data-close>Back</button>${action}`),()=>{
+      $$('[data-close]').forEach(button=>button.onclick=closeModal);
+      if($("#dockBuyRide"))$("#dockBuyRide").onclick=()=>buyAndShipFromBuildMenu(item.id);
+      if($("#dockDispatchRide"))$("#dockDispatchRide").onclick=()=>{dispatchOrder(order.id);save(true);};
+      if($("#dockRushRide"))$("#dockRushRide").onclick=()=>{rushShipment(shipment);closeModal();save(true);updateUI();};
+      if($("#dockCollectRide"))$("#dockCollectRide").onclick=()=>{collectFreight(shipment.id);closeModal();};
+      if($("#dockLicenseRide"))$("#dockLicenseRide").onclick=()=>{state.cash-=10000;state.stats.expenses+=10000;state.coasterLicenses.hairpin=true;refreshCoasterUnlocks();closeModal();notify("Hairpin Slideway licensed","The ride can now be bought directly from Attractions.");updateUI();save(true);};
+    });
   }
 
   function openFabricator() {
@@ -1014,13 +1055,13 @@
       <article class="shop-card"><header><h3>⌇ Queue Blueprint Set</h3><strong>$1,000</strong></header><p>Standard stanchions plus access to advanced elevated and atmospheric queue systems.</p><button data-pack="queue" ${queueOwned||state.cash<1000?"disabled":""}>${queueOwned?"OWNED":"BUY BLUEPRINT"}</button></article>
       <article class="shop-card"><header><h3>■ Vertical Structures</h3><strong>$2,000</strong></header><p>Foundation blocks, stairs, and structural inspection access. Included with your toolkit in this build.</p><button disabled>TOOLKIT LICENSED</button></article>
       <article class="shop-card"><header><h3>▱ Escalator Systems</h3><strong>$8,000</strong></header><p>Powered vertical passenger modules. Placement components cost $2,000 per level.</p><button disabled>CATALOG AVAILABLE</button></article></div>`,`<button class="modal-button" data-close>Leave Fabricator</button>`),()=>{
-      $$("[data-close]").forEach(b=>b.onclick=closeModal);$$('[data-pack]').forEach(button=>button.onclick=()=>{const type=button.dataset.pack,cost=type==="concrete"?2000:1000;if(state.cash<cost)return;state.cash-=cost;state.stats.expenses+=cost;state.blueprintPacks[type]=true;state.materials||={};const material=type==="concrete"?"pathConcrete":"queueStandard";state.materials[material]=(state.materials[material]||0)+(type==="concrete"?100:50);notify(`${type==="concrete"?"Concrete Pathing":"Queue"} acquired`,`${type==="concrete"?100:50} starter tiles stocked in Infrastructure.`);if(state.tutorial===4&&state.blueprintPacks.concrete&&state.blueprintPacks.queue)advanceTutorial(5);updateUI();openFabricator();});
+      $$("[data-close]").forEach(b=>b.onclick=closeModal);$$('[data-pack]').forEach(button=>button.onclick=()=>{const type=button.dataset.pack,cost=type==="concrete"?2000:1000;if(state.cash<cost)return;state.cash-=cost;state.stats.expenses+=cost;state.blueprintPacks[type]=true;state.materials||={};const material=type==="concrete"?"pathConcrete":"queueStandard";state.materials[material]=(state.materials[material]||0)+(type==="concrete"?100:50);notify(`${type==="concrete"?"Concrete Pathing":"Queue"} acquired`,`${type==="concrete"?100:50} starter tiles stocked in Infrastructure.`);if(state.tutorial===4&&state.blueprintPacks.concrete&&state.blueprintPacks.queue){advanceTutorial(5);if(state.shipments.length)advanceTutorial(6);}updateUI();openFabricator();});
     });
   }
 
   function openShippingDesk() {
     const active=state.shipments.filter(shipment=>shipment.status==="transit");
-    const orders=state.pendingOrders.length?`<div class="shop-grid">${state.pendingOrders.map(order=>{const ride=RIDES[order.ride];return `<article class="shop-card"><header><h3>${ride.name}</h3><strong>${money(ride.freight)}</strong></header><p>${Math.ceil(ride.delivery/60)} minute delivery · industrial flatbed</p><button data-dispatch="${order.id}" ${state.cash<ride.freight?"disabled":""}>DISPATCH FREIGHT</button></article>`}).join("")}</div>`:`<p class="modal-copy">No purchased machinery is awaiting dispatch. Visit the Used Ride Lot first.</p>`;
+    const orders=state.pendingOrders.length?`<div class="shop-grid">${state.pendingOrders.map(order=>{const ride=RIDES[order.ride];return `<article class="shop-card"><header><h3>${ride.name}</h3><strong>${money(ride.freight)}</strong></header><p>${Math.ceil(ride.delivery/60)} minute delivery · industrial flatbed</p><button data-dispatch="${order.id}" ${state.cash<ride.freight?"disabled":""}>DISPATCH FREIGHT</button></article>`}).join("")}</div>`:`<p class="modal-copy">No machinery is awaiting dispatch. You can buy and ship rides directly from the Attractions build tab.</p>`;
     const transit=active.length?`<p class="inspector-label" style="margin-top:18px">ACTIVE SHIPMENTS</p><div class="shop-grid">${active.map(shipment=>{const ride=RIDES[shipment.ride],cost=Math.ceil(ride.freight*.5*(shipment.rushes+1));return `<article class="shop-card"><header><h3>${ride.name}</h3><strong>${Math.ceil(shipment.remaining)}s</strong></header><p>${shipment.event==="starter"?"Starter express lane active":shipment.event==="delay"?"Traffic delay active":shipment.event==="damage"?"Crate inspection flagged":"Truck is en route"} · rush reduces remaining time by 50%</p><button data-rush="${shipment.id}" ${state.cash<cost?"disabled":""}>EXPEDITE · ${money(cost)}</button></article>`}).join("")}</div>`:"";
     const body=`<p class="modal-copy">Dispatch purchased machinery to your eastern Freight Depot. Delivery timers use simulation time.</p>${orders}${transit}`;
     openModal(modalShell("DISTRICT LOGISTICS","Freight shipping desk",body,`<button class="modal-button" data-close>Close ledger</button>`),()=>{$$("[data-close]").forEach(b=>b.onclick=closeModal);$$('[data-dispatch]').forEach(button=>button.onclick=()=>dispatchOrder(button.dataset.dispatch));$$('[data-rush]').forEach(button=>button.onclick=()=>{rushShipment(state.shipments.find(shipment=>shipment.id===button.dataset.rush));openShippingDesk();});});
@@ -1036,8 +1077,8 @@
     if(state.tutorial===5)advanceTutorial(6);closeModal();updateUI();
   }
 
-  function collectFreight() {
-    const shipment=state.shipments.find(entry=>entry.status==="arrived");if(!shipment){showWorldMessage("No freight is ready for sign-off");return;}
+  function collectFreight(shipmentId=null) {
+    const shipment=state.shipments.find(entry=>entry.status==="arrived"&&(!shipmentId||entry.id===shipmentId));if(!shipment){showWorldMessage("No freight is ready for sign-off");return;}
     shipment.status="collected";state.rideInventory[shipment.ride]=(state.rideInventory[shipment.ride]||0)+1;
     if(shipment.event==="parts")state.cash+=750;if(shipment.event==="damage")state.stats.expenses+=250;
     state.milestones ||= { path: false, freight: false }; state.milestones.freight = true;
