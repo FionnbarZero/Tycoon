@@ -44,12 +44,12 @@ Open `http://127.0.0.1:8080` in a modern desktop browser.
 - Freight fees, a 20-second first-delivery express lane, random delays/damage/spare parts, collection, and paid construction rushing
 - Side-scrolling Used Ride Parking Lot with visible parked machinery, direct purchase cards, and three recoverable cash finds
 - Three path surfaces, three queue formats, vertical foundation blocks, stairs, escalators, four structural levels, collision/support validation, and hologram feedback
-- Seventeen active rides: five custom-track coasters, eight family/thrill flats, and four tracked/dark rides
+- Seventeen active rides: five custom-track coasters, eight family/thrill flats, and four tracked/dark rides, each with a distinct animated model instead of a generic block
 - Node-based coaster construction with six vertical levels, speed/friction validation, stair and object collision checks, animated trains, and three compact prebuilt layouts
 - Individual ride naming plus three-tier ability trees earned through operation cycles
 - Construction, staffing, condition, animated/synthesized breakdown feedback, repair, power, admission, queues, and revenue
-- Food stalls, item pricing, thirst interactions, restrooms and bladder needs, ATMs, bins, scenery radii, themed ground, atmosphere, litter, janitors, mechanics, weather, and daily payroll
-- Guest wallets, demographic preferences, price tolerance, value-for-money decisions, complaints, park reputation, admission models, and a global economic ledger
+- Nine functional food stalls—including lemonade, burgers, churros, coffee, candy, pizza, wok, fries, and ice cream—with distinct prices, refreshment effects, happiness boosts, and colorful animated storefronts
+- Guest wallets, smiling happiness visuals, scenery mood boosts, food and ride reactions, demographic preferences, price tolerance, value-for-money decisions, complaints, park reputation, admission models, and a global economic ledger
 - Path-locked guest routing from the main gate through connected walkways and queues
 - Appearance reviews driven by atmosphere, cleanliness, path condition, visitor happiness, and a live review ticker
 - A 48% larger starter lot with 120-guest capacity, plus arcades, midway games, food stalls, a 4D cinema, gift shop, First Aid Lodge, fountains, and mascot stages

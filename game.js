@@ -90,10 +90,15 @@
     ],
     attractions: Object.entries(RIDES).map(([id, ride]) => ({ id, ...ride, kind: "ride" })),
     commerce: [
-      { id: "fry", name: "Neon Fry Basket", icon: "▥", cost: 4000, kind: "food", w: 2, h: 2, power: 6, price: 6.5, aura: 4, description: "Salty boardwalk food raises thirst and adjacent drink demand." },
-      { id: "wok", name: "Sichuan Wok Express", icon: "♨", cost: 6500, kind: "food", w: 3, h: 2, power: 8, price: 8.5, aura: 7, description: "Aromatic street kitchen that pulls guests from nearby paths." },
-      { id: "pizza", name: "Dairy-Free Pizza Parlor", icon: "◒", cost: 8000, kind: "food", w: 3, h: 3, power: 18, price: 9, aura: 5, description: "High-capacity open kitchen demanding a stronger power grid." },
-      { id: "iceCream", name: "Cloud Cone Creamery", icon: "♢", cost: 3500, kind: "food", w: 2, h: 2, power: 5, price: 5.5, aura: 3, description: "A cheerful ice-cream kiosk that cools guests down and sells quickly near family rides." },
+      { id: "fry", name: "Neon Fry Basket", icon: "▥", cost: 4000, kind: "food", w: 2, h: 2, power: 6, price: 6.5, aura: 4, joy: 7, thirstChange: 22, dirt: 5, description: "Salty boardwalk food raises thirst and adjacent drink demand." },
+      { id: "wok", name: "Sichuan Wok Express", icon: "♨", cost: 6500, kind: "food", w: 3, h: 2, power: 8, price: 8.5, aura: 7, joy: 9, thirstChange: 5, description: "Aromatic street kitchen that pulls guests from nearby paths." },
+      { id: "pizza", name: "Dairy-Free Pizza Parlor", icon: "◒", cost: 8000, kind: "food", w: 3, h: 3, power: 18, price: 9, aura: 5, joy: 10, thirstChange: 6, description: "High-capacity open kitchen demanding a stronger power grid." },
+      { id: "iceCream", name: "Cloud Cone Creamery", icon: "♢", cost: 3500, kind: "food", w: 2, h: 2, power: 5, price: 5.5, aura: 3, joy: 9, thirstRelief: 18, description: "A cheerful ice-cream kiosk that cools guests down and sells quickly near family rides." },
+      { id: "lemonade", name: "Sunbeam Lemonade Stand", icon: "●", cost: 2500, kind: "food", w: 2, h: 1, power: 2, price: 4, aura: 3, joy: 7, hungerRelief: 25, thirstRelief: 70, bladderChange: 14, description: "A bright drink stand that quickly cools and refreshes thirsty visitors." },
+      { id: "burger", name: "Meteor Burger Grill", icon: "≡", cost: 7000, kind: "food", w: 3, h: 2, power: 12, price: 9.5, aura: 5, joy: 11, thirstChange: 8, dirt: 4, description: "A lively grill serving filling burgers with a big guest happiness boost." },
+      { id: "churro", name: "Twisted Churro Cart", icon: "⌇", cost: 3200, kind: "food", w: 2, h: 1, power: 4, price: 5, aura: 4, joy: 8, hungerRelief: 65, thirstChange: 10, description: "A compact cinnamon snack cart that fits beside busy queues." },
+      { id: "coffee", name: "Mountain Mug Café", icon: "◡", cost: 5500, kind: "food", w: 2, h: 2, power: 7, price: 6, aura: 3, joy: 8, hungerRelief: 45, thirstRelief: 35, bladderChange: 12, description: "Warm drinks and pastries refresh tired guests in cool or rainy weather." },
+      { id: "candy", name: "Rainbow Candy Works", icon: "◆", cost: 4500, kind: "food", w: 2, h: 2, power: 5, price: 6.5, aura: 4, joy: 12, hungerRelief: 55, thirstChange: 5, description: "A colorful sweet shop that gives families a large burst of happiness." },
       { id: "restroomSingle", name: "Comfort Station", icon: "WC", cost: 3000, kind: "restroom", w: 1, h: 1, capacity: 2, price: 0, water: 4, aura: 3, description: "Tiny two-guest relief station for tight spaces." },
       { id: "restroomMulti", name: "Utility Restroom", icon: "▦", cost: 7000, kind: "restroom", w: 2, h: 2, capacity: 12, price: 0, water: 12, aura: 4, description: "Stackable, high-throughput facility requiring a water connection." },
       { id: "arcade", name: "Pixel Palace Arcade", icon: "▣", cost: 12000, kind: "venue", w: 4, h: 3, capacity: 30, price: 4, power: 20, aura: 5, atmosphere: 12, description: "A neon indoor arcade packed with cabinets, prize machines, and family games." },
@@ -556,7 +561,6 @@
   function drawRide(object, item) {
     if(object.track?.length)return drawTrackedCoaster(object,item);
     const p = iso(object.x + item.w / 2, object.y + item.h / 2, object.z);
-    const pulse = Math.sin(performance.now() / 280) * 2;
     if (object.state === "blueprint") {
       ctx.globalAlpha = .42; ctx.fillStyle = "#30ffab"; ctx.beginPath(); ctx.ellipse(p.x, p.y, item.w * 20, item.h * 10, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
       ctx.strokeStyle = "#63ffc1"; ctx.setLineDash([5, 4]); ctx.stroke(); ctx.setLineDash([]);
@@ -573,18 +577,21 @@
       ctx.fillStyle=shade(item.color,-55);ctx.fillRect(p.x-width/2,p.y-height-48,width,height+48);
       ctx.fillStyle=shade(item.color,-20);ctx.beginPath();ctx.moveTo(p.x-width/2-6,p.y-height-48);ctx.lineTo(p.x,p.y-height-68);ctx.lineTo(p.x+width/2+6,p.y-height-48);ctx.closePath();ctx.fill();
       ctx.strokeStyle=item.color;ctx.lineWidth=2;ctx.strokeRect(p.x-width/2+8,p.y-height-35,width-16,25);
-      ctx.fillStyle="#07121e";ctx.font="700 9px Inter";ctx.textAlign="center";ctx.fillText(item.icon,p.x,p.y-height-18);
+      drawDarkRideFacade(p,object,item,width,height);
     } else if (object.type === "skywheel") {
       const spin=object.open?performance.now()/5000:0,radius=42;
       ctx.strokeStyle="#d9edf0";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(p.x-26,p.y+22);ctx.lineTo(p.x,p.y-42);ctx.lineTo(p.x+26,p.y+22);ctx.stroke();
       ctx.strokeStyle=item.color;ctx.lineWidth=4;ctx.beginPath();ctx.arc(p.x,p.y-42,radius,0,Math.PI*2);ctx.stroke();
       for(let i=0;i<8;i++){const angle=spin+i*Math.PI/4,x=p.x+Math.cos(angle)*radius,y=p.y-42+Math.sin(angle)*radius;ctx.strokeStyle="rgba(230,245,248,.6)";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.x,p.y-42);ctx.lineTo(x,y);ctx.stroke();ctx.fillStyle=i%2?item.color:"#fff1a8";ctx.fillRect(x-6,y-3,12,7);}
-    } else if (["carousel", "wave", "spinner", "skid", "whirlybird", "bumper", "dropTower"].includes(object.type)) {
-      ctx.fillStyle = shade(item.color, -35); ctx.beginPath(); ctx.ellipse(p.x, p.y + 6, Math.max(28, item.w * 18), Math.max(14, item.h * 9), 0, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = item.color; ctx.lineWidth = 4; ctx.beginPath(); ctx.ellipse(p.x, p.y + 2, Math.max(22, item.w * 15), Math.max(11, item.h * 7), 0, 0, Math.PI * 2); ctx.stroke();
-      ctx.strokeStyle = "#dcecf0"; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(p.x, p.y + 4); ctx.lineTo(p.x, p.y - 47 - (object.open ? pulse : 0)); ctx.stroke();
-      for (let i = 0; i < 6; i++) { const angle = i * Math.PI / 3 + (object.open ? performance.now() / 900 : 0); const x = p.x + Math.cos(angle) * 34, y = p.y + Math.sin(angle) * 16 - 8; ctx.fillStyle = i % 2 ? item.color : "#e8f5f6"; ctx.fillRect(x - 5, y - 4, 10, 8); }
-    } else {
+    } else if (object.type === "carousel") drawCarouselRide(p,object,item);
+    else if (object.type === "whirlybird") drawWhirlybirdRide(p,object,item);
+    else if (object.type === "wave") drawWaveSwingerRide(p,object,item);
+    else if (object.type === "spinner") drawSpinnerRide(p,object,item);
+    else if (object.type === "skid") drawCargoSkidRide(p,object,item);
+    else if (object.type === "bumper") drawBumperRide(p,object,item);
+    else if (object.type === "dropTower") drawDropTowerRide(p,object,item);
+    else if (object.type === "safari") drawSafariRide(p,object,item);
+    else {
       ctx.strokeStyle = item.color; ctx.lineWidth = 6; ctx.beginPath(); ctx.ellipse(p.x, p.y - 5, item.w * 22, item.h * 12, -.05, .2, Math.PI * 1.9); ctx.stroke();
       ctx.strokeStyle = "#263945"; ctx.lineWidth = 2; ctx.stroke();
       for (let i = 0; i < 5; i++) { ctx.strokeStyle = "#7d8d92"; ctx.beginPath(); ctx.moveTo(p.x - item.w * 18 + i * item.w * 9, p.y); ctx.lineTo(p.x - item.w * 18 + i * item.w * 9, p.y + 30); ctx.stroke(); }
@@ -592,10 +599,67 @@
       if(object.open){const angle=performance.now()/900,x=p.x+Math.cos(angle)*item.w*19,y=p.y-5+Math.sin(angle)*item.h*10;ctx.fillStyle=object.type==="safari"?"#d59c4f":item.color;ctx.fillRect(x-10,y-5,20,9);ctx.fillStyle="#e9f5f4";ctx.fillRect(x-6,y-8,5,4);ctx.fillRect(x+2,y-8,5,4);}
     }
     const displayName=object.customName||item.name;
-    if (object.broken) drawWorldLabel(p.x, p.y - 67, "⚠ RIDE SHUTDOWN", "#ff5368");
-    else if (object.open) drawWorldLabel(p.x, p.y - 67, `${displayName.toUpperCase()} · OPEN`, "#53d998");
-    else drawWorldLabel(p.x, p.y - 67, `${displayName.toUpperCase()} · CLOSED`, "#91aab6");
+    const labelY=p.y-({dropTower:145,wave:94,skywheel:94,carousel:80,whirlybird:70,bumper:76}[object.type]||67);
+    if (object.broken) drawWorldLabel(p.x, labelY, "⚠ RIDE SHUTDOWN", "#ff5368");
+    else if (object.open) drawWorldLabel(p.x, labelY, `${displayName.toUpperCase()} · OPEN`, "#53d998");
+    else drawWorldLabel(p.x, labelY, `${displayName.toUpperCase()} · CLOSED`, "#91aab6");
     if(object.broken){ctx.strokeStyle="#ffd35a";ctx.lineWidth=2;for(let i=0;i<5;i++){const angle=performance.now()/120+i*1.7;ctx.beginPath();ctx.moveTo(p.x,p.y-28);ctx.lineTo(p.x+Math.cos(angle)*18,p.y-28+Math.sin(angle)*13);ctx.stroke();}}
+  }
+
+  function rideSpin(object,speed=900){return object.open?performance.now()/speed:0;}
+
+  function ridePlatform(p,item,rx=48,ry=22){
+    ctx.fillStyle=shade(item.color,-55);ctx.beginPath();ctx.ellipse(p.x,p.y+8,rx,ry,0,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle=item.color;ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(p.x,p.y+3,rx-5,ry-5,0,0,Math.PI*2);ctx.stroke();
+  }
+
+  function drawCarouselRide(p,object,item){
+    const spin=rideSpin(object,1800);ridePlatform(p,item,48,21);
+    ctx.strokeStyle="#f7ead0";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(p.x,p.y+5);ctx.lineTo(p.x,p.y-58);ctx.stroke();
+    ctx.fillStyle=item.color;ctx.beginPath();ctx.moveTo(p.x-48,p.y-43);ctx.quadraticCurveTo(p.x,p.y-75,p.x+48,p.y-43);ctx.lineTo(p.x+38,p.y-34);ctx.lineTo(p.x-38,p.y-34);ctx.closePath();ctx.fill();
+    ctx.strokeStyle="#fff1c2";ctx.lineWidth=3;for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(p.x+i*16,p.y-60+Math.abs(i)*5);ctx.lineTo(p.x+i*13,p.y-35);ctx.stroke();}
+    for(let i=0;i<6;i++){const a=spin+i*Math.PI/3,x=p.x+Math.cos(a)*34,y=p.y-14+Math.sin(a)*12;ctx.strokeStyle="#e9e1cb";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y-24);ctx.lineTo(x,y+8);ctx.stroke();ctx.fillStyle=i%2?"#f06f69":"#7ad8e6";ctx.beginPath();ctx.ellipse(x,y,7,4,0,0,Math.PI*2);ctx.fill();ctx.fillRect(x-5,y-5,8,7);}
+  }
+
+  function drawWhirlybirdRide(p,object,item){
+    const spin=rideSpin(object,1300);ridePlatform(p,item,45,20);ctx.fillStyle="#d9edf0";ctx.fillRect(p.x-5,p.y-42,10,46);ctx.fillStyle=item.color;ctx.beginPath();ctx.arc(p.x,p.y-42,12,0,Math.PI*2);ctx.fill();
+    for(let i=0;i<5;i++){const a=spin+i*Math.PI*2/5,x=p.x+Math.cos(a)*39,y=p.y-24+Math.sin(a)*16+(object.open?Math.sin(spin*2+i)*6:0);ctx.strokeStyle="#b8d0d5";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(p.x,p.y-40);ctx.lineTo(x,y);ctx.stroke();ctx.fillStyle=i%2?"#ffd85e":"#54ccef";ctx.beginPath();ctx.ellipse(x,y,10,6,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#294553";ctx.fillRect(x-3,y-6,7,5);ctx.strokeStyle="#eff8f7";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x-13,y-8);ctx.lineTo(x+13,y-8);ctx.stroke();}
+  }
+
+  function drawWaveSwingerRide(p,object,item){
+    const spin=rideSpin(object,1050),swing=object.open?8:0;ridePlatform(p,item,50,23);ctx.strokeStyle="#d9e6e8";ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(p.x,p.y+5);ctx.lineTo(p.x,p.y-75);ctx.stroke();ctx.fillStyle=item.color;ctx.beginPath();ctx.moveTo(p.x-37,p.y-62);ctx.lineTo(p.x,p.y-84);ctx.lineTo(p.x+37,p.y-62);ctx.lineTo(p.x+29,p.y-54);ctx.lineTo(p.x-29,p.y-54);ctx.closePath();ctx.fill();
+    for(let i=0;i<8;i++){const a=spin+i*Math.PI/4,x=p.x+Math.cos(a)*(34+swing),y=p.y-22+Math.sin(a)*(14+swing*.4);ctx.strokeStyle="#d7e1df";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.x+Math.cos(a)*27,p.y-59+Math.sin(a)*7);ctx.lineTo(x,y);ctx.stroke();ctx.fillStyle=i%2?"#ffdb58":"#ff6f75";ctx.fillRect(x-5,y,10,6);}
+  }
+
+  function drawSpinnerRide(p,object,item){
+    const spin=rideSpin(object,520);ridePlatform(p,item,50,24);ctx.strokeStyle="#f1eaff";ctx.lineWidth=2;for(let i=0;i<8;i++){const a=i*Math.PI/4;ctx.beginPath();ctx.moveTo(p.x,p.y+2);ctx.lineTo(p.x+Math.cos(a)*42,p.y+2+Math.sin(a)*18);ctx.stroke();}
+    ctx.fillStyle=shade(item.color,15);ctx.beginPath();ctx.arc(p.x,p.y-3,10,0,Math.PI*2);ctx.fill();for(let i=0;i<6;i++){const a=spin+i*Math.PI/3,r=24+Math.sin(spin*2+i)*10,x=p.x+Math.cos(a)*r,y=p.y-2+Math.sin(a)*r*.45;ctx.save();ctx.translate(x,y);ctx.rotate(a+.6);ctx.fillStyle=i%2?"#55dfca":"#ffd058";ctx.fillRect(-8,-4,16,8);ctx.fillStyle="#253743";ctx.fillRect(-4,-6,8,4);ctx.restore();}
+  }
+
+  function drawCargoSkidRide(p,object,item){
+    const spin=rideSpin(object,760);ridePlatform(p,item,62,27);ctx.strokeStyle="#f6a25e";ctx.lineWidth=6;ctx.beginPath();ctx.ellipse(p.x,p.y+1,50,21,0,0,Math.PI*2);ctx.stroke();ctx.fillStyle="#48525a";ctx.fillRect(p.x-9,p.y-31,18,34);
+    for(let i=0;i<5;i++){const a=spin+i*Math.PI*2/5,x=p.x+Math.cos(a)*44,y=p.y+Math.sin(a)*18;ctx.strokeStyle="#8c969b";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(p.x,p.y-13);ctx.lineTo(x,y-2);ctx.stroke();ctx.save();ctx.translate(x,y);ctx.rotate(a+.5);ctx.fillStyle=i%2?item.color:"#e6bd55";ctx.fillRect(-12,-6,24,12);ctx.fillStyle="#262f35";ctx.fillRect(-8,-9,8,4);ctx.restore();}
+  }
+
+  function drawBumperRide(p,object,item){
+    ctx.fillStyle="#263847";ctx.fillRect(p.x-60,p.y-44,120,50);ctx.strokeStyle=item.color;ctx.lineWidth=4;ctx.strokeRect(p.x-60,p.y-44,120,50);ctx.strokeStyle="#d7e9eb";ctx.lineWidth=3;for(let x=-52;x<=52;x+=26){ctx.beginPath();ctx.moveTo(p.x+x,p.y-44);ctx.lineTo(p.x+x,p.y-65);ctx.stroke();}ctx.strokeStyle=item.color;ctx.beginPath();ctx.moveTo(p.x-58,p.y-65);ctx.lineTo(p.x+58,p.y-65);ctx.stroke();
+    const motion=rideSpin(object,460);for(let i=0;i<6;i++){const x=p.x-40+(i%3)*39+(object.open?Math.sin(motion+i)*7:0),y=p.y-27+Math.floor(i/3)*22+(object.open?Math.cos(motion*.8+i)*3:0);ctx.fillStyle=i%2?"#59d8ec":"#ffcf52";ctx.beginPath();ctx.ellipse(x,y,11,6,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#182a35";ctx.fillRect(x-4,y-7,8,4);}
+  }
+
+  function drawDropTowerRide(p,object,item){
+    const phase=object.open?(Math.sin(performance.now()/900)+1)/2:.08,gondolaY=p.y-20-phase*78;ridePlatform(p,item,43,19);ctx.fillStyle="#dfe9eb";ctx.fillRect(p.x-5,p.y-116,10,120);ctx.fillStyle=item.color;ctx.beginPath();ctx.moveTo(p.x,p.y-132);ctx.lineTo(p.x-14,p.y-114);ctx.lineTo(p.x+14,p.y-114);ctx.closePath();ctx.fill();ctx.strokeStyle="#5f7180";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p.x,p.y-111);ctx.lineTo(p.x,p.y-3);ctx.stroke();ctx.fillStyle=shade(item.color,-20);ctx.fillRect(p.x-27,gondolaY,54,13);for(let i=-2;i<=2;i++){ctx.fillStyle=i%2?"#f6d264":"#eef6f5";ctx.fillRect(p.x+i*10-3,gondolaY+3,6,7);}
+  }
+
+  function drawSafariRide(p,object,item){
+    ctx.strokeStyle="#9d7448";ctx.lineWidth=16;ctx.beginPath();ctx.ellipse(p.x,p.y-4,item.w*20,item.h*10,-.08,.15,Math.PI*1.92);ctx.stroke();ctx.strokeStyle="#d8bc83";ctx.lineWidth=2;ctx.setLineDash([7,6]);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle="#67523e";ctx.beginPath();ctx.arc(p.x+18,p.y-22,19,Math.PI,Math.PI*2);ctx.fill();ctx.fillRect(p.x-1,p.y-23,38,17);for(let i=0;i<3;i++){const x=p.x-62+i*58;ctx.fillStyle="#837052";ctx.beginPath();ctx.arc(x,p.y-8-i*5,9,0,Math.PI*2);ctx.fill();ctx.fillStyle="#477044";ctx.beginPath();ctx.arc(x-4,p.y-25-i*5,12,0,Math.PI*2);ctx.arc(x+6,p.y-29-i*5,10,0,Math.PI*2);ctx.fill();}
+    const angle=rideSpin(object,1150),x=p.x+Math.cos(angle)*item.w*18,y=p.y-4+Math.sin(angle)*item.h*8;ctx.fillStyle="#d59c4f";ctx.fillRect(x-13,y-7,26,12);ctx.fillStyle="#c9e7e8";ctx.fillRect(x-7,y-11,12,6);ctx.fillStyle="#202b30";ctx.beginPath();ctx.arc(x-8,y+7,3,0,Math.PI*2);ctx.arc(x+9,y+7,3,0,Math.PI*2);ctx.fill();
+  }
+
+  function drawDarkRideFacade(p,object,item,width,height){
+    const top=p.y-height-18;ctx.textAlign="center";
+    if(object.type==="buttonEye"){ctx.fillStyle="#eadcf0";for(let i=-1;i<=1;i++){ctx.beginPath();ctx.arc(p.x+i*25,top,9,0,Math.PI*2);ctx.fill();ctx.fillStyle=item.color;ctx.beginPath();ctx.arc(p.x+i*25,top,3,0,Math.PI*2);ctx.fill();ctx.fillStyle="#eadcf0";}ctx.strokeStyle="#f0b7da";ctx.lineWidth=2;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(p.x-width/2+15,top+14);ctx.lineTo(p.x+width/2-15,top+14);ctx.stroke();ctx.setLineDash([]);}
+    else if(object.type==="shadow"){ctx.fillStyle="#0a0b18";ctx.fillRect(p.x-34,top-10,68,27);ctx.fillStyle="#ff6a88";ctx.beginPath();ctx.ellipse(p.x-10,top,7,3,0,0,Math.PI*2);ctx.ellipse(p.x+10,top,7,3,0,0,Math.PI*2);ctx.fill();}
+    else {ctx.strokeStyle="#43ffe0";ctx.lineWidth=2;for(let x=-42;x<=42;x+=14){ctx.beginPath();ctx.moveTo(p.x+x,top-11);ctx.lineTo(p.x+x,top+14);ctx.stroke();}for(let y=-10;y<=14;y+=8){ctx.beginPath();ctx.moveTo(p.x-42,top+y);ctx.lineTo(p.x+42,top+y);ctx.stroke();}ctx.fillStyle="#ff5ccc";ctx.fillRect(p.x-5,top-7,10,14);}
   }
 
   function drawTrackedCoaster(object,item){
@@ -617,12 +681,25 @@
     const p = iso(object.x, object.y, object.z);
     const w = item.w || 1, h = item.h || 1, far = iso(object.x + w, object.y + h, object.z);
     const center = { x: (p.x + far.x) / 2, y: (p.y + far.y) / 2 };
+    if(item.kind==="food")return drawFoodStall(center,item,w);
     const color = item.kind === "food" ? "#b15b31" : item.kind === "restroom" ? "#3d7588" : item.kind === "venue" ? "#553b87" : item.kind === "shop" ? "#a55a76" : item.kind === "rest" ? "#3f8065" : "#3c5d64";
     ctx.fillStyle = shade(color, -25); ctx.fillRect(center.x - w * 16, center.y - 35, w * 32, 35);
     ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(center.x - w * 19, center.y - 35); ctx.lineTo(center.x, center.y - 48); ctx.lineTo(center.x + w * 19, center.y - 35); ctx.lineTo(center.x, center.y - 22); ctx.closePath(); ctx.fill();
     ctx.fillStyle = "#eaf6f8"; ctx.font = `700 ${item.id === "restroomSingle" ? 7 : 9}px Inter`; ctx.textAlign = "center"; ctx.fillText(item.icon, center.x, center.y - 16);
-    if (item.id === "fry" || item.id === "wok") { ctx.strokeStyle = "rgba(255,220,160,.55)"; for (let i=0;i<3;i++){ctx.beginPath();ctx.arc(center.x+i*6-6,center.y-50-i*2,6+i*2,Math.PI,Math.PI*2);ctx.stroke();} }
     if(item.kind==="venue"){ctx.strokeStyle="#dd7dff";ctx.lineWidth=2;ctx.strokeRect(center.x-w*13,center.y-31,w*26,15);for(let i=0;i<4;i++){ctx.fillStyle=i%2?"#53d998":"#f3c753";ctx.fillRect(center.x-18+i*12,center.y-28,5,5);}}
+  }
+
+  function drawFoodStall(center,item,w){
+    const colors={fry:"#f08b3e",wok:"#cf4e43",pizza:"#4f9b65",iceCream:"#7ccde1",lemonade:"#efc938",burger:"#d94f43",churro:"#d8893d",coffee:"#7b583f",candy:"#db64ae"},color=colors[item.id]||"#b15b31";
+    ctx.fillStyle=shade(color,-35);ctx.fillRect(center.x-w*16,center.y-36,w*32,36);
+    ctx.fillStyle="#162b35";ctx.fillRect(center.x-w*11,center.y-29,w*22,18);
+    ctx.fillStyle="#d9f0ec";ctx.fillRect(center.x-w*9,center.y-27,w*18,11);
+    ctx.fillStyle=color;ctx.fillRect(center.x-w*18,center.y-46,w*36,11);
+    for(let x=-w*16;x<w*16;x+=12){ctx.fillStyle=((x/12)&1)?"#fff0d5":shade(color,18);ctx.beginPath();ctx.moveTo(center.x+x,center.y-46);ctx.lineTo(center.x+x+7,center.y-46);ctx.lineTo(center.x+x+5,center.y-35);ctx.lineTo(center.x+x-2,center.y-35);ctx.closePath();ctx.fill();}
+    ctx.fillStyle="#fff7e6";ctx.font="700 8px Inter";ctx.textAlign="center";ctx.fillText(item.icon,center.x,center.y-53);
+    if(["fry","wok","pizza","burger","churro","coffee"].includes(item.id)){ctx.strokeStyle="rgba(255,225,180,.65)";ctx.lineWidth=2;for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(center.x+i*7-7,center.y-56-i*2,5+i,Math.PI,Math.PI*2);ctx.stroke();}}
+    if(item.id==="lemonade"){ctx.fillStyle="#ffef7a";ctx.beginPath();ctx.arc(center.x+18,center.y-56,8,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#fff8c7";for(let i=0;i<8;i++){const a=i*Math.PI/4;ctx.beginPath();ctx.moveTo(center.x+18+Math.cos(a)*10,center.y-56+Math.sin(a)*10);ctx.lineTo(center.x+18+Math.cos(a)*14,center.y-56+Math.sin(a)*14);ctx.stroke();}}
+    if(item.id==="candy"){for(let i=-2;i<=2;i++){ctx.fillStyle=i%2?"#65e5df":"#ff7cbe";ctx.beginPath();ctx.arc(center.x+i*9,center.y-57-Math.abs(i)*2,4,0,Math.PI*2);ctx.fill();}}
   }
 
   function drawDecor(object, item) {
@@ -652,7 +729,8 @@
     for (const guest of guests) {
       const p = iso(guest.x, guest.y, guest.z || 0);
       ctx.fillStyle = "rgba(0,0,0,.2)"; ctx.beginPath();ctx.ellipse(p.x,p.y+7,5,2,0,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle = guest.color; ctx.beginPath();ctx.arc(p.x,p.y-5,4,0,Math.PI*2);ctx.fill();ctx.fillRect(p.x-3,p.y-2,6,9);
+      ctx.fillStyle = guest.color; ctx.beginPath();ctx.arc(p.x,p.y-5,5,0,Math.PI*2);ctx.fill();ctx.fillRect(p.x-3,p.y-1,6,9);
+      ctx.fillStyle="#182a34";ctx.fillRect(p.x-3,p.y-7,1,1);ctx.fillRect(p.x+2,p.y-7,1,1);ctx.strokeStyle="#182a34";ctx.lineWidth=1;ctx.beginPath();if(guest.happiness>=65)ctx.arc(p.x,p.y-5,3,0.2,Math.PI-.2);else ctx.arc(p.x,p.y-2,3,Math.PI+.2,Math.PI*2-.2);ctx.stroke();
       if (guest.thought) { ctx.fillStyle = guest.thoughtColor || "#fff"; ctx.font="700 9px Inter";ctx.textAlign="center";ctx.fillText(guest.thought,p.x,p.y-15); }
     }
   }
@@ -1269,7 +1347,7 @@
     const types=[{name:"Teen",wallet:40,color:"#ff6c80",thrill:1.3},{name:"Family",wallet:150,color:"#f3c753",thrill:.75},{name:"Adult",wallet:85,color:"#48cbd3",thrill:1}];const type=types[Math.floor(Math.random()*types.length)];
     let wallet=type.wallet*(.7+Math.random()*.6),entry=state.admission.model==="day"?state.admission.dayPass:state.admission.gatePrice;if(state.admission.model==="hybrid")entry=state.admission.gatePrice;
     const tolerance=(.8+state.reputation/250);if(entry>wallet*.45*tolerance){state.stats.complaints++;state.reputation=clamp(state.reputation-.03,0,100);return;}wallet-=entry;state.cash+=entry;state.totalRevenue+=entry;
-    const choice=reachable[Math.floor(Math.random()*reachable.length)],guest={id:uid("guest"),x:8.5,y:14.5,z:0,type:type.name,color:type.color,thrill:type.thrill,wallet,hunger:Math.random()*35,thirst:Math.random()*30,bladder:Math.random()*20,fatigue:0,happiness:75,state:"walking",age:0,thought:""};
+    const choice=reachable[Math.floor(Math.random()*reachable.length)],guest={id:uid("guest"),x:8.5,y:14.5,z:0,type:type.name,color:type.color,thrill:type.thrill,wallet,hunger:Math.random()*35,thirst:Math.random()*30,bladder:Math.random()*20,fatigue:0,happiness:82,state:"walking",age:0,thought:""};
     sendGuestTo(guest,choice.target,choice.route);guests.push(guest);state.totalGuests++;
   }
 
@@ -1287,9 +1365,9 @@
   }
 
   function updateGuests(dt){
-    for(const guest of guests){guest.age+=dt;guest.hunger+=dt*.18;guest.thirst+=dt*(state.weather==="heat"?.3:.15);guest.bladder+=dt*.12;const cooling=state.objects.some(object=>object.type==="hydro"&&object.open&&hasUpgrade(object,2)&&distance(object,guest)<7);guest.fatigue+=dt*.08*(cooling ? .65 : 1);if(guest.thoughtTimer){guest.thoughtTimer-=dt;if(guest.thoughtTimer<=0)guest.thought="";}
+    for(const guest of guests){guest.age+=dt;guest.hunger+=dt*.18;guest.thirst+=dt*(state.weather==="heat"?.3:.15);guest.bladder+=dt*.12;const cooling=state.objects.some(object=>object.type==="hydro"&&object.open&&hasUpgrade(object,2)&&distance(object,guest)<7),scenic=state.objects.some(object=>getItem(object.type)?.kind==="decor"&&distance(object,guest)<=(getItem(object.type).aura||0));guest.fatigue+=dt*.08*(cooling ? .65 : 1);if(scenic)guest.happiness=clamp(guest.happiness+dt*.025,0,100);if(guest.thoughtTimer){guest.thoughtTimer-=dt;if(guest.thoughtTimer<=0)guest.thought="";}
       if(guest.age>=420&&guest.target!=="exit")sendGuestTo(guest,"exit");
-      if(guest.state==="queued"){guest.wait-=dt;guest.fatigue+=dt*.12;guest.hunger-=dt*.12;if(guest.wait<=0){const ride=state.objects.find(o=>o.id===guest.target);if(ride)ride.queue=Math.max(0,(ride.queue||1)-1);guest.visits=(guest.visits||0)+1;guest.happiness=clamp(guest.happiness+6,0,100);const otherRides=state.objects.some(object=>getItem(object.type)?.kind==="ride"&&object.open&&!object.broken&&object.id!==ride?.id);if(guest.visits>=3||!otherRides)sendGuestTo(guest,"exit");else sendGuestToNext(guest);}continue;}
+      if(guest.state==="queued"){guest.wait-=dt;guest.fatigue+=dt*.12;guest.hunger-=dt*.12;if(guest.wait<=0){const ride=state.objects.find(o=>o.id===guest.target);if(ride)ride.queue=Math.max(0,(ride.queue||1)-1);guest.visits=(guest.visits||0)+1;guest.happiness=clamp(guest.happiness+10,0,100);guest.thought="★";guest.thoughtColor="#ffe16b";guest.thoughtTimer=3;const otherRides=state.objects.some(object=>getItem(object.type)?.kind==="ride"&&object.open&&!object.broken&&object.id!==ride?.id);if(guest.visits>=3||!otherRides)sendGuestTo(guest,"exit");else sendGuestToNext(guest);}continue;}
       const target=guest.target==="exit"?"exit":state.objects.find(object=>object.id===guest.target);
       if(!target){sendGuestToNext(guest);continue;}
       const waypoint=guest.route?.[guest.routeIndex||0];
@@ -1307,7 +1385,7 @@
     if(!accepted){guest.thought="$!";guest.thoughtColor="#ff5368";guest.thoughtTimer=3;guest.happiness-=8;state.stats.complaints++;state.reputation=clamp(state.reputation-.025,0,100);sendGuestToNext(guest);return;}
     guest.wallet-=target.price;let payout=target.price;if(target.type==="hairpin"&&hasUpgrade(target,2)&&((target.cycles||0)+1)%3===0)payout*=1.15;state.cash+=payout;state.totalRevenue+=payout;target.revenue=(target.revenue||0)+payout;
     if(item.kind==="ride"){guest.state="queued";guest.wait=rideStats.cycle;target.queue=(target.queue||0)+1;target.cycles=(target.cycles||0)+1;if(target.type==="flyer"&&hasUpgrade(target,2)&&target.cycles%10===0){state.reputation=clamp(state.reputation+1.5,0,100);notify("Synchronized stunt landed",`${target.customName||item.name} triggered a park-wide reputation burst.`);}}
-    else if(item.kind==="food"){guest.hunger=0;guest.thirst+=item.id==="fry"?22:7;guest.bladder+=8;guest.happiness+=4;dirtyNearbyPath(target,item.id==="fry"?5:3);sendGuestToNext(guest);}
+    else if(item.kind==="food"){guest.hunger=Math.max(0,guest.hunger-(item.hungerRelief||100));guest.thirst=item.thirstRelief?Math.max(0,guest.thirst-item.thirstRelief):guest.thirst+(item.thirstChange??7);guest.bladder+=item.bladderChange??8;guest.happiness=clamp(guest.happiness+(item.joy||6),0,100);guest.thought="♥";guest.thoughtColor="#ff84a8";guest.thoughtTimer=3;dirtyNearbyPath(target,item.dirt??3);sendGuestToNext(guest);}
     else if(item.kind==="restroom"){guest.bladder=0;guest.happiness+=target.price>2?-12:3;sendGuestToNext(guest);}
     else if(item.kind==="venue"){guest.happiness=clamp(guest.happiness+(item.id==="arcade"?12:10),0,100);guest.fatigue+=4;guest.visits=(guest.visits||0)+1;guest.visits>=3?sendGuestTo(guest,"exit"):sendGuestToNext(guest);}
     else if(item.kind==="shop"){guest.happiness=clamp(guest.happiness+6,0,100);sendGuestToNext(guest);}

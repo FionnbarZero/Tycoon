@@ -179,8 +179,8 @@ await wait(50);
 expect(await evaluate("document.querySelector('#modal').textContent.includes('Beautiful paths and scenery!')"), "Visitor review panel did not show saved reviews");
 await evaluate("document.querySelector('[data-close]').click(); true");
 await evaluate("document.querySelector('[data-tab=commerce]').click(); true");
-const newBuildings = await evaluate("['arcade','cinema','giftShop','firstAid','iceCream','gameBooth'].every(id => Boolean(document.querySelector(`[data-item=${id}]`)))");
-expect(newBuildings, "Arcade, cinema, gift shop, first-aid, ice-cream, and midway buildings should appear in Commerce");
+const newBuildings = await evaluate("['arcade','cinema','giftShop','firstAid','iceCream','gameBooth','lemonade','burger','churro','coffee','candy'].every(id => Boolean(document.querySelector(`[data-item=${id}]`)))");
+expect(newBuildings, "Arcade, cinema, gift shop, first-aid, midway games, and the expanded food-stall roster should appear in Commerce");
 await evaluate(`(() => {
   document.querySelector('[data-item=arcade]').click();
   const canvas=document.querySelector('#world'),rect=canvas.getBoundingClientRect();
