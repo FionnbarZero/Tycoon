@@ -94,12 +94,17 @@ await evaluate("document.querySelector('#enterGame').click(); window.dispatchEve
 await wait(100);
 const usedLot = await evaluate(`({
   cards: document.querySelectorAll('.ride-catalog .shop-card').length,
-  scrollable: document.querySelector('.ride-catalog').scrollHeight > document.querySelector('.ride-catalog').clientHeight,
-  cashSearch: Boolean(document.querySelector('#searchParkingCash'))
+  scrollable: document.querySelector('.ride-catalog').scrollWidth > document.querySelector('.ride-catalog').clientWidth,
+  cashSearch: Boolean(document.querySelector('#searchParkingCash')),
+  directPurchase: !document.querySelector('[data-buy-ride="carousel"]').disabled
 })`);
 expect(usedLot.cards === 13, "Used Ride Lot should list all 13 freight rides");
-expect(usedLot.scrollable, "Used Ride Lot inventory should be scrollable");
+expect(usedLot.scrollable, "Used Ride Lot inventory should scroll horizontally");
 expect(usedLot.cashSearch, "Used Ride Lot parking area should contain a cash search");
+expect(usedLot.directPurchase, "Starter rides should be directly purchasable from the horizontal catalog");
+await evaluate("document.querySelector('#rideScrollRight').click(); true");
+await wait(300);
+expect(await evaluate("document.querySelector('.ride-catalog').scrollLeft > 0"), "Ride catalog right-arrow did not scroll across the inventory");
 await evaluate("document.querySelector('#searchParkingCash').click(); true");
 await wait(50);
 expect(await evaluate("document.querySelector('#moneyValue').textContent === '$51,000'"), "Parking-lot cash find did not add $500");

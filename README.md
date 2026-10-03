@@ -41,7 +41,7 @@ Open `http://127.0.0.1:8080` in a modern desktop browser.
 
 - Isometric fenced lot, commercial district, walking avatar, contextual interaction, and guided starter tutorial
 - Used-ride purchasing, freight fees, simulation-time deliveries, random delays/damage/spare parts, collection, and paid construction rushing
-- Scrollable Used Ride Parking Lot with visible parked machinery and three recoverable cash finds
+- Side-scrolling Used Ride Parking Lot with visible parked machinery, direct purchase cards, and three recoverable cash finds
 - Three path surfaces, three queue formats, vertical foundation blocks, stairs, escalators, four structural levels, collision/support validation, and hologram feedback
 - Fourteen active rides: five custom-track coasters, five family/thrill flats, and four tracked/dark rides
 - Node-based coaster construction with six vertical levels, speed/friction validation, stair and object collision checks, animated trains, and three compact prebuilt layouts

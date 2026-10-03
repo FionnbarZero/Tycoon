@@ -1,27 +1,17 @@
 .ride-catalog {
-  max-height: 48vh;
-  margin: 12px -5px 0 0;
-  padding-right: 7px;
-  overflow-y: auto;
+  margin-top: 7px;
+  padding: 2px 0 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
   overscroll-behavior: contain;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
   scrollbar-color: #3d7895 #081923;
 }
 
-.ride-catalog::before {
-  content: "SCROLL TO BROWSE ALL RIDES";
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  display: block;
-  padding: 7px 9px;
-  margin-bottom: 7px;
-  border: 1px solid var(--line);
-  background: #0a2030;
-  color: #77a7bc;
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: .12em;
-}
+.ride-catalog .shop-grid { display: flex; width: max-content; }
+.ride-catalog .shop-card { flex: 0 0 255px; width: 255px; scroll-snap-align: start; }
+.ride-scroll-controls{display:flex;align-items:center;justify-content:space-between;margin-top:12px;border:1px solid var(--line);background:#0a2030}.ride-scroll-controls span{color:#77a7bc;font-size:8px;font-weight:700;letter-spacing:.12em}.ride-scroll-controls button{width:42px;height:29px;border:0;background:#12374d;color:#dff7ff;font-size:15px;cursor:pointer}.ride-scroll-controls button:hover{background:#19506d}
 
 .parking-find {
   display: flex;
@@ -72,5 +62,5 @@
 @media (max-width: 720px) {
   .parking-find { align-items: stretch; flex-direction: column; }
   .parking-find button { flex-basis: auto; }
-  .ride-catalog { max-height: 52vh; }
+  .ride-catalog .shop-card { flex-basis: 220px; width: 220px; }
 }
