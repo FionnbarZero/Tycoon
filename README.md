@@ -44,7 +44,9 @@ Open `http://127.0.0.1:8080` in a modern desktop browser.
 - Freight fees, a 20-second first-delivery express lane, random delays/damage/spare parts, collection, and paid construction rushing
 - Side-scrolling Used Ride Parking Lot with visible parked machinery, direct purchase cards, and three recoverable cash finds
 - Three path surfaces, three queue formats, vertical foundation blocks, stairs, escalators, four structural levels, collision/support validation, and hologram feedback
-- Seventeen active rides: five custom-track coasters, eight family/thrill flats, and four tracked/dark rides, each with a distinct animated model instead of a generic block
+- Eighteen active rides: five custom-track coasters, eight family/thrill flats, four tracked/dark rides, and a player-designed dark-ride studio, each with a distinct animated model instead of a generic block
+- Five separate Attractions areas for Family, Thrill, Tracked, Coaster, and Dark rides, with a dedicated Dark Décor workshop
+- Custom cutaway dark rides with selectable interior themes, 1–5 moving carts, an included animated Dark Core, and placeable button, Stalker, glitch-projection, and fog scenes
 - Node-based coaster construction with six vertical levels, speed/friction validation, stair and object collision checks, animated trains, and three compact prebuilt layouts
 - Individual ride naming plus three-tier ability trees earned through operation cycles
 - Construction, staffing, condition, animated/synthesized breakdown feedback, repair, power, admission, queues, and revenue

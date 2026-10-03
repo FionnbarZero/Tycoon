@@ -39,7 +39,8 @@
     skid: { name: "Diesel Cargo Skid", icon: "⟲", family: "Drifting Thrill", cost: 72000, freight: 2600, delivery: 270, w: 6, h: 5, capacity: 20, cycle: 100, excitement: 8.4, intensity: 8.6, nausea: 7.7, reliability: 70, power: 55, color: "#ff8b45", description: "Hydraulic cargo cars slam sideways around an industrial ring." },
     buttonEye: { name: "Button-Eye Workshop", icon: "◉", family: "Dark Ride", cost: 54000, freight: 2100, delivery: 240, w: 6, h: 5, capacity: 18, cycle: 140, excitement: 6.8, intensity: 4.1, nausea: 2.2, reliability: 86, power: 32, color: "#b28ac9", description: "Sewing-basket vehicles pass physical puppetry and claymation workshop scenes." },
     shadow: { name: "Shadow Corridor: The Chase", icon: "◐", family: "Dark Ride", cost: 78000, freight: 2900, delivery: 300, w: 7, h: 5, capacity: 16, cycle: 125, excitement: 8.6, intensity: 8.1, nausea: 5.2, reliability: 79, power: 44, color: "#6964a8", description: "Lane-switching vehicles flee a fluid Stalker entity through reactive corridors." },
-    glitch: { name: "The Glitch Hub", icon: "▦", family: "Dark Ride", cost: 96000, freight: 3400, delivery: 330, w: 7, h: 6, capacity: 20, cycle: 135, excitement: 8.9, intensity: 8.4, nausea: 6.3, reliability: 74, power: 62, color: "#31d9bd", description: "A projection-mapped retro server room with backward vehicle drops." }
+    glitch: { name: "The Glitch Hub", icon: "▦", family: "Dark Ride", cost: 96000, freight: 3400, delivery: 330, w: 7, h: 6, capacity: 20, cycle: 135, excitement: 8.9, intensity: 8.4, nausea: 6.3, reliability: 74, power: 62, color: "#31d9bd", description: "A projection-mapped retro server room with backward vehicle drops." },
+    customDark: { name: "Custom Dark Ride Studio", icon: "◈", family: "Dark Ride", darkBuilder: true, ledgerBuild: true, cost: 42000, freight: 0, delivery: 0, w: 7, h: 6, capacity: 20, cycle: 120, excitement: 7.4, intensity: 6.2, nausea: 3.8, reliability: 84, power: 38, color: "#8359b8", description: "Design a cutaway indoor ride with its own theme, Dark Core, scene props, and moving cart circuit." }
   };
 
   const COASTER_UPGRADES = {
@@ -88,7 +89,14 @@
       { id: "stairs", name: "Upward Stairs", icon: "▟", cost: 300, kind: "vertical", speed: 0.75, description: "Links adjacent levels but increases guest fatigue." },
       { id: "escalator", name: "Escalator", icon: "▱", cost: 2000, kind: "vertical", speed: 1.25, power: 5, price: 0, description: "Powered vertical route with no climbing fatigue." }
     ],
-    attractions: Object.entries(RIDES).map(([id, ride]) => ({ id, ...ride, kind: "ride" })),
+    attractions: [
+      ...Object.entries(RIDES).map(([id, ride]) => ({ id, ...ride, kind: "ride" })),
+      { id: "darkCore", name: "Dark Core", icon: "◆", cost: 0, kind: "darkDecor", included: true, w: 1, h: 1, atmosphere: 6, description: "The pulsing power and show-control heart automatically installed inside every Custom Dark Ride Studio." },
+      { id: "darkButtons", name: "Button Workshop Set", icon: "⊙", cost: 1200, kind: "darkDecor", w: 1, h: 1, atmosphere: 5, description: "Oversized buttons, thread spools, and a moving puppet workbench for a handcrafted scene." },
+      { id: "darkStalker", name: "Shadow Stalker", icon: "♟", cost: 1800, kind: "darkDecor", w: 1, h: 1, atmosphere: 7, description: "A reactive silhouette animatronic with glowing eyes that turns toward passing carts." },
+      { id: "darkGlitch", name: "Glitch Projection Wall", icon: "▦", cost: 1500, kind: "darkDecor", w: 1, h: 1, power: 3, atmosphere: 6, description: "A projection-mapped server wall with animated scanlines and color faults." },
+      { id: "darkFog", name: "Fog Tunnel Arch", icon: "∩", cost: 900, kind: "darkDecor", w: 1, h: 1, power: 1, atmosphere: 4, description: "A low fog portal that hides the next scene and makes each cart reveal more dramatic." }
+    ],
     commerce: [
       { id: "fry", name: "Neon Fry Basket", icon: "▥", cost: 4000, kind: "food", w: 2, h: 2, power: 6, price: 6.5, aura: 4, joy: 7, thirstChange: 22, dirt: 5, description: "Salty boardwalk food raises thirst and adjacent drink demand." },
       { id: "wok", name: "Sichuan Wok Express", icon: "♨", cost: 6500, kind: "food", w: 3, h: 2, power: 8, price: 8.5, aura: 7, joy: 9, thirstChange: 5, description: "Aromatic street kitchen that pulls guests from nearby paths." },
@@ -177,6 +185,7 @@
   let selectedShopVisited = false;
   let trackDraft = null;
   let pendingRideName = "";
+  let pendingDarkConfig = null;
   let audioContext = null;
   let walkTarget = null;
   let movementTimer = null;
@@ -526,6 +535,7 @@
     if (item.kind === "block") return drawBlock(object.x, object.y, object.z, "#596d73");
     if (item.kind === "vertical") return drawVertical(object, item);
     if (item.kind === "ride") return drawRide(object, item);
+    if (item.kind === "darkDecor") return drawDarkDecor(object, item);
     if (["food", "restroom", "service", "venue", "shop", "rest"].includes(item.kind)) return drawFacility(object, item);
     if (item.kind === "decor") return drawDecor(object, item);
   }
@@ -572,7 +582,8 @@
       drawWorldLabel(p.x, p.y - 55, `ASSEMBLY ${Math.ceil(object.buildRemaining)}s`, "#ffb456"); return;
     }
     ctx.fillStyle = "rgba(0,0,0,.25)"; ctx.beginPath(); ctx.ellipse(p.x, p.y + 16, item.w * 21, item.h * 10, 0, 0, Math.PI * 2); ctx.fill();
-    if (item.family === "Dark Ride") {
+    if (object.type === "customDark") drawCustomDarkRide(p,object,item);
+    else if (item.family === "Dark Ride") {
       const width=item.w*28,height=item.h*11;
       ctx.fillStyle=shade(item.color,-55);ctx.fillRect(p.x-width/2,p.y-height-48,width,height+48);
       ctx.fillStyle=shade(item.color,-20);ctx.beginPath();ctx.moveTo(p.x-width/2-6,p.y-height-48);ctx.lineTo(p.x,p.y-height-68);ctx.lineTo(p.x+width/2+6,p.y-height-48);ctx.closePath();ctx.fill();
@@ -680,6 +691,28 @@
 
   function drawSafariTruck(x,y,angle,color){
     ctx.save();ctx.translate(x,y);ctx.rotate(angle*.12);ctx.fillStyle="#202a2d";ctx.fillRect(-16,-7,32,14);ctx.fillStyle=color;ctx.fillRect(-14,-9,28,12);ctx.fillStyle="#d59c4f";ctx.beginPath();ctx.moveTo(-7,-9);ctx.lineTo(-3,-17);ctx.lineTo(10,-17);ctx.lineTo(14,-9);ctx.closePath();ctx.fill();ctx.fillStyle="#bde0e0";ctx.fillRect(-1,-15,9,5);ctx.strokeStyle="#292d2c";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-8,-17);ctx.lineTo(10,-17);ctx.moveTo(-8,-19);ctx.lineTo(-8,-8);ctx.moveTo(10,-19);ctx.lineTo(10,-8);ctx.stroke();ctx.fillStyle="#11181b";for(const dx of [-10,10]){ctx.beginPath();ctx.arc(dx,7,4,0,Math.PI*2);ctx.fill();ctx.fillStyle="#9ea8a7";ctx.beginPath();ctx.arc(dx,7,1.5,0,Math.PI*2);ctx.fill();ctx.fillStyle="#11181b";}ctx.fillStyle="#ffe16b";ctx.fillRect(12,-6,3,3);ctx.restore();
+  }
+
+  function drawCustomDarkRide(p,object,item){
+    const theme=object.darkTheme||"haunted",palette={haunted:["#171323","#8058b2"],workshop:["#2a1c2d","#c27ead"],shadow:["#0c1020","#655dd0"],glitch:["#071d26","#35dec1"]}[theme]||["#171323",item.color];
+    for(let dx=0;dx<item.w;dx++)for(let dy=0;dy<item.h;dy++)tileTop(object.x+dx,object.y+dy,object.z+.04,(dx+dy)%2?palette[0]:shade(palette[0],8),1);
+    const back=iso(object.x+item.w/2,object.y+.15,object.z),left=iso(object.x+.1,object.y+item.h/2,object.z),right=iso(object.x+item.w-.1,object.y+item.h/2,object.z);
+    ctx.strokeStyle=palette[1];ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(left.x,left.y);ctx.lineTo(left.x,left.y-42);ctx.lineTo(back.x,back.y-64);ctx.lineTo(right.x,right.y-42);ctx.lineTo(right.x,right.y);ctx.stroke();
+    ctx.fillStyle="rgba(4,8,16,.74)";ctx.beginPath();ctx.moveTo(left.x,left.y-42);ctx.lineTo(back.x,back.y-64);ctx.lineTo(right.x,right.y-42);ctx.lineTo(p.x,p.y-18);ctx.closePath();ctx.fill();
+    ctx.strokeStyle="#4d5c69";ctx.lineWidth=8;ctx.beginPath();ctx.ellipse(p.x,p.y+3,item.w*20,item.h*10,0,.15,Math.PI*1.9);ctx.stroke();ctx.strokeStyle=palette[1];ctx.lineWidth=2;ctx.stroke();
+    for(let i=0;i<8;i++){const a=i*Math.PI/4,x=p.x+Math.cos(a)*item.w*18,y=p.y+3+Math.sin(a)*item.h*8;ctx.fillStyle=i%2?palette[1]:"#ead86d";ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);ctx.fill();}
+    const spin=rideSpin(object,1150),cars=clamp(object.cars||3,1,5);for(let car=0;car<cars;car++){const a=spin-car*.24,x=p.x+Math.cos(a)*item.w*18,y=p.y+3+Math.sin(a)*item.h*8;ctx.save();ctx.translate(x,y);ctx.rotate(a+.6);ctx.fillStyle=car?palette[1]:"#f3dd67";ctx.beginPath();ctx.roundRect(-9,-5,18,10,3);ctx.fill();ctx.fillStyle="#0d1720";ctx.fillRect(-4,-7,8,4);ctx.restore();}
+    const portal=iso(object.x+item.w-.4,object.y+item.h-.4,object.z);ctx.fillStyle="#07101a";ctx.fillRect(portal.x-17,portal.y-29,34,29);ctx.strokeStyle=palette[1];ctx.lineWidth=3;ctx.beginPath();ctx.arc(portal.x,portal.y-13,17,Math.PI,Math.PI*2);ctx.lineTo(portal.x+17,portal.y);ctx.moveTo(portal.x-17,portal.y);ctx.lineTo(portal.x-17,portal.y-13);ctx.stroke();ctx.fillStyle="#e9f4f3";ctx.font="800 6px Inter";ctx.textAlign="center";ctx.fillText("ENTER",portal.x,portal.y-8);
+  }
+
+  function drawDarkDecor(object,item){
+    const parent=state.objects.find(entry=>entry.id===object.parentRide);if(parent&&parent.state!=="built")return;const p=iso(object.x+.5,object.y+.5,object.z+.08),time=performance.now();ctx.save();
+    if(item.id==="darkCore"){ctx.shadowColor="#b86cff";ctx.shadowBlur=14;ctx.fillStyle="#4b2a69";ctx.beginPath();ctx.moveTo(p.x,p.y-36);ctx.lineTo(p.x+12,p.y-23);ctx.lineTo(p.x+8,p.y-4);ctx.lineTo(p.x-8,p.y-4);ctx.lineTo(p.x-12,p.y-23);ctx.closePath();ctx.fill();ctx.fillStyle="#e85cff";ctx.beginPath();ctx.arc(p.x,p.y-21,6+Math.sin(time/250)*2,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle="#d4c6e5";for(let i=0;i<4;i++){const a=i*Math.PI/2+time/1000;ctx.beginPath();ctx.moveTo(p.x+Math.cos(a)*8,p.y-21+Math.sin(a)*4);ctx.lineTo(p.x+Math.cos(a)*16,p.y-21+Math.sin(a)*8);ctx.stroke();}}
+    else if(item.id==="darkButtons"){ctx.fillStyle="#865477";ctx.fillRect(p.x-17,p.y-18,34,18);for(let i=0;i<3;i++){ctx.fillStyle=i%2?"#72d5dd":"#eeb56f";ctx.beginPath();ctx.arc(p.x-10+i*10,p.y-21-i*3,7,0,Math.PI*2);ctx.fill();ctx.fillStyle="#3a2638";ctx.beginPath();ctx.arc(p.x-10+i*10,p.y-21-i*3,2,0,Math.PI*2);ctx.fill();}}
+    else if(item.id==="darkStalker"){ctx.fillStyle="#080811";ctx.beginPath();ctx.ellipse(p.x,p.y-25,10,18,0,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.moveTo(p.x-8,p.y-20);ctx.lineTo(p.x-15,p.y);ctx.lineTo(p.x-4,p.y-4);ctx.lineTo(p.x,p.y-14);ctx.lineTo(p.x+6,p.y-3);ctx.lineTo(p.x+15,p.y);ctx.lineTo(p.x+8,p.y-21);ctx.closePath();ctx.fill();ctx.fillStyle="#ff5d84";ctx.beginPath();ctx.ellipse(p.x-4,p.y-30,3,1.5,0,0,Math.PI*2);ctx.ellipse(p.x+4,p.y-30,3,1.5,0,0,Math.PI*2);ctx.fill();}
+    else if(item.id==="darkGlitch"){ctx.fillStyle="#102c36";ctx.fillRect(p.x-20,p.y-35,40,35);ctx.strokeStyle="#3ff4d1";ctx.lineWidth=2;ctx.strokeRect(p.x-18,p.y-32,36,28);for(let y=-28;y<-4;y+=6){ctx.strokeStyle=(y+Math.floor(time/100))%12?"#39d8bd":"#ff5bc9";ctx.beginPath();ctx.moveTo(p.x-15,p.y+y);ctx.lineTo(p.x+15,p.y+y);ctx.stroke();}}
+    else if(item.id==="darkFog"){ctx.strokeStyle="#9a76c9";ctx.lineWidth=5;ctx.beginPath();ctx.arc(p.x,p.y-2,19,Math.PI,Math.PI*2);ctx.stroke();ctx.fillStyle="rgba(180,205,220,.2)";for(let i=0;i<4;i++){ctx.beginPath();ctx.ellipse(p.x-13+i*9+Math.sin(time/500+i)*3,p.y-i*2,12,4,0,0,Math.PI*2);ctx.fill();}}
+    ctx.restore();
   }
 
   function drawDarkRideFacade(p,object,item,width,height){
@@ -848,6 +881,11 @@
     openModal(modalShell("RIDE IDENTITY REGISTRY",`Name your ${item.name}`,`<p class="modal-copy">Give this individual attraction a park-specific name, or retain its factory designation.</p><input id="rideNameInput" class="name-input" maxlength="32" value="${item.name}">`,`<button class="modal-button" data-close>Cancel</button><button id="confirmRideName" class="modal-button primary">PLACE BLUEPRINT</button>`),()=>{$$("[data-close]").forEach(button=>button.onclick=closeModal);$("#rideNameInput").focus();$("#rideNameInput").select();$("#confirmRideName").onclick=()=>{pendingRideName=$("#rideNameInput").value.trim()||item.name;state.activeTool=item.id;walkMode=false;closeModal();renderBuildItems();updateUI();showWorldMessage(`${pendingRideName} · choose an anchor footprint`);};});
   }
 
+  function openDarkRideBuilder(item){
+    const body=`<p class="modal-copy">Create an indoor cart ride as a cutaway show building. Every studio includes its own powered <strong>Dark Core</strong>; after placing it, use the Dark Décor area to install scenes directly inside its walls.</p><label class="inspector-label">CUSTOM RIDE NAME</label><input id="darkRideName" class="name-input" maxlength="32" value="Nightfall Workshop"><label class="inspector-label" style="margin-top:12px">INTERIOR THEME</label><select id="darkRideTheme" class="name-input" style="font-size:15px"><option value="haunted">Haunted Dark Core</option><option value="workshop">Button-Eye Workshop</option><option value="shadow">Shadow Chase</option><option value="glitch">Glitch Server Lab</option></select><label class="inspector-label" style="margin-top:12px">CARTS ON THE CIRCUIT</label><select id="darkRideCars" class="name-input" style="font-size:15px"><option value="1">1 inspection cart</option><option value="2">2 linked carts</option><option value="3" selected>3 scene carts</option><option value="4">4 high-capacity carts</option><option value="5">5 continuous-load carts</option></select><div class="shop-stats" style="margin-top:12px"><span>7×6 CUTAWAY SHELL</span><span>DARK CORE INCLUDED</span><span>CUSTOM SCENE SLOTS</span></div>`;
+    openModal(modalShell("DARK RIDES · CUSTOM WORKSHOP",item.name,body,`<button class="modal-button" data-close>Cancel</button><button id="startDarkRide" class="modal-button primary">BUILD DARK RIDE · ${money(item.cost)}</button>`),()=>{$$("[data-close]").forEach(button=>button.onclick=closeModal);$("#startDarkRide").onclick=()=>{if(state.cash<item.cost)return;pendingRideName=$("#darkRideName").value.trim()||item.name;pendingDarkConfig={theme:$("#darkRideTheme").value,cars:Number($("#darkRideCars").value)||3};state.activeTool=item.id;walkMode=false;closeModal();renderBuildItems();updateUI();showWorldMessage(`${pendingRideName} · place the 7×6 dark ride shell`);};});
+  }
+
   function openCoasterBuilder(item){
     const layouts=Object.entries(TRACK_LAYOUTS).filter(([,layout])=>layout.ride===item.id);
     openModal(modalShell("CUSTOM TRACK LEDGER",item.name,`<p class="modal-copy">Set the ride name and train size, then sculpt every left, right, rise, drop, and underground tunnel down to B3. Maximum ${item.maxSpeed} mph · maximum height L${item.maxHeight+1}.</p><label class="inspector-label">CUSTOM RIDE NAME</label><input id="coasterName" class="name-input" maxlength="32" value="${item.name}"><label class="inspector-label" style="margin-top:12px">CARTS PER TRAIN</label><select id="coasterCars" class="name-input" style="font-size:15px"><option value="1">1 individual cart</option><option value="2">2 linked carts</option><option value="3" selected>3 linked carts</option><option value="4">4 linked carts</option><option value="5">5 linked carts</option></select><div class="shop-grid" style="margin-top:12px"><article class="shop-card"><header><h3>◇ Custom Track</h3><strong>DIRECTION EDITOR</strong></header><p>Click a station tile, then use the on-screen arrows or WASD. Q dives, E rises, X undoes, and Enter finishes.</p><button data-track-custom>OPEN EDITOR</button></article>${layouts.map(([id,layout])=>`<article class="shop-card"><header><h3>${layout.name}</h3><strong>${layout.w}×${layout.h}</strong></header><p>${layout.description}</p><button data-layout="${id}">USE PREBUILT</button></article>`).join("")}</div>`,`<button class="modal-button" data-close>Cancel</button>`),()=>{
@@ -895,6 +933,14 @@
 
   function validatePlacement(item, x, y, z) {
     if (x < LOT.minX || y < LOT.minY || x + (item.w || 1) - 1 > LOT.maxX || y + (item.h || 1) - 1 > LOT.maxY) return { ok: false, reason: "Outside park boundary" };
+    if(item.kind==="darkDecor"){
+      const parent=state.objects.find(object=>object.type==="customDark"&&object.z===z&&x>object.x&&x<object.x+RIDES.customDark.w-1&&y>object.y&&y<object.y+RIDES.customDark.h-1);
+      if(!parent)return{ok:false,reason:"Place dark décor inside a Custom Dark Ride"};
+      if(item.included)return{ok:false,reason:"Every studio already includes one Dark Core"};
+      if(state.objects.some(object=>getItem(object.type)?.kind==="darkDecor"&&object.x===x&&object.y===y&&object.z===z))return{ok:false,reason:"Dark scene slot occupied"};
+      if(state.cash<item.cost)return{ok:false,reason:"Insufficient cash"};
+      return{ok:true,parentRide:parent.id};
+    }
     if (item.minLevel && z < item.minLevel) return { ok: false, reason: `Requires L${item.minLevel + 1}` };
     const cells = footprint(item, x, y);
     for (const [cx, cy] of cells) {
@@ -908,10 +954,10 @@
       }
     }
     if (item.kind === "vertical" && z >= 5) return { ok: false, reason: "Maximum structural level" };
-    if (item.kind === "ride" && (state.rideInventory[item.id] || 0) < 1) return { ok: false, reason: "Blueprint not delivered" };
+    if (item.kind === "ride" && !item.ledgerBuild && (state.rideInventory[item.id] || 0) < 1) return { ok: false, reason: "Blueprint not delivered" };
     if (!item.unlockedBy && !state.toolkit) return { ok: false, reason: "Toolkit required" };
     if (item.unlockedBy && !state.blueprintPacks[item.unlockedBy]) return { ok: false, reason: "Buy blueprint pack" };
-    const cost = item.kind === "ride" || (state.materials?.[item.id] || 0) > 0 ? 0 : item.cost;
+    const cost = item.kind === "ride" ? (item.ledgerBuild?item.cost:0) : (state.materials?.[item.id] || 0) > 0 ? 0 : item.cost;
     if (state.cash < cost) return { ok: false, reason: "Insufficient cash" };
     return { ok: true };
   }
@@ -928,17 +974,20 @@
     const valid = validatePlacement(item, x, y, z);
     if (!valid.ok) { showWorldMessage(valid.reason); return false; }
     const stocked=(state.materials?.[item.id]||0)>0;
-    const cost = item.kind === "ride" || stocked ? 0 : item.cost;
+    const cost = item.kind === "ride" ? (item.ledgerBuild?item.cost:0) : stocked ? 0 : item.cost;
     state.cash -= cost; state.stats.expenses += cost;
     if(stocked)state.materials[item.id]--;
     const object = { id: uid("obj"), type: id, x, y, z, rotation, condition: 100, dirt: 0, price: item.price ?? (item.kind === "ride" ? Math.max(3, item.excitement * 1.5) : 0), revenue: 0 };
+    if(item.kind==="darkDecor")object.parentRide=valid.parentRide;
     if (item.kind === "ride") {
       object.customName=pendingRideName||item.name;pendingRideName="";object.state = "blueprint"; object.operator = false; object.open = false; object.queue = 0; object.cycles = 0;object.upgrades=[];
-      state.rideInventory[id]--;
+      if(item.darkBuilder){object.darkTheme=pendingDarkConfig?.theme||"haunted";object.cars=pendingDarkConfig?.cars||3;pendingDarkConfig=null;}
+      if(!item.ledgerBuild)state.rideInventory[id]--;
       state.activeTool=null;
       if (state.tutorial === 8) advanceTutorial(9);
     }
     state.objects.push(object);
+    if(item.darkBuilder){state.objects.push({id:uid("dark-core"),type:"darkCore",x:x+3,y:y+3,z,rotation:0,condition:100,dirt:0,price:0,parentRide:object.id,included:true});state.atmosphere+=6;}
     if (item.atmosphere) state.atmosphere += item.atmosphere;
     if(id==="arcade")awardMilestone("firstArcade","Arcade Opening Bonus",1500,"The city entertainment board sponsored your first arcade.");
     if(item.kind==="decor")awardMilestone("firstDecor","Beautification Bonus",500,"Your first decoration made the park more welcoming.");
@@ -971,6 +1020,7 @@
     const actual = state.objects.length - 1 - index;
     const object = state.objects[actual], item = getItem(object.type);
     state.objects.splice(actual,1);
+    if(object.type==="customDark")state.objects=state.objects.filter(child=>child.parentRide!==object.id);
     if (item.kind === "ride" && object.state === "blueprint" && !item.ledgerBuild) state.rideInventory[object.type]=(state.rideInventory[object.type]||0)+1;
     else state.cash += Math.floor(item.cost * .2);
     notify(`${item.name} demolished`, "Twenty percent of its value was recovered.", "warning");
@@ -1009,22 +1059,36 @@
     return rideShopUnlocked(item.id)?`${money(item.cost+item.freight)} BUY + SHIP`:"LOCKED · VIEW REQUIREMENT";
   }
 
+  function attractionArea(item){
+    if(item.kind==="darkDecor"||item.darkBuilder||item.family==="Dark Ride")return "Dark Rides & Dark Décor";
+    if(item.coaster)return "Roller Coasters";
+    if(item.family==="Family Flat")return "Family Rides";
+    if(item.family==="Tracked Ride")return "Tracked Adventures";
+    return "Thrill & Motion Rides";
+  }
+
+  function buildItemMarkup(item){
+    const available=isItemAvailable(item),count=item.kind==="ride"?(state.rideInventory[item.id]||0):(state.materials?.[item.id]||0),catalogRide=item.kind==="ride"&&!item.ledgerBuild,status=item.included?"AUTO-INCLUDED":item.kind==="ride"?rideBuildStatus(item):count?"STOCKED":money(item.cost);
+    return `<button class="build-item ${available||catalogRide?"":"locked"} ${catalogRide&&!available?"catalog":""} ${state.activeTool===item.id?"active":""}" data-item="${item.id}" data-kind="${item.kind}" title="${item.description}"><span class="item-icon">${item.icon}</span><strong>${item.name}</strong><small>${status}</small>${count?`<i class="count">×${count}</i>`:""}</button>`;
+  }
+
   function renderBuildItems() {
     const items=ITEMS[state.activeTab]||[];
-    $("#buildItems").innerHTML=items.map(item=>{
-      const available=isItemAvailable(item);
-      const count=item.kind==="ride"?(state.rideInventory[item.id]||0):(state.materials?.[item.id]||0);
-      const catalogRide=item.kind==="ride"&&!item.ledgerBuild;
-      return `<button class="build-item ${available||catalogRide?"":"locked"} ${catalogRide&&!available?"catalog":""} ${state.activeTool===item.id?"active":""}" data-item="${item.id}" title="${item.description}"><span class="item-icon">${item.icon}</span><strong>${item.name}</strong><small>${item.kind==="ride"?rideBuildStatus(item):count?"STOCKED":money(item.cost)}</small>${count?`<i class="count">×${count}</i>`:""}</button>`;
-    }).join("");
+    const buildItems=$("#buildItems");buildItems.classList.toggle("has-areas",state.activeTab==="attractions");
+    if(state.activeTab==="attractions"){
+      const order=["Family Rides","Thrill & Motion Rides","Tracked Adventures","Roller Coasters","Dark Rides & Dark Décor"],groups=new Map(order.map(area=>[area,[]]));items.forEach(item=>groups.get(attractionArea(item)).push(item));
+      buildItems.innerHTML=order.map(area=>`<section class="build-area"><span class="build-area-title">${area}</span><div class="build-area-items">${groups.get(area).map(buildItemMarkup).join("")}</div></section>`).join("");
+    }else buildItems.innerHTML=items.map(buildItemMarkup).join("");
     $$(".build-item").forEach(button=>button.addEventListener("click",()=>{
       const item=getItem(button.dataset.item);
+      if(item.included){showWorldMessage("A Dark Core is automatically installed inside every Custom Dark Ride");return;}
       if(item.kind==="ride"&&!item.ledgerBuild&&!isItemAvailable(item)){openBuildRideShop(item);return;}
-      if(!isItemAvailable(item)){showWorldMessage(item.kind==="ride"?"Purchase and collect this ride in the Supply District":"Blueprint not yet acquired");return;}
+      if(!isItemAvailable(item)){showWorldMessage(item.darkBuilder?`The custom studio requires ${money(item.cost)}`:item.kind==="ride"?"Purchase and collect this ride in the Supply District":"Blueprint not yet acquired");return;}
+      if(item.darkBuilder){openDarkRideBuilder(item);return;}
       if(item.coaster){openCoasterBuilder(item);return;}
       if(item.kind==="ride"){openRideNaming(item);return;}
       state.activeTool=button.dataset.item; walkMode=false; renderBuildItems(); updateUI();
-      $("#dockInstruction").textContent=`${item.name} selected · click or drag on the grid`;
+      $("#dockInstruction").textContent=item.kind==="darkDecor"?`${item.name} · place inside a Custom Dark Ride`:`${item.name} selected · click or drag on the grid`;
     }));
   }
 
@@ -1050,7 +1114,7 @@
     $("#atmosphereValue").textContent=Math.round(state.atmosphere);$("#cleanValue").textContent=`${Math.round(state.cleanliness)}%`;$("#profitValue").textContent=`${profit<0?"−":""}${money(Math.abs(profit))}`;
     $("#buildDock").classList.toggle("locked",!state.toolkit);
     $$(".dock-tabs button").forEach(button=>button.classList.toggle("active",button.dataset.tab===state.activeTab));
-    $("#dockCategory").textContent=`${state.activeTab.toUpperCase()} INVENTORY`;
+    $("#dockCategory").textContent=state.activeTab==="attractions"?"ATTRACTION AREAS":`${state.activeTab.toUpperCase()} INVENTORY`;
     if(!state.activeTool)$("#dockInstruction").textContent=state.toolkit?"Select a blueprint to begin construction":"Register and collect your toolkit";
     $("#walkToggle").classList.toggle("active",walkMode);$("#walkToggle").innerHTML=walkMode?`<span>◆</span> WALK MODE <kbd>V</kbd>`:`<span>◇</span> BUILD MODE <kbd>V</kbd>`;
     $("#controlHint").textContent=walkMode?"WASD move · E interact · V build mode":"Click to place · Shift locks path axis · Q/E levels · R rotates";
@@ -1205,7 +1269,7 @@
     let body=`<section class="inspector-section"><p class="inspector-copy">${item.description}</p>${item.kind==="ride"?`<label class="inspector-label" style="margin-top:10px">CUSTOM RIDE NAME</label><input data-ride-name class="name-input" maxlength="32" value="${escapeHtml(object.customName||item.name)}">`:""}</section>`;
     if(item.kind==="ride"){
       const stats=effectiveRideStats(object,item);
-      body+=`<section class="inspector-section"><label>LIVE RIDE TELEMETRY</label><div class="stat-row"><span>Excitement</span><strong>${stats.excitement.toFixed(1)} / 10</strong></div><div class="stat-row"><span>Intensity</span><strong>${item.intensity} / 10</strong></div><div class="stat-row"><span>Nausea</span><strong>${stats.nausea.toFixed(1)} / 10</strong></div>${item.coaster?`<div class="stat-row"><span>Safety envelope</span><strong>${item.maxSpeed} mph · L${item.maxHeight+1}</strong></div><div class="stat-row"><span>Track layout</span><strong>${object.layout||"Custom"}</strong></div><div class="stat-row"><span>Train consist</span><strong>${object.cars||3} carts</strong></div><div class="stat-row"><span>Deepest tunnel</span><strong>${levelLabel(Math.min(0,...(object.track||[]).map(node=>node.z)))}</strong></div>`:""}<div class="stat-row"><span>Reliability</span><strong>${Math.round(object.condition)}%</strong></div><div class="meter"><i style="width:${object.condition}%;background:${object.condition<30?'#ff5368':'#53d998'}"></i></div><div class="stat-row"><span>Queue</span><strong>${object.queue||0} guests</strong></div><div class="stat-row"><span>Lifetime revenue</span><strong>${money(object.revenue||0)}</strong></div></section>`;
+      body+=`<section class="inspector-section"><label>LIVE RIDE TELEMETRY</label><div class="stat-row"><span>Excitement</span><strong>${stats.excitement.toFixed(1)} / 10</strong></div><div class="stat-row"><span>Intensity</span><strong>${item.intensity} / 10</strong></div><div class="stat-row"><span>Nausea</span><strong>${stats.nausea.toFixed(1)} / 10</strong></div>${item.coaster?`<div class="stat-row"><span>Safety envelope</span><strong>${item.maxSpeed} mph · L${item.maxHeight+1}</strong></div><div class="stat-row"><span>Track layout</span><strong>${object.layout||"Custom"}</strong></div><div class="stat-row"><span>Train consist</span><strong>${object.cars||3} carts</strong></div><div class="stat-row"><span>Deepest tunnel</span><strong>${levelLabel(Math.min(0,...(object.track||[]).map(node=>node.z)))}</strong></div>`:""}${object.type==="customDark"?`<div class="stat-row"><span>Interior theme</span><strong>${(object.darkTheme||"haunted").toUpperCase()}</strong></div><div class="stat-row"><span>Cart circuit</span><strong>${object.cars||3} carts</strong></div><div class="stat-row"><span>Dark Core</span><strong>ONLINE</strong></div><div class="stat-row"><span>Installed scenes</span><strong>${state.objects.filter(scene=>scene.parentRide===object.id&&scene.type!=="darkCore").length}</strong></div>`:""}<div class="stat-row"><span>Reliability</span><strong>${Math.round(object.condition)}%</strong></div><div class="meter"><i style="width:${object.condition}%;background:${object.condition<30?'#ff5368':'#53d998'}"></i></div><div class="stat-row"><span>Queue</span><strong>${object.queue||0} guests</strong></div><div class="stat-row"><span>Lifetime revenue</span><strong>${money(object.revenue||0)}</strong></div></section>`;
       if(object.state==="blueprint") body+=`<section class="inspector-section"><label>CONSTRUCTION AUTHORIZATION</label><p class="inspector-copy">The footprint is anchored. Authorize your starter crew to assemble the mechanical components.</p><button class="inspector-button primary" data-action="authorize">AUTHORIZE CONSTRUCTION</button></section>`;
       else if(object.state==="constructing") body+=`<section class="inspector-section"><label>ASSEMBLY IN PROGRESS</label><div class="stat-row"><span>Time remaining</span><strong>${Math.ceil(object.buildRemaining)} sec</strong></div><button class="inspector-button orange" data-action="rushBuild">RUSH CREW · $1,000</button></section>`;
       else {

@@ -151,7 +151,10 @@ const loaded = await evaluate(`({
   dockLocked: document.querySelector('#buildDock').classList.contains('locked'),
   complete: document.querySelector('#objectiveStep').textContent,
   errors: document.querySelectorAll('.event-toast.danger').length,
-  rideRoster: document.querySelectorAll('#buildItems .build-item').length,
+  rideRoster: document.querySelectorAll('#buildItems .build-item[data-kind=ride]').length,
+  rideAreas: document.querySelectorAll('#buildItems .build-area').length,
+  customDark: Boolean(document.querySelector('[data-item=customDark]')),
+  darkDecor: ['darkCore','darkButtons','darkStalker','darkGlitch','darkFog'].every(id => Boolean(document.querySelector('[data-item='+id+']'))),
   rating: document.querySelector('#reputationLabel').textContent,
   capacity: document.querySelector('#parkCapacity').textContent,
   reviewTicker: !document.querySelector('#reviewTicker').classList.contains('hidden'),
@@ -161,11 +164,16 @@ expect(loaded.cash.includes("74,250"), "Saved cash was not restored");
 expect(loaded.rep === "78%", "Saved reputation was not restored");
 expect(!loaded.dockLocked, "Toolkit should unlock the dock");
 expect(loaded.complete === "COMPLETE", "Completed tutorial was not recognized");
-expect(loaded.rideRoster === 17, "The active ride roster should contain 17 rides");
+expect(loaded.rideRoster === 18, "The active ride roster should contain 18 rides including the custom dark-ride studio");
+expect(loaded.rideAreas === 5, "Attractions should be separated into five ride-type areas");
+expect(loaded.customDark && loaded.darkDecor, "The Dark Ride area should include the custom studio, Dark Core, and scene décor");
 expect(loaded.rating.includes('4.3') && loaded.rating.includes('2 REVIEWS'), "Saved appearance reviews were not restored");
 expect(loaded.capacity === 'LOT CAPACITY 220', "Expanded park capacity was not restored");
 expect(loaded.reviewTicker, "Latest guest review should be visible in the live review ticker");
 expect(loaded.timberAvailable, "Timber Ridge should be available directly from the construction ledger");
+await evaluate("document.querySelector('[data-item=customDark]').click(); true");
+expect(await evaluate("document.querySelector('#modal').textContent.includes('DARK CORE') && document.querySelector('#modal').textContent.includes('INTERIOR THEME')"), "Custom Dark Ride Studio should open its themed interior builder");
+await evaluate("document.querySelector('[data-close]').click(); true");
 await evaluate("document.querySelector('[data-item=skywheel]').click(); true");
 expect(await evaluate("document.querySelector('#modal').textContent.includes('REMOTE RIDE MARKETPLACE') && Boolean(document.querySelector('#dockBuyRide'))"), "An unowned ride should be purchasable directly from the Attractions build tab");
 await evaluate("document.querySelector('#dockBuyRide').click(); true");
