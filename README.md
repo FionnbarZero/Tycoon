@@ -22,6 +22,7 @@ Open `http://127.0.0.1:8080` in a modern desktop browser.
 ## Controls
 
 - `WASD` or arrow keys: walk
+- Click a destination or labeled district building: walk there and interact
 - `E`: interact in Walk Mode; raise construction level in Build Mode
 - `V`: toggle Walk/Build Mode
 - `1`–`5`: Infrastructure, Attractions, Commerce, Atmosphere, and Finance

@@ -78,6 +78,12 @@ expect(await evaluate("document.querySelector('#modal').textContent.includes('$5
 await evaluate("document.querySelector('#profileName').value='Budget Tester'; document.querySelector('#confirmProfile').click(); true");
 await wait(100);
 expect(await evaluate("document.querySelector('#moneyValue').textContent === '$50,500'"), "Registration did not grant exactly $50,500");
+await evaluate("window.dispatchEvent(new KeyboardEvent('keydown', { key: 'e', bubbles: true })); window.dispatchEvent(new KeyboardEvent('keyup', { key: 'e', bubbles: true })); true");
+await wait(50);
+expect(await evaluate("document.querySelector('#modal').textContent.includes('Starter Toolkit issued')"), "The registered player could not collect the Starter Toolkit");
+await evaluate("document.querySelector('#equipToolkit').click(); true");
+await wait(50);
+expect(await evaluate("!document.querySelector('#buildDock').classList.contains('locked')"), "The Starter Toolkit did not unlock construction controls");
 
 const scenario = {
   version: 1, profile: "Test Manager", registered: true, toolkit: true, cash: 74250,

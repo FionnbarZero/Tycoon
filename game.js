@@ -144,6 +144,8 @@
   let trackDraft = null;
   let pendingRideName = "";
   let audioContext = null;
+  let walkTarget = null;
+  let movementTimer = null;
 
   const canvas = $("#world");
   const ctx = canvas.getContext("2d");
@@ -227,6 +229,21 @@
     const sx = px - originX;
     const sy = py - originY + z * LEVEL_H;
     return { x: Math.floor(sy / TILE_H + sx / TILE_W), y: Math.floor(sy / TILE_H - sx / TILE_W), z };
+  }
+
+  const LANDMARKS = [
+    { x: 2.3, y: 9.3, w: 2.5, h: 2.2, approach: { x: 3.5, y: 10.5 } },
+    { x: 20, y: 2, w: 5, h: 4, approach: { x: 21.5, y: 4.2 } },
+    { x: 23, y: 8, w: 5, h: 3.5, approach: { x: 24.5, y: 9.5 } },
+    { x: 26, y: 4.5, w: 2.5, h: 2.5, approach: { x: 27, y: 5.5 } },
+    { x: 19, y: 11, w: 3.5, h: 2.5, approach: { x: 20, y: 12.3 } },
+    { x: 14.5, y: 1, w: 2.4, h: 3.3, approach: { x: 15.5, y: 2.5 } }
+  ];
+
+  function landmarkAt(tile) {
+    return LANDMARKS.filter(landmark => tile.x >= Math.floor(landmark.x) - 2 && tile.x <= Math.ceil(landmark.x + landmark.w)
+      && tile.y >= Math.floor(landmark.y) - 2 && tile.y <= Math.ceil(landmark.y + landmark.h))
+      .sort((a,b)=>distance(tile,a.approach)-distance(tile,b.approach))[0];
   }
 
   function resize() {
@@ -852,7 +869,7 @@
       <article class="shop-card"><header><h3>⌇ Queue Blueprint Set</h3><strong>$1,000</strong></header><p>Standard stanchions plus access to advanced elevated and atmospheric queue systems.</p><button data-pack="queue" ${queueOwned||state.cash<1000?"disabled":""}>${queueOwned?"OWNED":"BUY BLUEPRINT"}</button></article>
       <article class="shop-card"><header><h3>■ Vertical Structures</h3><strong>$2,000</strong></header><p>Foundation blocks, stairs, and structural inspection access. Included with your toolkit in this build.</p><button disabled>TOOLKIT LICENSED</button></article>
       <article class="shop-card"><header><h3>▱ Escalator Systems</h3><strong>$8,000</strong></header><p>Powered vertical passenger modules. Placement components cost $2,000 per level.</p><button disabled>CATALOG AVAILABLE</button></article></div>`,`<button class="modal-button" data-close>Leave Fabricator</button>`),()=>{
-      $$("[data-close]").forEach(b=>b.onclick=closeModal);$$('[data-pack]').forEach(button=>button.onclick=()=>{const type=button.dataset.pack,cost=type==="concrete"?2000:1000;if(state.cash<cost)return;state.cash-=cost;state.stats.expenses+=cost;state.blueprintPacks[type]=true;state.materials||={};const material=type==="concrete"?"pathConcrete":"queueStandard";state.materials[material]=(state.materials[material]||0)+(type==="concrete"?100:50);notify(`${type==="concrete"?"Concrete Pathing":"Queue"} acquired`,`${type==="concrete"?100:50} starter tiles stocked in Infrastructure.`);if(state.tutorial===4&&state.blueprintPacks.concrete&&state.blueprintPacks.queue)advanceTutorial(5);closeModal();updateUI();});
+      $$("[data-close]").forEach(b=>b.onclick=closeModal);$$('[data-pack]').forEach(button=>button.onclick=()=>{const type=button.dataset.pack,cost=type==="concrete"?2000:1000;if(state.cash<cost)return;state.cash-=cost;state.stats.expenses+=cost;state.blueprintPacks[type]=true;state.materials||={};const material=type==="concrete"?"pathConcrete":"queueStandard";state.materials[material]=(state.materials[material]||0)+(type==="concrete"?100:50);notify(`${type==="concrete"?"Concrete Pathing":"Queue"} acquired`,`${type==="concrete"?100:50} starter tiles stocked in Infrastructure.`);if(state.tutorial===4&&state.blueprintPacks.concrete&&state.blueprintPacks.queue)advanceTutorial(5);updateUI();openFabricator();});
     });
   }
 
@@ -961,8 +978,7 @@
 
   function rushShipment(shipment){if(!shipment||shipment.status!=="transit")return;const ride=RIDES[shipment.ride],cost=Math.ceil(ride.freight*.5*(shipment.rushes+1));if(state.cash<cost)return;state.cash-=cost;state.stats.expenses+=cost;shipment.remaining*=.5;shipment.rushes++;notify("Freight expedited",`${money(cost)} paid. Remaining delivery time reduced by half.`);updateUI();}
 
-  function updateSimulation(dt,inputDt=dt){
-    updatePlayer(inputDt);
+  function updateSimulation(dt){
     if(state.speed===0)return;
     const scaled=dt*state.speed;state.time+=scaled*3;saveTimer+=dt;
     if(state.time>=1440){state.time-=1440;state.day++;runDailyCosts();rollWeather();}
@@ -973,7 +989,34 @@
     if(saveTimer>8)save();
   }
 
-  function updatePlayer(dt){if(!walkMode||$("#modalLayer").classList.contains("hidden")===false)return;const horizontal=(keys.has("d")||keys.has("ArrowRight")?1:0)-(keys.has("a")||keys.has("ArrowLeft")?1:0),vertical=(keys.has("s")||keys.has("ArrowDown")?1:0)-(keys.has("w")||keys.has("ArrowUp")?1:0);let dx=horizontal+vertical,dy=vertical-horizontal;if(!dx&&!dy)return;const length=Math.hypot(dx,dy),speed=keys.has("Shift")?4.2:2.7;state.player.x=clamp(state.player.x+dx/length*speed*dt,-1,28);state.player.y=clamp(state.player.y+dy/length*speed*dt,0,15.5);}
+  function updatePlayer(dt){
+    if(!walkMode||$("#modalLayer").classList.contains("hidden")===false)return;
+    const horizontal=(keys.has("d")||keys.has("ArrowRight")?1:0)-(keys.has("a")||keys.has("ArrowLeft")?1:0);
+    const vertical=(keys.has("s")||keys.has("ArrowDown")?1:0)-(keys.has("w")||keys.has("ArrowUp")?1:0);
+    let dx=horizontal+vertical,dy=vertical-horizontal;
+    if(dx||dy)walkTarget=null;
+    else if(walkTarget){
+      dx=walkTarget.x-state.player.x;dy=walkTarget.y-state.player.y;
+      if(Math.hypot(dx,dy)<.12){
+        const shouldInteract=walkTarget.interact;
+        walkTarget=null;
+        if(shouldInteract)interact();
+        return;
+      }
+    }
+    if(!dx&&!dy)return;
+    const length=Math.hypot(dx,dy),speed=keys.has("Shift")?4.2:3.4,step=Math.min(length,speed*dt);
+    state.player.x=clamp(state.player.x+dx/length*step,-1,28);
+    state.player.y=clamp(state.player.y+dy/length*step,0,15.5);
+  }
+
+  function startMovementLoop(){
+    let previous=performance.now();
+    movementTimer=setInterval(()=>{
+      const now=performance.now(),dt=Math.min(.5,Math.max(0,(now-previous)/1000));
+      previous=now;updatePlayer(dt);
+    },16);
+  }
 
   function updateConstruction(dt){for(const object of state.objects){if(object.state==="constructing"){object.buildRemaining-=dt;if(object.buildRemaining<=0){object.state="built";object.buildRemaining=0;notify(`${getItem(object.type).name} assembled`,"Construction passed its initial safety check.");if(selected===object.id)renderInspector(object);}}}}
 
@@ -1028,7 +1071,12 @@
   function runDailyCosts(){const operators=state.objects.filter(o=>o.operator).length,wages=operators*50+state.staff.janitors*80+state.staff.mechanics*120;if(wages){state.cash-=wages;state.stats.expenses+=wages;notify("Daily payroll processed",`${money(wages)} paid to ${operators+state.staff.janitors+state.staff.mechanics} staff.`);}for(const path of state.objects.filter(o=>getItem(o.type)?.kind==="path"))path.condition=Math.max(0,(path.condition||100)-(path.type==="pathConcrete"?1.2:path.type==="pathWood"?.7:.4));}
   function rollWeather(){const roll=Math.random();state.weather=roll<.2?"rain":roll>.88?"heat":"clear";if(state.weather==="rain")notify("Rain system moving in","Puddles slow basic paths. LED asphalt retains full visibility.","warning");if(state.weather==="heat")notify("Heat advisory","Guest thirst rises faster and water rides gain demand.","warning");}
 
-  function frame(now){const elapsed=Math.max(0,(now-lastTime)/1000),dt=Math.min(.05,elapsed),inputDt=Math.min(.5,elapsed);lastTime=now;accumulator+=dt;updateSimulation(dt,inputDt);drawWorld();if(Math.floor(now/500)%2===0)updateUI();requestAnimationFrame(frame);}
+  function frame(now){
+    const elapsed=Math.min(.5,Math.max(0,(now-lastTime)/1000)),step=1/30;
+    lastTime=now;accumulator+=elapsed;
+    while(accumulator>=step){updateSimulation(step);accumulator-=step;}
+    drawWorld();if(Math.floor(now/500)%2===0)updateUI();requestAnimationFrame(frame);
+  }
 
   function bindEvents(){
     window.addEventListener("resize",resize);
@@ -1054,7 +1102,12 @@
     canvas.addEventListener("pointerdown",event=>{const p=logicalPoint(event);dragStart=screenToGrid(p.x,p.y,state.buildLevel);if(event.isTrusted)canvas.setPointerCapture?.(event.pointerId);});
     canvas.addEventListener("pointerup",event=>{
       const p=logicalPoint(event),end=screenToGrid(p.x,p.y,state.buildLevel);if(event.isTrusted&&canvas.hasPointerCapture?.(event.pointerId))canvas.releasePointerCapture(event.pointerId);
-      if(walkMode){selectAt(end.x,end.y,state.buildLevel);dragStart=null;return;}
+      if(walkMode){
+        const object=state.objects.filter(candidate=>objectCovers(candidate,end.x,end.y,state.buildLevel)).at(-1);
+        if(object){selected=object.id;renderInspector(object);walkTarget=null;}
+        else {const landmark=landmarkAt(end);walkTarget=landmark?{...landmark.approach,interact:true}:{x:clamp(end.x+.5,-1,28),y:clamp(end.y+.5,0,15.5),interact:false};showWorldMessage(landmark?"Walking to interact · use WASD or arrows to steer":"Walking to destination · use WASD or arrows to steer");}
+        dragStart=null;return;
+      }
       if(state.activeTool==="demolish"){demolishAt(end.x,end.y,state.buildLevel);dragStart=null;return;}
       if(state.activeTool?.startsWith("track:")){addTrackNode(end);dragStart=null;return;}
       if(state.activeTool?.startsWith("prebuilt:")){placePrebuilt(end);dragStart=null;return;}
@@ -1068,7 +1121,7 @@
       const typing=["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName);if(typing){if(event.key==="Escape")document.activeElement.blur();return;}
       keys.add(event.key.length===1?event.key.toLowerCase():event.key);keys.add(event.key);
       const movementKey=["w","W","a","A","s","S","d","D","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(event.key);
-      if(movementKey){event.preventDefault();if(!walkMode&&!state.activeTool?.startsWith("track:")&&!state.activeTool?.startsWith("prebuilt:")){walkMode=true;state.activeTool=null;trackDraft=null;closeInspector();updateUI();}if(!event.repeat)updatePlayer(.08);}
+      if(movementKey){event.preventDefault();walkTarget=null;if(!walkMode&&!state.activeTool?.startsWith("track:")&&!state.activeTool?.startsWith("prebuilt:")){walkMode=true;state.activeTool=null;trackDraft=null;closeInspector();updateUI();}if(!event.repeat)updatePlayer(.08);}
       if(event.key==="Tab"&&$("#modalLayer").classList.contains("hidden")){event.preventDefault();$("#buildDock").classList.toggle("hidden");return;}
       if(event.key==="Escape"){if(!$("#modalLayer").classList.contains("hidden")){closeModal();return;}state.activeTool=null;trackDraft=null;state.buildLevel=Math.max(0,state.buildLevel);closeInspector();renderBuildItems();return;}
       if(event.key==="Enter"&&state.activeTool?.startsWith("track:")){finalizeTrack();return;}
@@ -1089,15 +1142,14 @@
     });
     window.addEventListener("keyup",event=>{keys.delete(event.key.length===1?event.key.toLowerCase():event.key);keys.delete(event.key);});
     window.addEventListener("blur",()=>keys.clear());
-    document.addEventListener("visibilitychange",()=>{if(document.hidden)keys.clear();});
     window.addEventListener("beforeunload",()=>save(true));
   }
 
   function changeLevel(amount){const minimum=state.activeTool?.startsWith("track:")?-1:0;state.buildLevel=clamp(state.buildLevel+amount,minimum,5);updateUI();showWorldMessage(`Structural layer ${levelLabel(state.buildLevel)}`);}
-  function toggleMode(){if(!state.toolkit&&!walkMode)return;walkMode=!walkMode;if(walkMode){state.activeTool=null;trackDraft=null;state.buildLevel=Math.max(0,state.buildLevel);}closeInspector();updateUI();}
+  function toggleMode(){if(!state.toolkit&&!walkMode)return;walkMode=!walkMode;walkTarget=null;if(walkMode){state.activeTool=null;trackDraft=null;state.buildLevel=Math.max(0,state.buildLevel);}closeInspector();updateUI();}
 
   function init(){
-    state.unlocked={spinner:false,skid:false,hairpin:false,hydro:false,neon:false,flyer:false,buttonEye:false,shadow:false,glitch:false,...state.unlocked};state.coasterLicenses||={};canvas.tabIndex=0;resize();bindEvents();renderBuildItems();updateUI();
+    state.unlocked={spinner:false,skid:false,hairpin:false,hydro:false,neon:false,flyer:false,buttonEye:false,shadow:false,glitch:false,...state.unlocked};state.coasterLicenses||={};canvas.tabIndex=0;resize();bindEvents();startMovementLoop();renderBuildItems();updateUI();
     if(state.registered)$("#enterGame").innerHTML=`RETURN TO ${state.profile.toUpperCase()}'S PARK <span>→</span>`;
     requestAnimationFrame(frame);
   }
