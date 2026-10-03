@@ -84,11 +84,31 @@ expect(await evaluate("document.querySelector('#modal').textContent.includes('St
 await evaluate("document.querySelector('#equipToolkit').click(); true");
 await wait(50);
 expect(await evaluate("!document.querySelector('#buildDock').classList.contains('locked')"), "The Starter Toolkit did not unlock construction controls");
+const usedLotScenario = await evaluate("JSON.parse(localStorage.getItem('amusement-park-tycoon-v1'))");
+usedLotScenario.player={x:21.5,y:4.2,z:0};
+const usedLotPreload = await command("Page.addScriptToEvaluateOnNewDocument", { source: `localStorage.setItem('amusement-park-tycoon-v1', ${JSON.stringify(JSON.stringify(usedLotScenario))});` });
+await command("Page.reload", { ignoreCache: true });
+await wait(700);
+await command("Page.removeScriptToEvaluateOnNewDocument", { identifier: usedLotPreload.identifier });
+await evaluate("document.querySelector('#enterGame').click(); window.dispatchEvent(new KeyboardEvent('keydown', { key: 'e', bubbles: true })); window.dispatchEvent(new KeyboardEvent('keyup', { key: 'e', bubbles: true })); true");
+await wait(100);
+const usedLot = await evaluate(`({
+  cards: document.querySelectorAll('.ride-catalog .shop-card').length,
+  scrollable: document.querySelector('.ride-catalog').scrollHeight > document.querySelector('.ride-catalog').clientHeight,
+  cashSearch: Boolean(document.querySelector('#searchParkingCash'))
+})`);
+expect(usedLot.cards === 13, "Used Ride Lot should list all 13 freight rides");
+expect(usedLot.scrollable, "Used Ride Lot inventory should be scrollable");
+expect(usedLot.cashSearch, "Used Ride Lot parking area should contain a cash search");
+await evaluate("document.querySelector('#searchParkingCash').click(); true");
+await wait(50);
+expect(await evaluate("document.querySelector('#moneyValue').textContent === '$51,000'"), "Parking-lot cash find did not add $500");
 
 const scenario = {
   version: 1, profile: "Test Manager", registered: true, toolkit: true, cash: 74250,
   totalRevenue: 14500, totalGuests: 312, reputation: 78, atmosphere: 38, cleanliness: 92,
   powerCapacity: 200, waterCapacity: 60, time: 1140, day: 6, speed: 0, lotTier: 2,
+  reviewTotal: 8.5, reviewCount: 2, reviews: [{ stars: 4.5, text: "Beautiful paths and scenery!", type: "Family", day: 6 }], parkingCashFound: 1,
   tutorial: 12, buildLevel: 0, activeTab: "attractions", activeTool: null,
   blueprintPacks: { concrete: true, queue: true }, rideInventory: { spinner: 1 }, pendingOrders: [], shipments: [],
   themes: [{x:7,y:7,type:"boardwalk"}], staff: { janitors: 2, mechanics: 1 },
@@ -123,6 +143,7 @@ const loaded = await evaluate(`({
   complete: document.querySelector('#objectiveStep').textContent,
   errors: document.querySelectorAll('.event-toast.danger').length,
   rideRoster: document.querySelectorAll('#buildItems .build-item').length,
+  rating: document.querySelector('#reputationLabel').textContent,
   timberAvailable: !document.querySelector('[data-item=timber]').classList.contains('locked')
 })`);
 expect(loaded.cash.includes("74,250"), "Saved cash was not restored");
@@ -130,7 +151,12 @@ expect(loaded.rep === "78%", "Saved reputation was not restored");
 expect(!loaded.dockLocked, "Toolkit should unlock the dock");
 expect(loaded.complete === "COMPLETE", "Completed tutorial was not recognized");
 expect(loaded.rideRoster === 14, "The active ride roster should contain 14 rides");
+expect(loaded.rating.includes('4.3') && loaded.rating.includes('2 REVIEWS'), "Saved appearance reviews were not restored");
 expect(loaded.timberAvailable, "Timber Ridge should be available directly from the construction ledger");
+await evaluate("document.querySelector('#reviewCard').click(); true");
+await wait(50);
+expect(await evaluate("document.querySelector('#modal').textContent.includes('Beautiful paths and scenery!')"), "Visitor review panel did not show saved reviews");
+await evaluate("document.querySelector('[data-close]').click(); true");
 await evaluate("document.querySelector('[data-item=timber]').click(); true");
 await wait(100);
 expect(await evaluate("document.querySelector('#modal').textContent.includes('Custom Track')"), "Timber Ridge should open the custom track builder");
@@ -159,5 +185,29 @@ expect(exceptions.length === 0, `Runtime exceptions: ${exceptions.join("\n")}`);
 
 const screenshot = await command("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
 await writeFile("/tmp/amusement-tycoon-smoke.png", Buffer.from(screenshot.data, "base64"));
+
+const routingObjects = [
+  ...Array.from({length:6},(_,index)=>({id:`route-path-${index}`,type:"pathConcrete",x:8,y:14-index,z:0,condition:100,dirt:0,price:0})),
+  {id:"route-queue",type:"queueStandard",x:8,y:8,z:0,condition:100,dirt:0,price:0},
+  {id:"route-ride",type:"carousel",x:8,y:5,z:0,condition:100,price:8,state:"built",operator:true,open:true,queue:0,cycles:0,revenue:0}
+];
+const routingScenario = { version:1, profile:"Path Tester", registered:true, toolkit:true, cash:50500, speed:4, tutorial:12, player:{x:8,y:12,z:0}, objects:routingObjects };
+const routingPreload = await command("Page.addScriptToEvaluateOnNewDocument", { source: `localStorage.setItem('amusement-park-tycoon-v1', ${JSON.stringify(JSON.stringify(routingScenario))});` });
+await command("Page.reload", { ignoreCache: true });
+await wait(700);
+await command("Page.removeScriptToEvaluateOnNewDocument", { identifier: routingPreload.identifier });
+await evaluate("document.querySelector('#enterGame').click(); true");
+await wait(2200);
+expect(await evaluate("Number(document.querySelector('#guestValue').textContent) > 0"), "A first ride connected to the gate did not attract visitors");
+
+const disconnectedScenario = { ...routingScenario, objects:routingObjects.filter(object=>object.id!=="route-path-3") };
+const disconnectedPreload = await command("Page.addScriptToEvaluateOnNewDocument", { source: `localStorage.setItem('amusement-park-tycoon-v1', ${JSON.stringify(JSON.stringify(disconnectedScenario))});` });
+await command("Page.reload", { ignoreCache: true });
+await wait(700);
+await command("Page.removeScriptToEvaluateOnNewDocument", { identifier: disconnectedPreload.identifier });
+await evaluate("document.querySelector('#enterGame').click(); true");
+await wait(2200);
+expect(await evaluate("document.querySelector('#guestValue').textContent === '0'"), "Visitors spawned without a continuous path from the gate");
+expect(exceptions.length === 0, `Runtime exceptions: ${exceptions.join("\n")}`);
 socket.close();
-console.log(JSON.stringify({ ok: true, initial, shell, loaded, screenshot: "/tmp/amusement-tycoon-smoke.png" }, null, 2));
+console.log(JSON.stringify({ ok: true, initial, shell, usedLot, loaded, pathRouting: true, screenshot: "/tmp/amusement-tycoon-smoke.png" }, null, 2));

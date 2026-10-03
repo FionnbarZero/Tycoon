@@ -41,6 +41,7 @@ Open `http://127.0.0.1:8080` in a modern desktop browser.
 
 - Isometric fenced lot, commercial district, walking avatar, contextual interaction, and guided starter tutorial
 - Used-ride purchasing, freight fees, simulation-time deliveries, random delays/damage/spare parts, collection, and paid construction rushing
+- Scrollable Used Ride Parking Lot with visible parked machinery and three recoverable cash finds
 - Three path surfaces, three queue formats, vertical foundation blocks, stairs, escalators, four structural levels, collision/support validation, and hologram feedback
 - Fourteen active rides: five custom-track coasters, five family/thrill flats, and four tracked/dark rides
 - Node-based coaster construction with six vertical levels, speed/friction validation, stair and object collision checks, animated trains, and three compact prebuilt layouts
@@ -48,6 +49,8 @@ Open `http://127.0.0.1:8080` in a modern desktop browser.
 - Construction, staffing, condition, animated/synthesized breakdown feedback, repair, power, admission, queues, and revenue
 - Food stalls, item pricing, thirst interactions, restrooms and bladder needs, ATMs, bins, scenery radii, themed ground, atmosphere, litter, janitors, mechanics, weather, and daily payroll
 - Guest wallets, demographic preferences, price tolerance, value-for-money decisions, complaints, park reputation, admission models, and a global economic ledger
+- Path-locked guest routing from the main gate through connected walkways and queues
+- Appearance reviews driven by atmosphere, cleanliness, path condition, and visitor happiness
 - Persistent local saves, lot expansion milestones, drifting-ride unlocks, responsive UI, keyboard controls, and accessible non-color placement feedback
 
 ## Smoke test

@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="ui-extras.css" />
   </head>
   <body>
     <div id="game" class="game-shell">
@@ -20,7 +21,7 @@
         <div class="resource-strip">
           <button class="resource" id="moneyCard"><small>AVAILABLE CASH</small><strong id="moneyValue">$0</strong><span id="cashFlow">REGISTER TO BEGIN</span></button>
           <div class="resource"><small>GUESTS</small><strong id="guestValue">0</strong><span id="parkCapacity">LOT CAPACITY 80</span></div>
-          <div class="resource"><small>REPUTATION</small><strong id="reputationValue">—</strong><span id="reputationLabel">UNRATED</span></div>
+          <button class="resource" id="reviewCard"><small>REPUTATION</small><strong id="reputationValue">—</strong><span id="reputationLabel">UNRATED · OPEN A RIDE</span></button>
           <div class="resource power-resource"><small>GRID LOAD</small><strong id="powerValue">0 / 100 kW</strong><span class="mini-meter"><i id="powerFill"></i></span></div>
         </div>
         <div class="time-cluster">

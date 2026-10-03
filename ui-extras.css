@@ -1,0 +1,76 @@
+.ride-catalog {
+  max-height: 48vh;
+  margin: 12px -5px 0 0;
+  padding-right: 7px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: #3d7895 #081923;
+}
+
+.ride-catalog::before {
+  content: "SCROLL TO BROWSE ALL RIDES";
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: block;
+  padding: 7px 9px;
+  margin-bottom: 7px;
+  border: 1px solid var(--line);
+  background: #0a2030;
+  color: #77a7bc;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+
+.parking-find {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 11px 12px;
+  border: 1px solid rgba(83, 217, 152, .38);
+  background: rgba(24, 87, 67, .24);
+}
+
+.parking-find strong,
+.parking-find span { display: block; }
+.parking-find strong { color: #76efae; font-size: 10px; }
+.parking-find span { margin-top: 3px; color: #89a9b5; font-size: 9px; }
+.parking-find.exhausted { border-color: var(--line); opacity: .7; }
+
+.parking-find button {
+  flex: 0 0 120px;
+  padding: 8px;
+  border: 1px solid #3bb477;
+  background: #145a41;
+  color: #effff6;
+  font-size: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.review-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px;
+  border: 1px solid rgba(243, 199, 83, .35);
+  background: rgba(90, 69, 18, .2);
+}
+
+.review-summary > strong { color: var(--gold); font: 800 42px/1 "Barlow Condensed"; }
+.review-summary span { color: #9db4bf; font-size: 9px; font-weight: 700; line-height: 1.6; letter-spacing: .08em; }
+.review-factors { margin: 12px 0; }
+.review-list { display: grid; gap: 7px; max-height: 44vh; overflow: auto; }
+.review-row { padding: 10px 12px; border: 1px solid var(--line); background: #0b2130; }
+.review-row strong { color: var(--gold); font-size: 11px; letter-spacing: .08em; }
+.review-row strong span { margin-left: 7px; color: #c8d9e1; }
+.review-row p { margin: 5px 0; color: #d9e8ee; font-size: 10px; }
+.review-row small { color: #67899a; font-size: 8px; }
+
+@media (max-width: 720px) {
+  .parking-find { align-items: stretch; flex-direction: column; }
+  .parking-find button { flex-basis: auto; }
+  .ride-catalog { max-height: 52vh; }
+}

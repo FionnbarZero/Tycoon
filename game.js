@@ -121,6 +121,7 @@
     blueprintPacks: { concrete: false, queue: false }, materials: {}, rideInventory: {}, pendingOrders: [], shipments: [],
     objects: [], themes: [], staff: { janitors: 0, mechanics: 0 }, admission: { model: "open", gatePrice: 0, dayPass: 35, seasonPass: 120 },
     player: { x: 8, y: 12, z: 0 }, stats: { expenses: 0, profit: 0, complaints: 0 }, weather: "clear",
+    reviewTotal: 0, reviewCount: 0, reviews: [], parkingCashFound: 0,
     unlocked: { spinner: false, skid: false, hairpin: false, hydro: false, neon: false, flyer: false }, coasterLicenses: {}, powerTier: 1, level: 1, milestones: { path: false, freight: false }, lastSave: Date.now()
   });
 
@@ -387,6 +388,7 @@
   }
 
   function drawDistrict() {
+    drawUsedRideParkingLot();
     drawBuilding(2.3, 9.3, 2.5, 2.2, "#2d5870", "JOB SHACK", "#39a8ff");
     drawBuilding(20, 2, 5, 4, "#62333c", "USED RIDE LOT", "#ff5368");
     drawBuilding(23, 8, 5, 3.5, "#174f68", "BLUEPRINT FABRICATOR", "#39a8ff");
@@ -395,6 +397,21 @@
     drawBuilding(14.5, 1, 2.4, 3.3, "#48575a", "FREIGHT DEPOT", "#ff9d45");
     const truck = state.shipments.find(shipment => shipment.status === "arrived");
     if (truck) drawTruck(15, 3.2, truck.ride);
+  }
+
+  function drawUsedRideParkingLot(){
+    ctx.save();
+    for(let x=18;x<=25;x++)for(let y=1;y<=7;y++)tileTop(x,y,.01,"#3d474c",1);
+    ctx.strokeStyle="rgba(235,220,150,.7)";ctx.lineWidth=2;
+    for(let index=0;index<5;index++){
+      const a=iso(18.7+index*1.55,6.8),b=iso(18.7+index*1.55,5.7);
+      ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+    }
+    for(const [x,y,color] of [[19.2,6.1,"#cf4e42"],[21,6.1,"#e0b64d"],[22.8,6.1,"#4b87a7"],[24.6,6.1,"#6e7780"]]){
+      const p=iso(x,y);ctx.fillStyle=color;ctx.fillRect(p.x-15,p.y-14,30,11);ctx.fillStyle="#18242a";ctx.fillRect(p.x-10,p.y-18,20,6);
+    }
+    if((state.parkingCashFound||0)<3){const p=iso(24.8,7);ctx.fillStyle="#69f0a9";ctx.shadowColor="#69f0a9";ctx.shadowBlur=12;ctx.font="800 13px Inter";ctx.textAlign="center";ctx.fillText("$",p.x,p.y-8);ctx.shadowBlur=0;}
+    ctx.restore();
   }
 
   function drawBuilding(x, y, w, h, color, label, accent) {
@@ -785,7 +802,8 @@
     $("#cashFlow").textContent=state.registered?`${profit>=0?"+":"−"}${money(Math.abs(profit))} NET`:`REGISTER TO BEGIN`;
     $("#guestValue").textContent=guests.length.toString();
     $("#reputationValue").textContent=state.registered?`${Math.round(state.reputation)}%`:"—";
-    $("#reputationLabel").textContent=state.reputation>75?"DESTINATION":state.reputation>55?"RISING":state.reputation>35?"LOCAL":"TROUBLED";
+    const rating=state.reviewCount?state.reviewTotal/state.reviewCount:0;
+    $("#reputationLabel").textContent=state.reviewCount?`★ ${rating.toFixed(1)} · ${state.reviewCount} REVIEW${state.reviewCount===1?"":"S"}`:"UNRATED · OPEN A RIDE";
     $("#powerValue").textContent=`${Math.round(powerUsed)} / ${state.powerCapacity} kW`;
     $("#powerFill").style.width=`${clamp(powerUsed/state.powerCapacity*100,0,100)}%`;
     $("#powerFill").style.background=powerUsed>state.powerCapacity?"#ff5368":"#39a8ff";
@@ -847,9 +865,17 @@
       if(id==="hairpin"&&!state.coasterLicenses.hairpin)action=`<button data-license="hairpin" ${parkNetWorth()<50000||state.cash<10000?"disabled":""}>LICENSE BLUEPRINT · $10,000</button>`;
       if(id==="flyer"&&!state.coasterLicenses.flyer)action=`<button disabled>VISIT LEGAL DISTRICT OFFICES</button>`;
       return `<article class="shop-card"><header><h3>${ride.icon} ${ride.name}</h3><strong>${money(ride.cost)}</strong></header><p>${ride.description}</p><div class="shop-stats"><span>EXC ${ride.excitement}</span><span>REL ${ride.reliability}%</span><span>${ride.coaster?`${ride.maxSpeed} MPH · H${ride.maxHeight}`:`${ride.w}×${ride.h}`}</span></div>${unlocked?action:`<p class="inspector-copy">${coasterRequirement(id)}</p>${action}`}</article>`;}).join("");
-    openModal(modalShell("MANUFACTURING DISTRICT · USED RIDE LOT","Complete active ride roster",`<p class="modal-copy">Fourteen active attractions are organized across coasters, flats, and tracked dark rides. Purchase hardware here, then arrange freight at the shipping desk.</p><div class="shop-grid">${cards}</div>`,`<button class="modal-button" data-close>Leave lot</button>`),()=>{
+    const searches=state.parkingCashFound||0,findsLeft=3-searches,parkingFind=searches<3?`<aside class="parking-find"><div><strong>💵 PARKING-LOT CASH FIND</strong><span>Search discarded seat cushions and old ticket booths. ${findsLeft} ${findsLeft===1?"find":"finds"} remain.</span></div><button id="searchParkingCash">SEARCH LOT</button></aside>`:`<aside class="parking-find exhausted"><div><strong>PARKING LOT SEARCHED</strong><span>You recovered every loose cash envelope in this shipment cycle.</span></div></aside>`;
+    openModal(modalShell("MANUFACTURING DISTRICT · USED RIDE PARKING LOT","Scroll the used-ride inventory",`<p class="modal-copy">Walk between parked secondhand attractions, recover abandoned cash, and scroll through the complete machinery roster below. Purchased rides ship from the freight desk.</p>${parkingFind}<div class="ride-catalog"><div class="shop-grid">${cards}</div></div>`,`<button class="modal-button" data-close>Leave lot</button>`),()=>{
       $$("[data-close]").forEach(b=>b.onclick=closeModal);$$('[data-buy-ride]').forEach(button=>button.onclick=()=>buyRide(button.dataset.buyRide));$$('[data-license]').forEach(button=>button.onclick=()=>purchaseCoasterLicense(button.dataset.license));
+      if($("#searchParkingCash"))$("#searchParkingCash").onclick=searchParkingCash;
     });
+  }
+
+  function searchParkingCash(){
+    if((state.parkingCashFound||0)>=3)return;
+    const amount=[500,750,1000][state.parkingCashFound||0];state.parkingCashFound=(state.parkingCashFound||0)+1;state.cash+=amount;
+    notify("Cash found between the parked rides",`${money(amount)} was added to your available construction budget.`);saveTimer=99;save();updateUI();openUsedRideLot();
   }
 
   function purchaseCoasterLicense(id){const cost=id==="hairpin"?10000:25000;if(state.cash<cost)return;if(id==="hairpin"&&parkNetWorth()<50000)return;if(id==="flyer"&&state.atmosphere<80)return;state.cash-=cost;state.stats.expenses+=cost;state.coasterLicenses[id]=true;refreshCoasterUnlocks();notify(`${RIDES[id].name} licensed`,"Manufacturing hardware is now available for purchase.");openUsedRideLot();updateUI();}
@@ -935,7 +961,7 @@
       if(action==="authorize"){object.state="constructing";object.buildRemaining=item.coaster?60:item.family==="Drifting Thrill"?45:25;if(state.themes.some(t=>t.type==="shipyard"&&Math.abs(t.x-object.x)<4&&Math.abs(t.y-object.y)<4))object.buildRemaining*=.75;if(state.tutorial===9)advanceTutorial(10);renderInspector(object);}
       if(action==="rushBuild"&&state.cash>=1000){state.cash-=1000;state.stats.expenses+=1000;object.buildRemaining=Math.max(1,object.buildRemaining*.5);renderInspector(object);updateUI();}
       if(action==="operator"){object.operator=!object.operator;if(!object.operator)object.open=false;renderInspector(object);}
-      if(action==="open"){if(!object.open&&!hasAdjacentQueue(object)){showWorldMessage("Connect a dedicated queue tile beside this ride");return;}if(!object.open&&!hasAdjacentPath(object)){showWorldMessage("Connect the ride area to a main pedestrian path");return;}object.open=!object.open;if(object.open&&state.tutorial===11)advanceTutorial(12);renderInspector(object);updateUI();}
+      if(action==="open"){if(!object.open&&!hasAdjacentQueue(object)){showWorldMessage("Connect a dedicated queue tile beside this ride");return;}if(!object.open&&!hasAdjacentPath(object)){showWorldMessage("Connect the ride area to a main pedestrian path");return;}if(!object.open&&!routeToTarget({x:8.5,y:14.5},object,true)){showWorldMessage("Connect this queue to the main gate with an unbroken path");return;}const firstOpening=!state.objects.some(other=>other!==object&&getItem(other.type)?.kind==="ride"&&other.open);object.open=!object.open;if(object.open&&firstOpening){spawnTimer=0;notify("Your first ride is drawing a crowd",`Visitors are heading to ${object.customName||item.name}. Keep every entrance connected to the main gate by paths.`);}if(object.open&&state.tutorial===11)advanceTutorial(12);renderInspector(object);updateUI();}
       if(action==="repair"){const cost=Math.max(300,Math.round((100-object.condition)*25));if(state.cash>=cost){state.cash-=cost;state.stats.expenses+=cost;object.condition=100;object.broken=false;notify(`${item.name} repaired`,"Safety inspection passed. The ride can reopen.");renderInspector(object);updateUI();}}
       if(action==="aura"){auraOverlay=!auraOverlay;renderInspector(object);}
       if(action==="penalty"){penaltyOverlay=!penaltyOverlay;renderInspector(object);}
@@ -953,6 +979,12 @@
     openModal(modalShell("GLOBAL ECONOMIC LEDGER","Pricing & admissions",`<p class="modal-copy">Set exact prices globally. Guest willingness responds to excitement, urgency, reputation, loyalty, and remaining wallet cash.</p>
       <table class="ledger-table"><thead><tr><th>ADMISSION MODEL</th><th>GATE PRICE</th><th>DAY PASS</th></tr></thead><tbody><tr><td><select id="admissionModel"><option value="open" ${state.admission.model==="open"?"selected":""}>Open lot / pay per ride</option><option value="day" ${state.admission.model==="day"?"selected":""}>Day pass</option><option value="hybrid" ${state.admission.model==="hybrid"?"selected":""}>Hybrid admission</option></select></td><td><input id="gatePrice" type="number" min="0" value="${state.admission.gatePrice}"></td><td><input id="dayPassPrice" type="number" min="0" value="${state.admission.dayPass}"></td></tr></tbody></table>
       <table class="ledger-table"><thead><tr><th>ASSET</th><th>LEVEL</th><th>PRICE</th><th>REVENUE</th></tr></thead><tbody>${priced.length?priced.map(object=>`<tr><td>${getItem(object.type).name}</td><td>L${object.z+1}</td><td><input data-ledger-price="${object.id}" type="number" min="0" step=".05" value="${Number(object.price||0).toFixed(2)}"></td><td>${money(object.revenue||0)}</td></tr>`).join(""):`<tr><td colspan="4">No priced assets have been constructed.</td></tr>`}</tbody></table>`,`<button class="modal-button" data-close>Cancel</button><button id="applyLedger" class="modal-button primary">APPLY PRICES</button>`),()=>{$$("[data-close]").forEach(b=>b.onclick=closeModal);$("#applyLedger").onclick=()=>{state.admission.model=$("#admissionModel").value;state.admission.gatePrice=clamp(Number($("#gatePrice").value)||0,0,999);state.admission.dayPass=clamp(Number($("#dayPassPrice").value)||0,0,999);$$('[data-ledger-price]').forEach(input=>{const object=state.objects.find(entry=>entry.id===input.dataset.ledgerPrice);if(object)object.price=clamp(Number(input.value)||0,0,999);});closeModal();notify("Ledger applied","Park prices were updated globally.");saveTimer=99;save();};});
+  }
+
+  function openReviews(){
+    const average=state.reviewCount?state.reviewTotal/state.reviewCount:0,paths=state.objects.filter(object=>getItem(object.type)?.kind==="path"),pathQuality=paths.length?paths.reduce((sum,path)=>sum+(path.condition??100),0)/paths.length:0;
+    const recent=(state.reviews||[]).length?state.reviews.map(review=>`<article class="review-row"><strong>${"★".repeat(Math.round(review.stars))}<span>${review.stars.toFixed(1)}</span></strong><p>${escapeHtml(review.text)}</p><small>${review.type} · DAY ${review.day}</small></article>`).join(""):`<p class="modal-copy">Open a ride and connect it to the front gate. Visitors will post ratings after completing their visit.</p>`;
+    openModal(modalShell("VISITOR REVIEWS · APPEARANCE","What guests think of your park",`<div class="review-summary"><strong>${average?average.toFixed(1):"—"}</strong><span>AVERAGE STARS<br>${state.reviewCount||0} VERIFIED REVIEW${state.reviewCount===1?"":"S"}</span></div><div class="shop-stats review-factors"><span>ATMOSPHERE ${Math.round(state.atmosphere)}</span><span>CLEANLINESS ${Math.round(state.cleanliness)}%</span><span>PATH QUALITY ${Math.round(pathQuality)}%</span></div><div class="review-list">${recent}</div>`,`<button class="modal-button primary" data-close>Back to park</button>`),()=>{$$("[data-close]").forEach(button=>button.onclick=closeModal);});
   }
 
   function openMenu(){openModal(modalShell("PARK MANAGEMENT","Session controls",`<p class="modal-copy">${state.profile?`${state.profile}'s park`:"Unregistered park"} · Day ${state.day} · Local browser save</p><div class="shop-grid"><article class="shop-card"><h3>Staff roster</h3><p>Janitors sweep assigned paths. Mechanics automatically respond to safe ride shutdowns.</p><div class="shop-stats"><span>${state.staff.janitors} JANITORS</span><span>${state.staff.mechanics} MECHANICS</span></div><button id="hireJanitor">HIRE JANITOR · $80/day</button><button id="hireMechanic" style="margin-top:5px">HIRE MECHANIC · $120/day</button></article><article class="shop-card"><h3>Lot expansion</h3><p>Unlock drifting attractions and raise park capacity after operating two rides and reaching 250 lifetime guests.</p><button id="expandLot" ${state.lotTier>1||state.cash<20000||state.totalGuests<250||state.objects.filter(o=>getItem(o.type)?.kind==="ride"&&o.open).length<2?"disabled":""}>PERMIT · $20,000</button></article></div>`,`<button class="modal-button" data-close>Resume</button><button id="saveNow" class="modal-button primary">SAVE NOW</button><button id="resetGame" class="modal-button">RESET PARK</button>`),()=>{
@@ -985,7 +1017,7 @@
     for(const shipment of state.shipments){if(shipment.status==="transit"){shipment.remaining-=scaled;if(shipment.remaining<=0){shipment.status="arrived";notify("Freight has arrived",`${RIDES[shipment.ride].name} is waiting at the eastern depot. Sign the inventory to unlock it.`);}}}
     updateConstruction(scaled);updateRides(scaled);updateGuests(scaled);updateCleanliness(scaled);spawnTimer-=scaled;
     const openRides=state.objects.filter(object=>getItem(object.type)?.kind==="ride"&&object.open&&!object.broken);
-    if(openRides.length&&spawnTimer<=0&&guests.length<(state.lotTier>1?160:80)){spawnGuest(openRides);spawnTimer=Math.max(1.2,4-state.reputation/30);}
+    if(openRides.length&&spawnTimer<=0&&guests.length<(state.lotTier>1?160:80)){spawnGuest(openRides);const stars=state.reviewCount?state.reviewTotal/state.reviewCount:3;spawnTimer=Math.max(.8,3.8-openRides.length*.25-stars*.25-state.reputation/100);}
     if(saveTimer>8)save();
   }
 
@@ -1028,47 +1060,95 @@
   }
   function autoRepair(object){if(!object.broken)return;const cost=Math.max(250,Math.round((100-object.condition)*18));if(state.cash>=cost){state.cash-=cost;state.stats.expenses+=cost;object.condition=90;object.broken=false;notify(`${getItem(object.type).name} repaired`,`${money(cost)} in parts used by your mechanic.`);updateUI();}}
 
-  function spawnGuest(openRides){
-    const types=[{name:"Teen",wallet:40,color:"#ff6c80",thrill:1.3},{name:"Family",wallet:150,color:"#f3c753",thrill:.75},{name:"Adult",wallet:85,color:"#48cbd3",thrill:1}];const type=types[Math.floor(Math.random()*types.length)];
-    let wallet=type.wallet*(.7+Math.random()*.6),entry=state.admission.model==="day"?state.admission.dayPass:state.admission.gatePrice;if(state.admission.model==="hybrid")entry=state.admission.gatePrice;
-    const tolerance=(.8+state.reputation/250);if(entry>wallet*.45*tolerance){state.stats.complaints++;state.reputation=clamp(state.reputation-.03,0,100);return;}wallet-=entry;state.cash+=entry;state.totalRevenue+=entry;
-    const target=openRides[Math.floor(Math.random()*openRides.length)];guests.push({id:uid("guest"),x:8,y:15,z:0,type:type.name,color:type.color,thrill:type.thrill,wallet,hunger:Math.random()*35,thirst:Math.random()*30,bladder:Math.random()*20,fatigue:0,happiness:75,target:target.id,state:"walking",age:0,thought:""});state.totalGuests++;
+  function pedestrianMap(){
+    const map=new Map();
+    for(const object of state.objects){const kind=getItem(object.type)?.kind;if(object.z===0&&["path","queue"].includes(kind))map.set(`${object.x},${object.y}`,{x:object.x,y:object.y,kind});}
+    return map;
+  }
+
+  function routeToTarget(from,target,entranceOnly=false){
+    const cells=pedestrianMap(),entry="8,14";if(!cells.size||entranceOnly&&!cells.has(entry))return null;
+    let start=entry;
+    if(!entranceOnly){let nearest=Infinity;for(const [key,cell] of cells){const d=Math.hypot(cell.x+.5-from.x,cell.y+.5-from.y);if(d<nearest){nearest=d;start=key;}}}
+    const goals=new Set();
+    if(target==="exit")goals.add(entry);
+    else {
+      const item=getItem(target.type),occupied=target.track?.length?target.track.filter(node=>node.z===0).map(node=>[node.x,node.y]):footprint(item,target.x,target.y);
+      const adjacent=[];for(const [key,cell] of cells)if(occupied.some(([x,y])=>Math.abs(cell.x-x)+Math.abs(cell.y-y)<=1))adjacent.push([key,cell]);
+      const preferred=item.kind==="ride"?adjacent.filter(([,cell])=>cell.kind==="queue"):adjacent;
+      for(const [key] of preferred.length?preferred:adjacent)goals.add(key);
+    }
+    if(!goals.size||!cells.has(start))return null;
+    const queue=[start],previous=new Map([[start,null]]);let finish=null;
+    while(queue.length){const key=queue.shift();if(goals.has(key)){finish=key;break;}const cell=cells.get(key);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const next=`${cell.x+dx},${cell.y+dy}`;if(cells.has(next)&&!previous.has(next)){previous.set(next,key);queue.push(next);}}}
+    if(!finish)return null;const route=[];for(let key=finish;key;key=previous.get(key)){const cell=cells.get(key);route.push({x:cell.x+.5,y:cell.y+.5});}return route.reverse();
+  }
+
+  function sendGuestTo(guest,target,route=null){
+    route||=routeToTarget(guest,target);if(!route)return false;guest.target=target==="exit"?"exit":target.id;guest.route=route;guest.routeIndex=0;guest.state="walking";return true;
   }
 
   function chooseTarget(guest){
-    if(guest.bladder>70){const restrooms=state.objects.filter(o=>getItem(o.type)?.kind==="restroom");if(restrooms.length)return restrooms[Math.floor(Math.random()*restrooms.length)];}
-    if(guest.hunger>60){const food=state.objects.filter(o=>getItem(o.type)?.kind==="food");if(food.length)return food[Math.floor(Math.random()*food.length)];}
-    const rides=state.objects.filter(o=>getItem(o.type)?.kind==="ride"&&o.open&&!o.broken);return rides.length?rides[Math.floor(Math.random()*rides.length)]:null;
+    const groups=[];
+    if(guest.bladder>70)groups.push(state.objects.filter(o=>getItem(o.type)?.kind==="restroom"));
+    if(guest.hunger>60)groups.push(state.objects.filter(o=>getItem(o.type)?.kind==="food"));
+    groups.push(state.objects.filter(o=>getItem(o.type)?.kind==="ride"&&o.open&&!o.broken));
+    for(const candidates of groups){const reachable=candidates.map(target=>({target,route:routeToTarget(guest,target)})).filter(entry=>entry.route);if(reachable.length)return reachable[Math.floor(Math.random()*reachable.length)];}
+    return null;
+  }
+
+  function sendGuestToNext(guest){const next=chooseTarget(guest);return next?sendGuestTo(guest,next.target,next.route):sendGuestTo(guest,"exit");}
+
+  function spawnGuest(openRides){
+    const reachable=openRides.map(target=>({target,route:routeToTarget({x:8.5,y:14.5},target,true)})).filter(entry=>entry.route);if(!reachable.length)return;
+    const types=[{name:"Teen",wallet:40,color:"#ff6c80",thrill:1.3},{name:"Family",wallet:150,color:"#f3c753",thrill:.75},{name:"Adult",wallet:85,color:"#48cbd3",thrill:1}];const type=types[Math.floor(Math.random()*types.length)];
+    let wallet=type.wallet*(.7+Math.random()*.6),entry=state.admission.model==="day"?state.admission.dayPass:state.admission.gatePrice;if(state.admission.model==="hybrid")entry=state.admission.gatePrice;
+    const tolerance=(.8+state.reputation/250);if(entry>wallet*.45*tolerance){state.stats.complaints++;state.reputation=clamp(state.reputation-.03,0,100);return;}wallet-=entry;state.cash+=entry;state.totalRevenue+=entry;
+    const choice=reachable[Math.floor(Math.random()*reachable.length)],guest={id:uid("guest"),x:8.5,y:14.5,z:0,type:type.name,color:type.color,thrill:type.thrill,wallet,hunger:Math.random()*35,thirst:Math.random()*30,bladder:Math.random()*20,fatigue:0,happiness:75,state:"walking",age:0,thought:""};
+    sendGuestTo(guest,choice.target,choice.route);guests.push(guest);state.totalGuests++;
+  }
+
+  function parkAppearanceStars(guest){
+    const paths=state.objects.filter(object=>getItem(object.type)?.kind==="path"),pathQuality=paths.length?paths.reduce((sum,path)=>sum+(path.condition??100),0)/paths.length:0;
+    const visual=clamp(state.atmosphere,0,100)*.45+state.cleanliness*.35+pathQuality*.2;
+    return clamp(Math.round((1+visual/25+(guest.happiness-70)/80)*2)/2,1,5);
+  }
+
+  function submitGuestReview(guest){
+    const stars=parkAppearanceStars(guest),comments=stars>=4.5?["Beautiful paths and scenery!","This park looks incredible."]:stars>=3.5?["Clean and fun, but needs more scenery.","A good-looking little park."]:stars>=2.5?["The ride was fun; the park looks plain.","More decorations would help."]:["The paths and scenery need work.","This place looks neglected."];
+    const text=comments[Math.floor(Math.random()*comments.length)];state.reviewTotal=(state.reviewTotal||0)+stars;state.reviewCount=(state.reviewCount||0)+1;state.reviews||=[];state.reviews.unshift({stars,text,type:guest.type,day:state.day});state.reviews=state.reviews.slice(0,12);state.reputation=clamp(state.reputation+(stars-3)*.08,0,100);
+    if(state.reviewCount<=3||state.reviewCount%5===0)notify(`${stars.toFixed(1)}★ visitor review`,text,stars<3?"warning":"");updateUI();
   }
 
   function updateGuests(dt){
     for(const guest of guests){guest.age+=dt;guest.hunger+=dt*.18;guest.thirst+=dt*(state.weather==="heat"?.3:.15);guest.bladder+=dt*.12;const cooling=state.objects.some(object=>object.type==="hydro"&&object.open&&hasUpgrade(object,2)&&distance(object,guest)<7);guest.fatigue+=dt*.08*(cooling ? .65 : 1);if(guest.thoughtTimer){guest.thoughtTimer-=dt;if(guest.thoughtTimer<=0)guest.thought="";}
-      if(guest.state==="queued"){guest.wait-=dt;guest.fatigue+=dt*.12;guest.hunger-=dt*.12;if(guest.wait<=0){const ride=state.objects.find(o=>o.id===guest.target);if(ride)ride.queue=Math.max(0,(ride.queue||1)-1);guest.state="walking";const next=chooseTarget(guest);guest.target=next?.id||"exit";guest.happiness=clamp(guest.happiness+6,0,100);}continue;}
-      const target=guest.target==="exit"?{x:8,y:15,id:"exit"}:state.objects.find(object=>object.id===guest.target);
-      if(!target){const next=chooseTarget(guest);guest.target=next?.id||"exit";continue;}
-      const item=target.id==="exit"?null:getItem(target.type),tx=target.x+(item?.w||0)/2,ty=target.y+(item?.h||0)/2,dx=tx-guest.x,dy=ty-guest.y,dist=Math.hypot(dx,dy);
-      if(dist>.35){const pathSpeed=state.weather==="rain"?.72:1;guest.x+=dx/dist*dt*.75*pathSpeed;guest.y+=dy/dist*dt*.75*pathSpeed;continue;}
-      if(target.id==="exit"){guest.remove=true;continue;}
-      processGuestArrival(guest,target,item);
+      if(guest.age>=420&&guest.target!=="exit")sendGuestTo(guest,"exit");
+      if(guest.state==="queued"){guest.wait-=dt;guest.fatigue+=dt*.12;guest.hunger-=dt*.12;if(guest.wait<=0){const ride=state.objects.find(o=>o.id===guest.target);if(ride)ride.queue=Math.max(0,(ride.queue||1)-1);guest.visits=(guest.visits||0)+1;guest.happiness=clamp(guest.happiness+6,0,100);const otherRides=state.objects.some(object=>getItem(object.type)?.kind==="ride"&&object.open&&!object.broken&&object.id!==ride?.id);if(guest.visits>=3||!otherRides)sendGuestTo(guest,"exit");else sendGuestToNext(guest);}continue;}
+      const target=guest.target==="exit"?"exit":state.objects.find(object=>object.id===guest.target);
+      if(!target){sendGuestToNext(guest);continue;}
+      const waypoint=guest.route?.[guest.routeIndex||0];
+      if(waypoint){const dx=waypoint.x-guest.x,dy=waypoint.y-guest.y,dist=Math.hypot(dx,dy);if(dist>.08){const surface=state.objects.find(object=>object.z===0&&object.x===Math.floor(guest.x)&&object.y===Math.floor(guest.y)),speed=(getItem(surface?.type)?.speed||1)*(state.weather==="rain"&&surface?.type==="pathConcrete"?.72:1);guest.x+=dx/dist*Math.min(dist,dt*.9*speed);guest.y+=dy/dist*Math.min(dist,dt*.9*speed);continue;}guest.routeIndex=(guest.routeIndex||0)+1;continue;}
+      if(target==="exit"){submitGuestReview(guest);guest.remove=true;continue;}
+      processGuestArrival(guest,target,getItem(target.type));
     }
-    guests=guests.filter(guest=>!guest.remove&&guest.age<420);
+    guests=guests.filter(guest=>!guest.remove);
   }
 
   function processGuestArrival(guest,target,item){
     const rideStats=item.kind==="ride"?effectiveRideStats(target,item):null;let reference=0,urgency=1;if(item.kind==="ride")reference=rideStats.excitement*1.7*guest.thrill;if(item.kind==="food"){reference=7;urgency=1+guest.hunger/130;}if(item.kind==="restroom"){reference=.35;urgency=1+guest.bladder/35;}if(item.id==="atm")reference=3;
     const quality=.75+state.reputation/180+Math.min(.25,state.atmosphere/200),loyalty=guest.happiness/75,willing=reference*urgency*quality*loyalty;
     const accepted=guest.wallet>=target.price&&(target.price<=willing||Math.random()<clamp((willing-target.price)/Math.max(1,willing)*.5+.45,.05,.95));
-    if(!accepted){guest.thought="$!";guest.thoughtColor="#ff5368";guest.thoughtTimer=3;guest.happiness-=8;state.stats.complaints++;state.reputation=clamp(state.reputation-.025,0,100);guest.target=chooseTarget(guest)?.id||"exit";return;}
+    if(!accepted){guest.thought="$!";guest.thoughtColor="#ff5368";guest.thoughtTimer=3;guest.happiness-=8;state.stats.complaints++;state.reputation=clamp(state.reputation-.025,0,100);sendGuestToNext(guest);return;}
     guest.wallet-=target.price;let payout=target.price;if(target.type==="hairpin"&&hasUpgrade(target,2)&&((target.cycles||0)+1)%3===0)payout*=1.15;state.cash+=payout;state.totalRevenue+=payout;target.revenue=(target.revenue||0)+payout;
     if(item.kind==="ride"){guest.state="queued";guest.wait=rideStats.cycle;target.queue=(target.queue||0)+1;target.cycles=(target.cycles||0)+1;if(target.type==="flyer"&&hasUpgrade(target,2)&&target.cycles%10===0){state.reputation=clamp(state.reputation+1.5,0,100);notify("Synchronized stunt landed",`${target.customName||item.name} triggered a park-wide reputation burst.`);}}
-    else if(item.kind==="food"){guest.hunger=0;guest.thirst+=item.id==="fry"?22:7;guest.bladder+=8;guest.happiness+=4;dirtyNearbyPath(target,item.id==="fry"?5:3);guest.target=chooseTarget(guest)?.id||"exit";}
-    else if(item.kind==="restroom"){guest.bladder=0;guest.happiness+=target.price>2?-12:3;guest.target=chooseTarget(guest)?.id||"exit";}
-    else if(item.id==="atm"){guest.wallet+=50;guest.target=chooseTarget(guest)?.id||"exit";}
+    else if(item.kind==="food"){guest.hunger=0;guest.thirst+=item.id==="fry"?22:7;guest.bladder+=8;guest.happiness+=4;dirtyNearbyPath(target,item.id==="fry"?5:3);sendGuestToNext(guest);}
+    else if(item.kind==="restroom"){guest.bladder=0;guest.happiness+=target.price>2?-12:3;sendGuestToNext(guest);}
+    else if(item.id==="atm"){guest.wallet+=50;sendGuestToNext(guest);}
   }
 
   function dirtyNearbyPath(target,amount){const paths=state.objects.filter(o=>getItem(o.type)?.kind==="path").sort((a,b)=>distance(a,target)-distance(b,target));if(paths[0])paths[0].dirt=(paths[0].dirt||0)+amount;}
   function updateCleanliness(dt){const paths=state.objects.filter(o=>getItem(o.type)?.kind==="path");if(state.staff.janitors>0)for(const path of paths)path.dirt=Math.max(0,(path.dirt||0)-dt*.12*state.staff.janitors);const dirt=paths.reduce((sum,p)=>sum+(p.dirt||0),0);state.cleanliness=clamp(100-dirt/Math.max(1,paths.length)*1.5,0,100);if(state.cleanliness<50)state.reputation=clamp(state.reputation-dt*.002,0,100);}
-  function runDailyCosts(){const operators=state.objects.filter(o=>o.operator).length,wages=operators*50+state.staff.janitors*80+state.staff.mechanics*120;if(wages){state.cash-=wages;state.stats.expenses+=wages;notify("Daily payroll processed",`${money(wages)} paid to ${operators+state.staff.janitors+state.staff.mechanics} staff.`);}for(const path of state.objects.filter(o=>getItem(o.type)?.kind==="path"))path.condition=Math.max(0,(path.condition||100)-(path.type==="pathConcrete"?1.2:path.type==="pathWood"?.7:.4));}
+  function runDailyCosts(){const operators=state.objects.filter(o=>o.operator).length,wages=operators*50+state.staff.janitors*80+state.staff.mechanics*120;if(wages){state.cash-=wages;state.stats.expenses+=wages;notify("Daily payroll processed",`${money(wages)} paid to ${operators+state.staff.janitors+state.staff.mechanics} staff.`);}for(const path of state.objects.filter(o=>getItem(o.type)?.kind==="path"))path.condition=Math.max(0,(path.condition??100)-(path.type==="pathConcrete"?1.2:path.type==="pathWood"?.7:.4));}
   function rollWeather(){const roll=Math.random();state.weather=roll<.2?"rain":roll>.88?"heat":"clear";if(state.weather==="rain")notify("Rain system moving in","Puddles slow basic paths. LED asphalt retains full visibility.","warning");if(state.weather==="heat")notify("Heat advisory","Guest thirst rises faster and water rides gain demand.","warning");}
 
   function frame(now){
@@ -1086,6 +1166,7 @@
     $("#closeInspector").addEventListener("click",closeInspector);
     $("#menuButton").addEventListener("click",openMenu);
     $("#moneyCard").addEventListener("click",openFinance);
+    $("#reviewCard").addEventListener("click",openReviews);
     $("#levelDown").addEventListener("click",()=>changeLevel(-1));$("#levelUp").addEventListener("click",()=>changeLevel(1));
     $("#rotateButton").addEventListener("click",()=>{rotation=(rotation+1)%4;showWorldMessage(`Blueprint rotated ${rotation*90}°`);});
     $("#demolishButton").addEventListener("click",()=>{walkMode=false;state.activeTool="demolish";showWorldMessage("Demolition mode · select an asset to remove");updateUI();});
