@@ -14,6 +14,12 @@
   const LEVEL_H = 34;
   const STARTING_BUDGET = 50500;
   const LOT = { minX: -4, maxX: 16, minY: -3, maxY: 14 };
+  const REGIONS = {
+    meadow: { name: "Meadow Valley", description: "Open green terrain with balanced weather and classic park scenery.", lot: "#4e7c55", outer: "#345e48", sky: ["#6fa7b8","#a8c6bc"] },
+    coast: { name: "Sunset Beach", description: "A sandy oceanfront lot with waves, fishing docks, boats, and bright coastal atmosphere.", lot: "#b99968", outer: "#87a875", sky: ["#55a9d5","#c4e6de"] },
+    alpine: { name: "Alpine Ridge", description: "Cool mountain grass, rocky ledges, pines, and a dramatic highland skyline.", lot: "#5f7c62", outer: "#465d51", sky: ["#668ca6","#cad8d2"] },
+    desert: { name: "Desert Springs", description: "Warm canyon soil, scattered cacti, red rocks, and clear golden skies.", lot: "#a9784e", outer: "#77543d", sky: ["#c07850","#e6c493"] }
+  };
 
   const RIDES = {
     timber: { name: "Timber Ridge Hybrid", icon: "⌁", family: "Hybrid Coaster", coaster: true, ledgerBuild: true, maxSpeed: 70, maxHeight: 4, cost: 32000, freight: 0, delivery: 0, w: 8, h: 5, capacity: 24, cycle: 130, excitement: 7.1, intensity: 6.8, nausea: 4.2, reliability: 84, power: 20, color: "#b77942", description: "A wood-and-steel baseline coaster with a chain lift and compact airtime profile." },
@@ -104,9 +110,19 @@
       { id: "tree", name: "Redwood Cluster", icon: "♠", cost: 450, kind: "decor", w: 1, h: 1, aura: 2, atmosphere: 3, description: "Natural shade and stress relief for nearby guests." },
       { id: "fountain", name: "Dancing Light Fountain", icon: "♒", cost: 2500, kind: "decor", w: 2, h: 2, aura: 4, atmosphere: 10, description: "Animated water jets and colored lights create a lively plaza centerpiece." },
       { id: "mascotStage", name: "Mascot Mini Stage", icon: "★", cost: 4500, kind: "decor", w: 3, h: 2, aura: 5, atmosphere: 12, description: "Short character shows delight families and brighten nearby paths." },
+      { id: "dock", name: "Boardwalk Dock Module", icon: "═", cost: 900, kind: "decor", w: 3, h: 1, aura: 2, atmosphere: 5, description: "Snap-together timber pier sections for beach promenades and waterside viewing decks." },
+      { id: "palm", name: "Coastal Palm Cluster", icon: "♧", cost: 650, kind: "decor", w: 1, h: 1, aura: 2, atmosphere: 4, description: "Wind-swept palms add shade and tropical character to paths and plazas." },
+      { id: "lighthouse", name: "Mini Lighthouse", icon: "◭", cost: 4200, kind: "decor", w: 2, h: 2, aura: 6, atmosphere: 13, description: "A rotating coastal beacon becomes a highly visible park landmark after dark." },
+      { id: "umbrella", name: "Beach Umbrellas", icon: "◒", cost: 500, kind: "decor", w: 2, h: 1, aura: 2, atmosphere: 3, description: "Colorful shade umbrellas create a relaxed guest rest area." },
+      { id: "tunnelPortal", name: "Stone Tunnel Portal", icon: "∩", cost: 1800, kind: "decor", w: 2, h: 1, aura: 2, atmosphere: 6, description: "A themed portal masks coaster track as it dives into an underground section." },
+      { id: "neonArch", name: "Neon Gateway Arch", icon: "Π", cost: 2200, kind: "decor", w: 2, h: 1, power: 2, aura: 4, atmosphere: 8, description: "A programmable light arch frames paths and futuristic ride entrances." },
       { id: "themeBoardwalk", name: "Boardwalk Theme", icon: "≈", cost: 5000, kind: "theme", theme: "boardwalk", description: "Paints connected ground with sand and weathered decking." },
       { id: "themeForest", name: "Eco-Forest Theme", icon: "♣", cost: 6000, kind: "theme", theme: "forest", description: "Redwoods, rocks, and lanterns reduce guest stress." },
-      { id: "themeShipyard", name: "Shipyard Theme", icon: "⌗", cost: 4500, kind: "theme", theme: "shipyard", description: "Industrial ground treatment that speeds mechanical construction." }
+      { id: "themeShipyard", name: "Shipyard Theme", icon: "⌗", cost: 4500, kind: "theme", theme: "shipyard", description: "Industrial ground treatment that speeds mechanical construction." },
+      { id: "themeBeach", name: "Tropical Beach Pack", icon: "☼", cost: 5500, kind: "theme", theme: "beach", description: "Adds pale sand, turquoise accents, palms, and seaside boardwalk styling." },
+      { id: "themeCarnival", name: "Colorburst Carnival Pack", icon: "✶", cost: 5200, kind: "theme", theme: "carnival", description: "Bright midway tiles and playful colors increase family appeal." },
+      { id: "themeNeon", name: "Future Neon Pack", icon: "◇", cost: 7500, kind: "theme", theme: "neon", description: "Dark tech flooring and luminous grid lines amplify high-speed attractions." },
+      { id: "themeAlpine", name: "Alpine Adventure Pack", icon: "▲", cost: 6200, kind: "theme", theme: "alpine", description: "Stone, snow edging, and rugged timber create a mountain expedition zone." }
     ]
   };
 
@@ -132,7 +148,7 @@
     blueprintPacks: { concrete: false, queue: false }, materials: {}, rideInventory: {}, pendingOrders: [], shipments: [],
     objects: [], themes: [], staff: { janitors: 0, mechanics: 0 }, admission: { model: "open", gatePrice: 0, dayPass: 35, seasonPass: 120 },
     player: { x: 8, y: 12, z: 0 }, stats: { expenses: 0, profit: 0, complaints: 0 }, weather: "clear",
-    reviewTotal: 0, reviewCount: 0, reviews: [], parkingCashFound: 0, bonuses: {},
+    reviewTotal: 0, reviewCount: 0, reviews: [], parkingCashFound: 0, bonuses: {}, region: "meadow",
     unlocked: { spinner: false, skid: false, hairpin: false, hydro: false, neon: false, flyer: false }, coasterLicenses: {}, powerTier: 1, level: 1, milestones: { path: false, freight: false }, lastSave: Date.now()
   });
 
@@ -334,9 +350,10 @@
   function drawWorld() {
     const width = canvas.viewWidth || canvas.width;
     const height = canvas.viewHeight || canvas.height;
+    const region=REGIONS[state.region]||REGIONS.meadow;
     const sky = ctx.createLinearGradient(0, 0, 0, height);
-    sky.addColorStop(0, state.weather === "rain" ? "#28404d" : "#6fa7b8");
-    sky.addColorStop(.45, state.weather === "rain" ? "#1d3340" : "#a8c6bc");
+    sky.addColorStop(0, state.weather === "rain" ? "#28404d" : region.sky[0]);
+    sky.addColorStop(.45, state.weather === "rain" ? "#1d3340" : region.sky[1]);
     sky.addColorStop(1, "#1c3a35");
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, width, height);
@@ -366,23 +383,47 @@
   }
 
   function drawTerrain() {
+    const region=REGIONS[state.region]||REGIONS.meadow;
     for (let sum = -10; sum <= 44; sum++) {
       for (let x = -7; x <= 29; x++) {
         const y = sum - x;
         if (y < -6 || y > 16) continue;
-        let color = "#345e48";
-        if (x >= LOT.minX && x <= LOT.maxX && y >= LOT.minY && y <= LOT.maxY) color = "#4e7c55";
+        let color = region.outer;
+        if (state.region==="coast"&&(x<LOT.minX||y<LOT.minY))color=(x>=LOT.minX-1||y>=LOT.minY-1)?"#d2b77c":"#26758c";
+        if (x >= LOT.minX && x <= LOT.maxX && y >= LOT.minY && y <= LOT.maxY) color = region.lot;
         if (x >= 18 && x <= 28 && y >= 0 && y <= 14) color = "#47555a";
         if (y === 15 || y === 16) color = "#303b40";
         const themed = state.themes.find(theme => theme.x === x && theme.y === y);
         if (themed?.type === "boardwalk") color = "#a38b68";
         if (themed?.type === "forest") color = "#315b42";
         if (themed?.type === "shipyard") color = "#4c5559";
+        if (themed?.type === "beach") color = "#cfb67f";
+        if (themed?.type === "carnival") color = (x+y)%2?"#8e5e6e":"#65829a";
+        if (themed?.type === "neon") color = (x+y)%2?"#182c3e":"#20384a";
+        if (themed?.type === "alpine") color = (x+y)%3?"#63766c":"#89928a";
         diamond(x, y, color);
       }
     }
+    drawRegionScenery();
     drawRoadMarkings();
     drawFence();
+  }
+
+  function drawRegionScenery(){
+    ctx.save();
+    if(state.region==="coast"){
+      for(let x=-7;x<=-5;x++)tileTop(x,4,.04,"#8e623c",1);
+      const pier=iso(-5.5,4.5);ctx.fillStyle="#70462c";for(let i=0;i<4;i++)ctx.fillRect(pier.x-45+i*28,pier.y+8,4,27);
+      ctx.strokeStyle="rgba(195,244,255,.75)";ctx.lineWidth=2;for(let i=0;i<5;i++){const a=iso(-6.5+i*.8,-4.4);ctx.beginPath();ctx.arc(a.x,a.y+12,10,0,Math.PI);ctx.stroke();}
+      const boat=iso(-5.8,-4.8);ctx.fillStyle="#f1e5c9";ctx.beginPath();ctx.moveTo(boat.x-22,boat.y);ctx.lineTo(boat.x+23,boat.y);ctx.lineTo(boat.x+13,boat.y+10);ctx.lineTo(boat.x-13,boat.y+10);ctx.closePath();ctx.fill();ctx.strokeStyle="#d85d4b";ctx.beginPath();ctx.moveTo(boat.x,boat.y);ctx.lineTo(boat.x,boat.y-30);ctx.lineTo(boat.x+18,boat.y-10);ctx.closePath();ctx.stroke();
+    }else if(state.region==="alpine"){
+      for(const [x,y,s] of [[-5,-3,34],[-6,5,28],[11,-5,38]]){const p=iso(x,y);ctx.fillStyle="#5c6b68";ctx.beginPath();ctx.moveTo(p.x-s,p.y);ctx.lineTo(p.x,p.y-s*1.5);ctx.lineTo(p.x+s,p.y);ctx.closePath();ctx.fill();ctx.fillStyle="#d8e4df";ctx.beginPath();ctx.moveTo(p.x-s*.3,p.y-s);ctx.lineTo(p.x,p.y-s*1.5);ctx.lineTo(p.x+s*.32,p.y-s);ctx.closePath();ctx.fill();}
+    }else if(state.region==="desert"){
+      for(const [x,y] of [[-5,2],[-6,9],[12,-5]]){const p=iso(x,y);ctx.fillStyle="#39724d";ctx.fillRect(p.x-3,p.y-33,6,34);ctx.fillRect(p.x-13,p.y-25,12,5);ctx.fillRect(p.x+2,p.y-18,12,5);ctx.fillStyle="#8d4939";ctx.beginPath();ctx.ellipse(p.x+18,p.y,17,8,0,0,Math.PI*2);ctx.fill();}
+    }else{
+      for(const [x,y,color] of [[-6,3,"#ffd35a"],[-5,8,"#ff7fa3"],[12,-5,"#8fd9ff"]]){const p=iso(x,y);ctx.fillStyle=color;for(let i=0;i<5;i++){ctx.beginPath();ctx.arc(p.x+Math.cos(i*1.26)*6,p.y-5+Math.sin(i*1.26)*3,3,0,Math.PI*2);ctx.fill();}}
+    }
+    ctx.restore();
   }
 
   function drawRoadMarkings() {
@@ -542,6 +583,7 @@
       ctx.strokeStyle = "#263945"; ctx.lineWidth = 2; ctx.stroke();
       for (let i = 0; i < 5; i++) { ctx.strokeStyle = "#7d8d92"; ctx.beginPath(); ctx.moveTo(p.x - item.w * 18 + i * item.w * 9, p.y); ctx.lineTo(p.x - item.w * 18 + i * item.w * 9, p.y + 30); ctx.stroke(); }
       if (object.type === "hydro") { ctx.strokeStyle = "#54d7ef"; ctx.lineWidth = 10; ctx.beginPath(); ctx.ellipse(p.x, p.y, item.w * 17, item.h * 8, 0, 0, Math.PI * 2); ctx.stroke(); }
+      if(object.open){const angle=performance.now()/900,x=p.x+Math.cos(angle)*item.w*19,y=p.y-5+Math.sin(angle)*item.h*10;ctx.fillStyle=object.type==="safari"?"#d59c4f":item.color;ctx.fillRect(x-10,y-5,20,9);ctx.fillStyle="#e9f5f4";ctx.fillRect(x-6,y-8,5,4);ctx.fillRect(x+2,y-8,5,4);}
     }
     const displayName=object.customName||item.name;
     if (object.broken) drawWorldLabel(p.x, p.y - 67, "⚠ RIDE SHUTDOWN", "#ff5368");
@@ -556,8 +598,9 @@
     for(const node of nodes){if(node.z>0){const top=iso(node.x+.5,node.y+.5,node.z),ground=iso(node.x+.5,node.y+.5,0);ctx.strokeStyle="rgba(80,96,104,.8)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(top.x,top.y+10);ctx.lineTo(ground.x,ground.y+12);ctx.stroke();}}
     ctx.strokeStyle=object.state==="blueprint"?"rgba(75,255,181,.6)":item.color;ctx.lineWidth=item.id==="hydro"?10:6;ctx.setLineDash(object.state==="blueprint"?[7,5]:[]);ctx.beginPath();
     nodes.forEach((node,index)=>{const p=iso(node.x+.5,node.y+.5,node.z);index?ctx.lineTo(p.x,p.y+12):ctx.moveTo(p.x,p.y+12);});ctx.stroke();
+    for(let index=1;index<nodes.length;index++){const a=nodes[index-1],b=nodes[index];if(a.z>=0&&b.z>=0)continue;const pa=iso(a.x+.5,a.y+.5,a.z),pb=iso(b.x+.5,b.y+.5,b.z);ctx.strokeStyle="rgba(12,26,33,.9)";ctx.lineWidth=item.id==="hydro"?13:9;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(pa.x,pa.y+12);ctx.lineTo(pb.x,pb.y+12);ctx.stroke();ctx.strokeStyle="#66b7ae";ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);}
     ctx.strokeStyle=object.state==="blueprint"?"rgba(225,255,241,.55)":"#d4e2e5";ctx.lineWidth=1.5;ctx.beginPath();nodes.forEach((node,index)=>{const p=iso(node.x+.5,node.y+.5,node.z);index?ctx.lineTo(p.x,p.y+9):ctx.moveTo(p.x,p.y+9);});ctx.stroke();ctx.setLineDash([]);
-    if(object.open&&nodes.length>1){const progress=(performance.now()/90)%nodes.length,index=Math.floor(progress),next=(index+1)%nodes.length,t=progress-index,a=iso(nodes[index].x+.5,nodes[index].y+.5,nodes[index].z),b=iso(nodes[next].x+.5,nodes[next].y+.5,nodes[next].z);ctx.fillStyle="#f5f8f8";ctx.fillRect(a.x+(b.x-a.x)*t-6,a.y+(b.y-a.y)*t+4,12,7);}
+    if(object.open&&nodes.length>1){const cars=clamp(object.cars||3,1,5);for(let car=0;car<cars;car++){const progress=((performance.now()/90)-car*.28+nodes.length)%nodes.length,index=Math.floor(progress),next=(index+1)%nodes.length,t=progress-index,a=iso(nodes[index].x+.5,nodes[index].y+.5,nodes[index].z),b=iso(nodes[next].x+.5,nodes[next].y+.5,nodes[next].z),x=a.x+(b.x-a.x)*t,y=a.y+(b.y-a.y)*t;ctx.fillStyle=item.id==="hydro"?"#e8b75d":car?item.color:"#f5f8f8";ctx.fillRect(x-7,y+2,14,8);ctx.fillStyle="#122937";ctx.fillRect(x-4,y,8,4);if(nodes[index].z<0){ctx.fillStyle="rgba(255,237,147,.4)";ctx.beginPath();ctx.arc(x,y+5,10,0,Math.PI*2);ctx.fill();}}}
     const center=nodes.reduce((sum,node)=>({x:sum.x+node.x,y:sum.y+node.y,z:sum.z+node.z}),{x:0,y:0,z:0});center.x/=nodes.length;center.y/=nodes.length;center.z/=nodes.length;const label=iso(center.x+.5,center.y+.5,center.z);
     const display=object.customName||item.name;if(object.broken)drawWorldLabel(label.x,label.y-45,"⚠ SAFE SHUTDOWN","#ff5368");else if(object.state==="blueprint")drawWorldLabel(label.x,label.y-45,"AUTHORIZE TRACK CONSTRUCTION","#53d998");else if(object.state==="constructing")drawWorldLabel(label.x,label.y-45,`TRACK ASSEMBLY ${Math.ceil(object.buildRemaining)}s`,"#ffb456");else drawWorldLabel(label.x,label.y-45,`${display.toUpperCase()} · ${object.open?"OPEN":"CLOSED"}`,object.open?"#53d998":"#91aab6");
     if(object.broken){for(let i=0;i<5;i++){const px=label.x+Math.sin(performance.now()/250+i)*10,py=label.y-35-i*7;ctx.fillStyle=`rgba(170,190,195,${.5-i*.07})`;ctx.beginPath();ctx.arc(px,py,5+i*2,0,Math.PI*2);ctx.fill();}}
@@ -581,6 +624,14 @@
     if (item.id === "lantern") { ctx.fillStyle = "rgba(255,211,98,.2)"; ctx.beginPath(); ctx.arc(p.x, p.y - 15, 18, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = "#ffd96b"; ctx.fillRect(p.x - 3, p.y - 22, 6, 8); }
     else if (item.id === "tree") { ctx.fillStyle = "#564430"; ctx.fillRect(p.x - 3, p.y - 30, 6, 32); ctx.fillStyle = "#2f704c"; for (let i=0;i<3;i++){ctx.beginPath();ctx.arc(p.x+(i-1)*8,p.y-38-i*4,13,0,Math.PI*2);ctx.fill();} }
     else if (item.id === "dino") { ctx.strokeStyle = "#ded8b5"; ctx.lineWidth = 4; ctx.beginPath();ctx.moveTo(p.x-45,p.y-5);ctx.quadraticCurveTo(p.x,p.y-70,p.x+48,p.y-18);ctx.stroke();for(let i=0;i<5;i++){ctx.beginPath();ctx.moveTo(p.x-24+i*12,p.y-39);ctx.lineTo(p.x-20+i*12,p.y-14);ctx.stroke();} }
+    else if(item.id==="dock"){ctx.fillStyle="#94633d";ctx.fillRect(p.x-52,p.y-18,104,20);ctx.strokeStyle="#d2a66f";ctx.lineWidth=2;for(let i=-45;i<50;i+=15){ctx.beginPath();ctx.moveTo(p.x+i,p.y-17);ctx.lineTo(p.x+i,p.y+1);ctx.stroke();}ctx.fillStyle="#65442f";ctx.fillRect(p.x-45,p.y,5,17);ctx.fillRect(p.x+40,p.y,5,17);}
+    else if(item.id==="palm"){ctx.strokeStyle="#7e5c39";ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.quadraticCurveTo(p.x-4,p.y-25,p.x+5,p.y-48);ctx.stroke();ctx.strokeStyle="#3c8b59";ctx.lineWidth=5;for(let i=0;i<7;i++){const a=i*Math.PI*2/7;ctx.beginPath();ctx.moveTo(p.x+5,p.y-48);ctx.lineTo(p.x+5+Math.cos(a)*22,p.y-48+Math.sin(a)*9);ctx.stroke();}}
+    else if(item.id==="lighthouse"){ctx.fillStyle="#ece9dc";ctx.beginPath();ctx.moveTo(p.x-15,p.y);ctx.lineTo(p.x-10,p.y-55);ctx.lineTo(p.x+10,p.y-55);ctx.lineTo(p.x+15,p.y);ctx.closePath();ctx.fill();ctx.fillStyle="#d85d4b";ctx.fillRect(p.x-12,p.y-43,24,9);ctx.fillRect(p.x-14,p.y-61,28,9);ctx.fillStyle="#ffe68a";ctx.beginPath();ctx.arc(p.x,p.y-65,7,0,Math.PI*2);ctx.fill();const sweep=performance.now()/900;ctx.fillStyle="rgba(255,235,150,.13)";ctx.beginPath();ctx.moveTo(p.x,p.y-65);ctx.lineTo(p.x+Math.cos(sweep)*100,p.y-65+Math.sin(sweep)*35);ctx.lineTo(p.x+Math.cos(sweep+.2)*100,p.y-65+Math.sin(sweep+.2)*35);ctx.closePath();ctx.fill();}
+    else if(item.id==="umbrella"){for(let i=-1;i<=1;i++){ctx.strokeStyle="#d5e0df";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p.x+i*24,p.y);ctx.lineTo(p.x+i*24,p.y-24);ctx.stroke();ctx.fillStyle=i%2?"#4cc3d9":"#ff7d6f";ctx.beginPath();ctx.arc(p.x+i*24,p.y-24,13,Math.PI,Math.PI*2);ctx.fill();}}
+    else if(item.id==="fountain"){ctx.fillStyle="#447487";ctx.beginPath();ctx.ellipse(p.x,p.y,32,13,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#70dcf0";ctx.lineWidth=3;for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(p.x+i*9,p.y-3);ctx.quadraticCurveTo(p.x+i*6,p.y-30-Math.abs(i)*3,p.x,p.y-8);ctx.stroke();}}
+    else if(item.id==="mascotStage"){ctx.fillStyle="#67406e";ctx.fillRect(p.x-45,p.y-25,90,25);ctx.fillStyle="#f1c85e";ctx.fillRect(p.x-38,p.y-32,76,8);ctx.fillStyle="#ff8da1";ctx.beginPath();ctx.arc(p.x,p.y-43,10,0,Math.PI*2);ctx.fill();ctx.fillStyle="#eee";ctx.fillRect(p.x-7,p.y-33,14,19);}
+    else if(item.id==="tunnelPortal"){ctx.strokeStyle="#817e78";ctx.lineWidth=10;ctx.beginPath();ctx.arc(p.x,p.y,27,Math.PI,Math.PI*2);ctx.stroke();ctx.fillStyle="#10171b";ctx.beginPath();ctx.arc(p.x,p.y,20,Math.PI,Math.PI*2);ctx.fill();ctx.fillRect(p.x-20,p.y-2,40,8);}
+    else if(item.id==="neonArch"){ctx.strokeStyle="#63e8ff";ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(p.x-26,p.y);ctx.lineTo(p.x-26,p.y-30);ctx.quadraticCurveTo(p.x,p.y-55,p.x+26,p.y-30);ctx.lineTo(p.x+26,p.y);ctx.stroke();ctx.strokeStyle="#ff6bd8";ctx.lineWidth=2;ctx.stroke();}
     else { ctx.fillStyle = "#284454"; ctx.fillRect(p.x - 20, p.y - 32, 40, 31); ctx.fillStyle = "#f6d8a4"; ctx.beginPath();ctx.arc(p.x,p.y-18,10,0,Math.PI*2);ctx.fill(); }
   }
 
@@ -655,7 +706,7 @@
       const node=nodes[index];
       if(node.x<LOT.minX||node.x>LOT.maxX||node.y<LOT.minY||node.y>LOT.maxY)return{ok:false,reason:"Track outside park boundary"};
       if(reservedCell(node.x,node.y))return{ok:false,reason:"Municipal structure clearance violated"};
-      if(node.z< -1||node.z>item.maxHeight)return{ok:false,reason:`Height Limit: B1 to ${levelLabel(item.maxHeight)}`};
+      if(node.z< -3||node.z>item.maxHeight)return{ok:false,reason:`Height Limit: B3 to ${levelLabel(item.maxHeight)}`};
       const stairCollision=state.objects.find(object=>getItem(object.type)?.kind==="vertical"&&object.x===node.x&&object.y===node.y&&Math.abs(object.z-node.z)<=1);
       if(stairCollision)return{ok:false,reason:"Vertical Collision: Stair Clearance Violated"};
       const collision=state.objects.find(object=>objectCovers(object,node.x,node.y,node.z)&&!["path","queue"].includes(getItem(object.type)?.kind));
@@ -680,16 +731,33 @@
 
   function openCoasterBuilder(item){
     const layouts=Object.entries(TRACK_LAYOUTS).filter(([,layout])=>layout.ride===item.id);
-    openModal(modalShell("CUSTOM TRACK LEDGER",item.name,`<p class="modal-copy">Set the ride name, then sculpt a node-by-node circuit or deploy a validated minimalist layout. Maximum ${item.maxSpeed} mph · maximum height L${item.maxHeight+1}.</p><label class="inspector-label">CUSTOM RIDE NAME</label><input id="coasterName" class="name-input" maxlength="32" value="${item.name}"><div class="shop-grid" style="margin-top:12px"><article class="shop-card"><header><h3>◇ Custom Track</h3><strong>NODE EDITOR</strong></header><p>Click grid nodes, use Q/E for height, X to undo, and Enter to validate the closed circuit.</p><button data-track-custom>OPEN EDITOR</button></article>${layouts.map(([id,layout])=>`<article class="shop-card"><header><h3>${layout.name}</h3><strong>${layout.w}×${layout.h}</strong></header><p>${layout.description}</p><button data-layout="${id}">USE PREBUILT</button></article>`).join("")}</div>`,`<button class="modal-button" data-close>Cancel</button>`),()=>{
+    openModal(modalShell("CUSTOM TRACK LEDGER",item.name,`<p class="modal-copy">Set the ride name and train size, then sculpt every left, right, rise, drop, and underground tunnel down to B3. Maximum ${item.maxSpeed} mph · maximum height L${item.maxHeight+1}.</p><label class="inspector-label">CUSTOM RIDE NAME</label><input id="coasterName" class="name-input" maxlength="32" value="${item.name}"><label class="inspector-label" style="margin-top:12px">CARTS PER TRAIN</label><select id="coasterCars" class="name-input" style="font-size:15px"><option value="1">1 individual cart</option><option value="2">2 linked carts</option><option value="3" selected>3 linked carts</option><option value="4">4 linked carts</option><option value="5">5 linked carts</option></select><div class="shop-grid" style="margin-top:12px"><article class="shop-card"><header><h3>◇ Custom Track</h3><strong>DIRECTION EDITOR</strong></header><p>Click a station tile, then use the on-screen arrows or WASD. Q dives, E rises, X undoes, and Enter finishes.</p><button data-track-custom>OPEN EDITOR</button></article>${layouts.map(([id,layout])=>`<article class="shop-card"><header><h3>${layout.name}</h3><strong>${layout.w}×${layout.h}</strong></header><p>${layout.description}</p><button data-layout="${id}">USE PREBUILT</button></article>`).join("")}</div>`,`<button class="modal-button" data-close>Cancel</button>`),()=>{
       $$("[data-close]").forEach(button=>button.onclick=closeModal);
-      $('[data-track-custom]').onclick=()=>{pendingRideName=$("#coasterName").value.trim()||item.name;trackDraft={rideId:item.id,nodes:[],name:pendingRideName};state.activeTool=`track:${item.id}`;walkMode=false;closeModal();updateUI();showWorldMessage("Track Editor · click nodes · Q/E levels · X undo · Enter finish");};
-      $$('[data-layout]').forEach(button=>button.onclick=()=>{pendingRideName=$("#coasterName").value.trim()||item.name;trackDraft={rideId:item.id,nodes:[],name:pendingRideName,layoutId:button.dataset.layout};state.activeTool=`prebuilt:${item.id}`;walkMode=false;closeModal();updateUI();showWorldMessage(`${TRACK_LAYOUTS[button.dataset.layout].name} · choose an anchor tile`);});
+      $('[data-track-custom]').onclick=()=>{pendingRideName=$("#coasterName").value.trim()||item.name;trackDraft={rideId:item.id,nodes:[],name:pendingRideName,cars:Number($("#coasterCars").value)||3};state.activeTool=`track:${item.id}`;walkMode=false;closeModal();updateUI();showWorldMessage("Track Editor · click a station tile, then choose every direction");};
+      $$('[data-layout]').forEach(button=>button.onclick=()=>{pendingRideName=$("#coasterName").value.trim()||item.name;trackDraft={rideId:item.id,nodes:[],name:pendingRideName,cars:Number($("#coasterCars").value)||3,layoutId:button.dataset.layout};state.activeTool=`prebuilt:${item.id}`;walkMode=false;closeModal();updateUI();showWorldMessage(`${TRACK_LAYOUTS[button.dataset.layout].name} · choose an anchor tile`);});
     });
   }
 
   function addTrackNode(tile){
     if(!trackDraft)return;const item=getItem(trackDraft.rideId),node={x:tile.x,y:tile.y,z:state.buildLevel},nodes=[...trackDraft.nodes,node],validation=validateTrackNodes(nodes,item,false);
-    if(!validation.ok){showWorldMessage(validation.reason);return;}trackDraft.nodes.push(node);$("#dockInstruction").textContent=`Track node ${trackDraft.nodes.length} · ${levelLabel(node.z)} · Enter validates`; 
+    if(!validation.ok){showWorldMessage(validation.reason);return;}trackDraft.nodes.push(node);$("#dockInstruction").textContent=`Track node ${trackDraft.nodes.length} · ${levelLabel(node.z)} · Enter validates`;updateTrackControls();
+  }
+
+  function stepTrackDirection(direction){
+    if(!trackDraft||!state.activeTool?.startsWith("track:"))return;
+    const last=trackDraft.nodes.at(-1);if(!last){showWorldMessage("Click a grid tile to place the station first");return;}
+    const moves={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]},move=moves[direction];if(!move)return;
+    addTrackNode({x:last.x+move[0],y:last.y+move[1],z:state.buildLevel});
+  }
+
+  function undoTrackNode(){
+    if(!trackDraft?.nodes.length)return;trackDraft.nodes.pop();const last=trackDraft.nodes.at(-1);if(last)state.buildLevel=last.z;
+    showWorldMessage(`Removed last track node · ${trackDraft.nodes.length} remain`);updateTrackControls();updateUI();
+  }
+
+  function updateTrackControls(){
+    const active=!!trackDraft&&state.activeTool?.startsWith("track:"),panel=$("#trackControls");panel.classList.toggle("hidden",!active);if(!active)return;
+    $("#trackDepthStatus").textContent=levelLabel(state.buildLevel);$("#trackControlStatus").textContent=trackDraft.nodes.length?`${trackDraft.nodes.length} NODES · ${trackDraft.cars||3} CARTS`:"CLICK A STATION TILE";
   }
 
   function finalizeTrack(){
@@ -703,7 +771,7 @@
   function placeTrackRide(id,nodes,name,layout){
     const item=getItem(id),ledger=item.ledgerBuild&&(state.rideInventory[id]||0)<1;if(ledger&&state.cash<item.cost){showWorldMessage("Insufficient cash for coaster hardware");return;}if(!ledger&&(state.rideInventory[id]||0)<1){showWorldMessage("Coaster hardware has not been delivered");return;}
     if(ledger){state.cash-=item.cost;state.stats.expenses+=item.cost;}else state.rideInventory[id]--;
-    const xs=nodes.map(node=>node.x),ys=nodes.map(node=>node.y),object={id:uid("coaster"),type:id,x:Math.min(...xs),y:Math.min(...ys),z:0,track:nodes.map(node=>({...node})),layout,customName:name||item.name,state:"blueprint",operator:false,open:false,queue:0,cycles:0,condition:100,price:Math.max(6,item.excitement*1.5),revenue:0,upgrades:[]};state.objects.push(object);state.activeTool=null;trackDraft=null;state.buildLevel=0;if(state.tutorial===8)advanceTutorial(9);notify(`${object.customName} anchored`,`${layout} passed track geometry validation. Authorize construction from the inspector.`);selected=object.id;renderInspector(object);renderBuildItems();updateUI();saveTimer=99;save();
+    const xs=nodes.map(node=>node.x),ys=nodes.map(node=>node.y),object={id:uid("coaster"),type:id,x:Math.min(...xs),y:Math.min(...ys),z:0,track:nodes.map(node=>({...node})),layout,cars:trackDraft?.cars||3,customName:name||item.name,state:"blueprint",operator:false,open:false,queue:0,cycles:0,condition:100,price:Math.max(6,item.excitement*1.5),revenue:0,upgrades:[]};state.objects.push(object);state.activeTool=null;trackDraft=null;state.buildLevel=0;if(state.tutorial===8)advanceTutorial(9);notify(`${object.customName} anchored`,`${layout} passed track geometry validation. Authorize construction from the inspector.`);selected=object.id;renderInspector(object);renderBuildItems();updateUI();saveTimer=99;save();
   }
 
   function validatePlacement(item, x, y, z) {
@@ -799,7 +867,7 @@
 
   function setTab(tab) {
     if (tab === "finance") { openFinance(); return; }
-    state.activeTab=tab; state.activeTool=null;
+    state.activeTab=tab; state.activeTool=null;trackDraft=null;
     $$(".dock-tabs button").forEach(button=>button.classList.toggle("active",button.dataset.tab===tab));
     renderBuildItems(); updateUI();
   }
@@ -853,7 +921,7 @@
     if(!state.activeTool)$("#dockInstruction").textContent=state.toolkit?"Select a blueprint to begin construction":"Register and collect your toolkit";
     $("#walkToggle").classList.toggle("active",walkMode);$("#walkToggle").innerHTML=walkMode?`<span>◆</span> WALK MODE <kbd>V</kbd>`:`<span>◇</span> BUILD MODE <kbd>V</kbd>`;
     $("#controlHint").textContent=walkMode?"WASD move · E interact · V build mode":"Click to place · Shift locks path axis · Q/E levels · R rotates";
-    $("#coordsValue").textContent=`LOT 01 · L${state.buildLevel+1}`;
+    $("#coordsValue").textContent=`${(REGIONS[state.region]||REGIONS.meadow).name.toUpperCase()} · ${levelLabel(state.buildLevel)}`;
     $$(".speed-controls button").forEach(button=>button.classList.toggle("active",+button.dataset.speed===state.speed));
     const step=Math.min(state.tutorial,TOUR_STEPS.length-1), objective=TOUR_STEPS[step];
     $("#objectiveStep").textContent=state.tutorial>=TOUR_STEPS.length?"COMPLETE":`${String(step+1).padStart(2,"0")} / ${String(TOUR_STEPS.length).padStart(2,"0")}`;
@@ -861,6 +929,7 @@
     $("#objectiveText").textContent=state.tutorial>=TOUR_STEPS.length?"Expand the lot, tune your prices, and grow a vertical amusement empire.":objective[1];
     $("#objectiveFill").style.width=`${clamp(state.tutorial/TOUR_STEPS.length*100,4,100)}%`;
     renderBuildItems();
+    updateTrackControls();
   }
 
   function advanceTutorial(step) {
@@ -977,7 +1046,7 @@
     let body=`<section class="inspector-section"><p class="inspector-copy">${item.description}</p>${item.kind==="ride"?`<label class="inspector-label" style="margin-top:10px">CUSTOM RIDE NAME</label><input data-ride-name class="name-input" maxlength="32" value="${escapeHtml(object.customName||item.name)}">`:""}</section>`;
     if(item.kind==="ride"){
       const stats=effectiveRideStats(object,item);
-      body+=`<section class="inspector-section"><label>LIVE RIDE TELEMETRY</label><div class="stat-row"><span>Excitement</span><strong>${stats.excitement.toFixed(1)} / 10</strong></div><div class="stat-row"><span>Intensity</span><strong>${item.intensity} / 10</strong></div><div class="stat-row"><span>Nausea</span><strong>${stats.nausea.toFixed(1)} / 10</strong></div>${item.coaster?`<div class="stat-row"><span>Safety envelope</span><strong>${item.maxSpeed} mph · L${item.maxHeight+1}</strong></div><div class="stat-row"><span>Track layout</span><strong>${object.layout||"Custom"}</strong></div>`:""}<div class="stat-row"><span>Reliability</span><strong>${Math.round(object.condition)}%</strong></div><div class="meter"><i style="width:${object.condition}%;background:${object.condition<30?'#ff5368':'#53d998'}"></i></div><div class="stat-row"><span>Queue</span><strong>${object.queue||0} guests</strong></div><div class="stat-row"><span>Lifetime revenue</span><strong>${money(object.revenue||0)}</strong></div></section>`;
+      body+=`<section class="inspector-section"><label>LIVE RIDE TELEMETRY</label><div class="stat-row"><span>Excitement</span><strong>${stats.excitement.toFixed(1)} / 10</strong></div><div class="stat-row"><span>Intensity</span><strong>${item.intensity} / 10</strong></div><div class="stat-row"><span>Nausea</span><strong>${stats.nausea.toFixed(1)} / 10</strong></div>${item.coaster?`<div class="stat-row"><span>Safety envelope</span><strong>${item.maxSpeed} mph · L${item.maxHeight+1}</strong></div><div class="stat-row"><span>Track layout</span><strong>${object.layout||"Custom"}</strong></div><div class="stat-row"><span>Train consist</span><strong>${object.cars||3} carts</strong></div><div class="stat-row"><span>Deepest tunnel</span><strong>${levelLabel(Math.min(0,...(object.track||[]).map(node=>node.z)))}</strong></div>`:""}<div class="stat-row"><span>Reliability</span><strong>${Math.round(object.condition)}%</strong></div><div class="meter"><i style="width:${object.condition}%;background:${object.condition<30?'#ff5368':'#53d998'}"></i></div><div class="stat-row"><span>Queue</span><strong>${object.queue||0} guests</strong></div><div class="stat-row"><span>Lifetime revenue</span><strong>${money(object.revenue||0)}</strong></div></section>`;
       if(object.state==="blueprint") body+=`<section class="inspector-section"><label>CONSTRUCTION AUTHORIZATION</label><p class="inspector-copy">The footprint is anchored. Authorize your starter crew to assemble the mechanical components.</p><button class="inspector-button primary" data-action="authorize">AUTHORIZE CONSTRUCTION</button></section>`;
       else if(object.state==="constructing") body+=`<section class="inspector-section"><label>ASSEMBLY IN PROGRESS</label><div class="stat-row"><span>Time remaining</span><strong>${Math.ceil(object.buildRemaining)} sec</strong></div><button class="inspector-button orange" data-action="rushBuild">RUSH CREW · $1,000</button></section>`;
       else {
@@ -1033,10 +1102,11 @@
     openModal(modalShell("VISITOR REVIEWS · APPEARANCE","What guests think of your park",`<div class="review-summary"><strong>${average?average.toFixed(1):"—"}</strong><span>AVERAGE STARS<br>${state.reviewCount||0} VERIFIED REVIEW${state.reviewCount===1?"":"S"}</span></div><div class="shop-stats review-factors"><span>ATMOSPHERE ${Math.round(state.atmosphere)}</span><span>CLEANLINESS ${Math.round(state.cleanliness)}%</span><span>PATH QUALITY ${Math.round(pathQuality)}%</span></div><div class="review-list">${recent}</div>`,`<button class="modal-button primary" data-close>Back to park</button>`),()=>{$$("[data-close]").forEach(button=>button.onclick=closeModal);});
   }
 
-  function openMenu(){openModal(modalShell("PARK MANAGEMENT","Session controls",`<p class="modal-copy">${state.profile?`${state.profile}'s park`:"Unregistered park"} · Day ${state.day} · Local browser save</p><div class="shop-grid"><article class="shop-card"><h3>Staff roster</h3><p>Janitors sweep assigned paths. Mechanics automatically respond to safe ride shutdowns.</p><div class="shop-stats"><span>${state.staff.janitors} JANITORS</span><span>${state.staff.mechanics} MECHANICS</span></div><button id="hireJanitor">HIRE JANITOR · $80/day</button><button id="hireMechanic" style="margin-top:5px">HIRE MECHANIC · $120/day</button></article><article class="shop-card"><h3>Lot expansion</h3><p>Unlock drifting attractions and raise park capacity after operating two rides and welcoming 50 lifetime guests.</p><button id="expandLot" ${state.lotTier>1||state.cash<12000||state.totalGuests<50||state.objects.filter(o=>getItem(o.type)?.kind==="ride"&&o.open).length<2?"disabled":""}>PERMIT · $12,000</button></article></div>`,`<button class="modal-button" data-close>Resume</button><button id="saveNow" class="modal-button primary">SAVE NOW</button><button id="resetGame" class="modal-button">RESET PARK</button>`),()=>{
+  function openMenu(){const regionOptions=Object.entries(REGIONS).map(([id,region])=>`<option value="${id}" ${state.region===id?"selected":""}>${region.name}</option>`).join("");openModal(modalShell("PARK MANAGEMENT","Session controls",`<p class="modal-copy">${state.profile?`${state.profile}'s park`:"Unregistered park"} · Day ${state.day} · Local browser save</p><div class="shop-grid"><article class="shop-card"><h3>Staff roster</h3><p>Janitors sweep assigned paths. Mechanics automatically respond to safe ride shutdowns.</p><div class="shop-stats"><span>${state.staff.janitors} JANITORS</span><span>${state.staff.mechanics} MECHANICS</span></div><button id="hireJanitor">HIRE JANITOR · $80/day</button><button id="hireMechanic" style="margin-top:5px">HIRE MECHANIC · $120/day</button></article><article class="shop-card"><h3>Lot expansion</h3><p>Unlock drifting attractions and raise park capacity after operating two rides and welcoming 50 lifetime guests.</p><button id="expandLot" ${state.lotTier>1||state.cash<12000||state.totalGuests<50||state.objects.filter(o=>getItem(o.type)?.kind==="ride"&&o.open).length<2?"disabled":""}>PERMIT · $12,000</button></article><article class="shop-card"><h3>Park region</h3><p>Relocate the surrounding landscape without removing any of your paths, rides, or buildings.</p><select id="parkRegion" class="name-input" style="font-size:14px">${regionOptions}</select><button id="applyRegion" style="margin-top:6px">APPLY REGION</button></article></div>`,`<button class="modal-button" data-close>Resume</button><button id="saveNow" class="modal-button primary">SAVE NOW</button><button id="resetGame" class="modal-button">RESET PARK</button>`),()=>{
       $$("[data-close]").forEach(b=>b.onclick=closeModal);$("#saveNow").onclick=()=>{saveTimer=99;save();closeModal();notify("Park saved","All progress is stored in this browser.");};
       $("#hireJanitor").onclick=()=>{state.staff.janitors++;notify("Janitor hired","Automatic sweeping coverage expanded.");openMenu();};$("#hireMechanic").onclick=()=>{state.staff.mechanics++;notify("Mechanic hired","Breakdown response is now available.");openMenu();};
       $("#expandLot").onclick=()=>{state.cash-=12000;state.stats.expenses+=12000;state.lotTier=2;Object.keys(state.unlocked).forEach(key=>state.unlocked[key]=true);state.powerCapacity+=100;celebrationUntil=performance.now()+4000;notify("Expansion permit approved","Drifting Thrills, a larger crowd capacity, and a 200 kW grid are now available.");closeModal();updateUI();};
+      $("#applyRegion").onclick=()=>{chooseRegion($("#parkRegion").value);closeModal();notify("Park region updated",`${REGIONS[state.region].name} scenery now surrounds your park.`);updateUI();};
       $("#resetGame").onclick=()=>{if(confirm("Reset the entire park and erase the local save?")){localStorage.removeItem(SAVE_KEY);location.reload();}};
     });}
 
@@ -1072,9 +1142,10 @@
     if(!walkMode||$("#modalLayer").classList.contains("hidden")===false)return;
     const horizontal=(keys.has("d")||keys.has("ArrowRight")?1:0)-(keys.has("a")||keys.has("ArrowLeft")?1:0);
     const vertical=(keys.has("s")||keys.has("ArrowDown")?1:0)-(keys.has("w")||keys.has("ArrowUp")?1:0);
-    let dx=horizontal+vertical,dy=vertical-horizontal;
+    let dx=horizontal+vertical,dy=vertical-horizontal,autoWalking=false;
     if(dx||dy)walkTarget=null;
     else if(walkTarget){
+      autoWalking=true;
       dx=walkTarget.x-state.player.x;dy=walkTarget.y-state.player.y;
       if(Math.hypot(dx,dy)<.12){
         const shouldInteract=walkTarget.interact;
@@ -1084,7 +1155,7 @@
       }
     }
     if(!dx&&!dy)return;
-    const length=Math.hypot(dx,dy),speed=keys.has("Shift")?4.2:3.4,step=Math.min(length,speed*dt);
+    const length=Math.hypot(dx,dy),speed=autoWalking?18:keys.has("Shift")?4.2:3.4,step=Math.min(length,speed*dt);
     state.player.x=clamp(state.player.x+dx/length*step,LOT.minX-1,28);
     state.player.y=clamp(state.player.y+dy/length*step,LOT.minY-1,15.5);
   }
@@ -1220,6 +1291,9 @@
     $("#moneyCard").addEventListener("click",openFinance);
     $("#reviewCard").addEventListener("click",openReviews);
     $("#reviewTicker").addEventListener("click",openReviews);
+    $$('[data-region]').forEach(button=>button.addEventListener("click",()=>chooseRegion(button.dataset.region)));
+    $$('[data-track-move]').forEach(button=>button.addEventListener("click",()=>stepTrackDirection(button.dataset.trackMove)));
+    $("#trackDive").addEventListener("click",()=>changeLevel(-1));$("#trackRise").addEventListener("click",()=>changeLevel(1));$("#trackUndo").addEventListener("click",undoTrackNode);$("#trackFinish").addEventListener("click",finalizeTrack);
     $("#levelDown").addEventListener("click",()=>changeLevel(-1));$("#levelUp").addEventListener("click",()=>changeLevel(1));
     $("#rotateButton").addEventListener("click",()=>{rotation=(rotation+1)%4;showWorldMessage(`Blueprint rotated ${rotation*90}°`);});
     $("#demolishButton").addEventListener("click",()=>{walkMode=false;state.activeTool="demolish";showWorldMessage("Demolition mode · select an asset to remove");updateUI();});
@@ -1248,18 +1322,19 @@
       if(state.activeTool){const item=getItem(state.activeTool);if(["path","queue"].includes(item?.kind)&&dragStart)placeLine(state.activeTool,dragStart,end);else placeItem(state.activeTool,end.x,end.y,state.buildLevel);renderBuildItems();}
       else selectAt(end.x,end.y,state.buildLevel);dragStart=null;
     });
-    canvas.addEventListener("contextmenu",event=>{event.preventDefault();state.activeTool=null;trackDraft=null;renderBuildItems();showWorldMessage("Blueprint cancelled");});
+    canvas.addEventListener("contextmenu",event=>{event.preventDefault();state.activeTool=null;trackDraft=null;renderBuildItems();updateTrackControls();showWorldMessage("Blueprint cancelled");});
 
     window.addEventListener("keydown",event=>{
       ensureAudio();
       const typing=["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName);if(typing){if(event.key==="Escape")document.activeElement.blur();return;}
+      if(state.activeTool?.startsWith("track:")){const direction={w:"up",W:"up",ArrowUp:"up",s:"down",S:"down",ArrowDown:"down",a:"left",A:"left",ArrowLeft:"left",d:"right",D:"right",ArrowRight:"right"}[event.key];if(direction){event.preventDefault();if(!event.repeat)stepTrackDirection(direction);return;}}
       keys.add(event.key.length===1?event.key.toLowerCase():event.key);keys.add(event.key);
       const movementKey=["w","W","a","A","s","S","d","D","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(event.key);
       if(movementKey){event.preventDefault();walkTarget=null;if(!walkMode&&!state.activeTool?.startsWith("track:")&&!state.activeTool?.startsWith("prebuilt:")){walkMode=true;state.activeTool=null;trackDraft=null;closeInspector();updateUI();}if(!event.repeat)updatePlayer(.08);}
       if(event.key==="Tab"&&$("#modalLayer").classList.contains("hidden")){event.preventDefault();$("#buildDock").classList.toggle("hidden");return;}
-      if(event.key==="Escape"){if(!$("#modalLayer").classList.contains("hidden")){closeModal();return;}state.activeTool=null;trackDraft=null;state.buildLevel=Math.max(0,state.buildLevel);closeInspector();renderBuildItems();return;}
+      if(event.key==="Escape"){if(!$("#modalLayer").classList.contains("hidden")){closeModal();return;}state.activeTool=null;trackDraft=null;state.buildLevel=Math.max(0,state.buildLevel);closeInspector();renderBuildItems();updateTrackControls();return;}
       if(event.key==="Enter"&&state.activeTool?.startsWith("track:")){finalizeTrack();return;}
-      if((event.key==="x"||event.key==="X")&&state.activeTool?.startsWith("track:")){trackDraft?.nodes.pop();showWorldMessage(`Removed last track node · ${trackDraft?.nodes.length||0} remain`);return;}
+      if((event.key==="x"||event.key==="X")&&state.activeTool?.startsWith("track:")){undoTrackNode();return;}
       if(event.key==="e"||event.key==="E"){walkMode?interact():changeLevel(1);return;}
       if((event.key==="q"||event.key==="Q")&&!walkMode){changeLevel(-1);return;}
       if(event.key==="v"||event.key==="V"){toggleMode();return;}
@@ -1279,11 +1354,12 @@
     window.addEventListener("beforeunload",()=>save(true));
   }
 
-  function changeLevel(amount){const minimum=state.activeTool?.startsWith("track:")?-1:0;state.buildLevel=clamp(state.buildLevel+amount,minimum,5);updateUI();showWorldMessage(`Structural layer ${levelLabel(state.buildLevel)}`);}
+  function chooseRegion(id){if(!REGIONS[id])return;state.region=id;$$('[data-region]').forEach(button=>button.classList.toggle("active",button.dataset.region===id));$("#regionDescription").textContent=REGIONS[id].description;save(true);}
+  function changeLevel(amount){const minimum=state.activeTool?.startsWith("track:")?-3:0;state.buildLevel=clamp(state.buildLevel+amount,minimum,5);updateUI();showWorldMessage(`${state.buildLevel<0?"Underground depth":"Structural layer"} ${levelLabel(state.buildLevel)}`);}
   function toggleMode(){if(!state.toolkit&&!walkMode)return;walkMode=!walkMode;walkTarget=null;if(walkMode){state.activeTool=null;trackDraft=null;state.buildLevel=Math.max(0,state.buildLevel);}closeInspector();updateUI();}
 
   function init(){
-    state.unlocked={spinner:false,skid:false,hairpin:false,hydro:false,neon:false,flyer:false,buttonEye:false,shadow:false,glitch:false,...state.unlocked};state.coasterLicenses||={};canvas.tabIndex=0;resize();bindEvents();startMovementLoop();renderBuildItems();updateUI();
+    state.region=REGIONS[state.region]?state.region:"meadow";state.unlocked={spinner:false,skid:false,hairpin:false,hydro:false,neon:false,flyer:false,buttonEye:false,shadow:false,glitch:false,...state.unlocked};state.coasterLicenses||={};canvas.tabIndex=0;resize();bindEvents();startMovementLoop();renderBuildItems();updateUI();chooseRegion(state.region);
     if(state.registered)$("#enterGame").innerHTML=`RETURN TO ${state.profile.toUpperCase()}'S PARK <span>→</span>`;
     requestAnimationFrame(frame);
   }

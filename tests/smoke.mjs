@@ -47,12 +47,16 @@ const initial = await evaluate(`({
   title: document.title,
   intro: !document.querySelector('#intro').classList.contains('hidden'),
   tabs: document.querySelectorAll('.dock-tabs button').length,
-  canvas: Boolean(document.querySelector('#world'))
+  canvas: Boolean(document.querySelector('#world')),
+  regions: document.querySelectorAll('[data-region]').length
 })`);
 expect(initial.title === "Amusement Park Tycoon", "Unexpected page title");
 expect(initial.intro, "Intro screen should be visible on first load");
 expect(initial.tabs === 5, "Five build tabs should be present");
 expect(initial.canvas, "World canvas is missing");
+expect(initial.regions === 4, "Four selectable park regions should be available");
+await evaluate("document.querySelector('[data-region=coast]').click(); true");
+expect(await evaluate("document.querySelector('[data-region=coast]').classList.contains('active') && document.querySelector('#regionDescription').textContent.includes('docks')"), "Beach region selection did not activate its coastal scenery description");
 
 await evaluate("document.querySelector('#enterGame').click(); true");
 await wait(300);
@@ -162,6 +166,9 @@ expect(loaded.rating.includes('4.3') && loaded.rating.includes('2 REVIEWS'), "Sa
 expect(loaded.capacity === 'LOT CAPACITY 220', "Expanded park capacity was not restored");
 expect(loaded.reviewTicker, "Latest guest review should be visible in the live review ticker");
 expect(loaded.timberAvailable, "Timber Ridge should be available directly from the construction ledger");
+await evaluate("document.querySelector('#menuButton').click(); true");
+expect(await evaluate("Boolean(document.querySelector('#parkRegion')) && document.querySelectorAll('#parkRegion option').length === 4"), "Park management should allow region changes after entering the game");
+await evaluate("document.querySelector('[data-close]').click(); true");
 await evaluate("document.querySelector('#reviewCard').click(); true");
 await wait(50);
 expect(await evaluate("document.querySelector('#modal').textContent.includes('Beautiful paths and scenery!')"), "Visitor review panel did not show saved reviews");
@@ -182,13 +189,18 @@ expect(await evaluate("JSON.parse(localStorage.getItem('amusement-park-tycoon-v1
 expect(await evaluate("JSON.parse(localStorage.getItem('amusement-park-tycoon-v1')).bonuses.firstArcade === true"), "Building the first arcade did not award its one-time bonus");
 await evaluate("document.querySelector('[data-tab=atmosphere]').click(); true");
 expect(await evaluate("['fountain','mascotStage'].every(id => Boolean(document.querySelector(`[data-item=${id}]`)))"), "New plaza scenery should appear in Atmosphere");
+expect(await evaluate("['dock','palm','lighthouse','umbrella','tunnelPortal','neonArch','themeBeach','themeCarnival','themeNeon','themeAlpine'].every(id => Boolean(document.querySelector(`[data-item=${id}]`)))"), "Expanded scenery decorations and theme packs should appear in Atmosphere");
 await evaluate("document.querySelector('[data-tab=attractions]').click(); true");
 await evaluate("document.querySelector('[data-item=timber]').click(); true");
 await wait(100);
 expect(await evaluate("document.querySelector('#modal').textContent.includes('Custom Track')"), "Timber Ridge should open the custom track builder");
+expect(await evaluate("document.querySelector('#modal').textContent.includes('B3') && Boolean(document.querySelector('#coasterCars'))"), "Custom track builder should offer underground construction and train cart selection");
 await evaluate("document.querySelector('#coasterName').value='Skyline Test'; document.querySelector('[data-track-custom]').click(); true");
 await wait(50);
 expect(await evaluate("document.querySelector('#worldMessage').textContent.includes('Track Editor')"), "Custom track editor did not activate");
+expect(await evaluate("!document.querySelector('#trackControls').classList.contains('hidden')"), "Directional custom-track controls did not open");
+await evaluate("window.dispatchEvent(new KeyboardEvent('keydown', { key: 'q', bubbles: true })); window.dispatchEvent(new KeyboardEvent('keydown', { key: 'q', bubbles: true })); window.dispatchEvent(new KeyboardEvent('keydown', { key: 'q', bubbles: true })); true");
+expect(await evaluate("document.querySelector('#trackDepthStatus').textContent === 'B3'"), "Custom track editor did not allow B3 underground depth");
 await evaluate("window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); true");
 await wait(50);
 await evaluate("document.querySelector('[data-item=timber]').click(); true");

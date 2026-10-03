@@ -60,6 +60,19 @@
         <div id="eventStack" class="event-stack" aria-live="polite"></div>
         <button id="reviewTicker" class="review-ticker hidden" aria-label="Open visitor reviews"><small>LIVE GUEST REVIEW</small><strong id="reviewTickerStars">★★★★★</strong><span id="reviewTickerText"></span></button>
 
+        <section id="trackControls" class="track-controls hidden" aria-label="Custom track controls">
+          <header><div><small>CUSTOM TRACK SCULPTOR</small><strong id="trackControlStatus">CLICK A STATION TILE</strong></div><span id="trackDepthStatus">L1</span></header>
+          <div class="track-pad">
+            <button data-track-move="up" aria-label="Track up">↑<small>UP</small></button>
+            <button data-track-move="left" aria-label="Track left">←<small>LEFT</small></button>
+            <button data-track-move="down" aria-label="Track down">↓<small>DOWN</small></button>
+            <button data-track-move="right" aria-label="Track right">→<small>RIGHT</small></button>
+          </div>
+          <div class="track-levels"><button id="trackDive">Q · DIVE</button><button id="trackRise">E · RISE</button></div>
+          <div class="track-finish"><button id="trackUndo">UNDO</button><button id="trackFinish">FINISH LOOP</button></div>
+          <p>Click the first station tile, then use these controls or WASD/arrow keys. Choose a level before placing the next segment. Underground supports B1–B3.</p>
+        </section>
+
         <aside id="inspector" class="inspector hidden" aria-label="Context inspector">
           <div class="inspector-top"><div><p class="kicker" id="inspectorKicker">CONTEXT INSPECTOR</p><h2 id="inspectorTitle">Selection</h2></div><button id="closeInspector">×</button></div>
           <div id="inspectorBody"></div>
@@ -111,6 +124,16 @@
         <p>You have a fenced lot, a job shack, and a road into the Manufacturing District. Register on-site, source real machinery, and build every path, platform, and ride yourself.</p>
         <div class="intro-features">
           <div><b>01</b><span>Walk the district</span></div><div><b>02</b><span>Source & ship</span></div><div><b>03</b><span>Build vertically</span></div>
+        </div>
+        <div class="region-picker">
+          <small>CHOOSE YOUR PARK REGION</small>
+          <div>
+            <button data-region="meadow" class="active"><b>▰</b><span>Meadow</span></button>
+            <button data-region="coast"><b>≈</b><span>Beach</span></button>
+            <button data-region="alpine"><b>▲</b><span>Alpine</span></button>
+            <button data-region="desert"><b>◇</b><span>Desert</span></button>
+          </div>
+          <p id="regionDescription">Open green terrain with balanced weather and classic park scenery.</p>
         </div>
         <button id="enterGame">ENTER YOUR PARK LOT <span>→</span></button>
         <small>Progress is saved automatically in this browser.</small>

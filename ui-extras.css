@@ -60,9 +60,15 @@
 
 .review-ticker{position:absolute;z-index:6;top:18px;left:50%;width:300px;padding:10px 13px;transform:translateX(-50%);border:1px solid rgba(243,199,83,.35);background:rgba(8,24,35,.92);box-shadow:var(--shadow);text-align:left;cursor:pointer}.review-ticker small,.review-ticker strong,.review-ticker span{display:block}.review-ticker small{color:#7193a4;font-size:8px;font-weight:700;letter-spacing:.12em}.review-ticker strong{margin-top:3px;color:var(--gold);font-size:10px}.review-ticker span{margin-top:3px;overflow:hidden;color:#d6e6ec;font-size:9px;white-space:nowrap;text-overflow:ellipsis}
 
+.region-picker{margin:20px 0 16px}.region-picker>small{display:block;margin-bottom:8px;color:#78a1b5;font-size:8px;font-weight:700;letter-spacing:.14em}.region-picker>div{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.region-picker button{padding:9px 4px;border:1px solid #29485b;background:#0a1d2a;color:#7895a4;cursor:pointer}.region-picker button.active{border-color:#45b9e9;background:#123c51;color:#f1fbff;box-shadow:inset 0 3px #45b9e9}.region-picker button b,.region-picker button span{display:block}.region-picker button b{font-size:16px}.region-picker button span{margin-top:3px;font-size:8px;font-weight:700;letter-spacing:.05em}.region-picker p{min-height:25px;margin:7px 0 0;color:#7393a2;font-size:9px;line-height:1.4}
+
+.track-controls{position:absolute;z-index:11;right:18px;top:18px;width:255px;padding:12px;border:1px solid rgba(83,217,152,.55);background:rgba(6,22,31,.96);box-shadow:var(--shadow)}.track-controls header{display:flex;align-items:center;justify-content:space-between;padding-bottom:9px;border-bottom:1px solid var(--line)}.track-controls header small,.track-controls header strong{display:block}.track-controls header small{color:#67a78b;font-size:7px;font-weight:700;letter-spacing:.14em}.track-controls header strong{margin-top:3px;color:#dffff0;font-size:10px}.track-controls header>span{padding:5px 7px;border:1px solid #347a5c;background:#0e3b2b;color:#72f1af;font:700 14px "Barlow Condensed"}.track-pad{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:8px}.track-pad button{height:45px;border:1px solid #315a6c;background:#102f40;color:#dff8ff;font-size:17px;cursor:pointer}.track-pad small{display:block;color:#7596a5;font-size:6px;font-weight:700}.track-levels,.track-finish{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:5px}.track-levels button,.track-finish button{padding:7px 3px;border:1px solid #315a6c;background:#102a39;color:#9fc5d4;font-size:8px;font-weight:700;cursor:pointer}.track-levels button{border-color:#72572e;color:#ffd27d}.track-finish button:last-child{border-color:#379a70;background:#124733;color:#dffff0}.track-controls p{margin:8px 0 0;color:#688897;font-size:8px;line-height:1.45}
+
 @media (max-width: 720px) {
   .parking-find { align-items: stretch; flex-direction: column; }
   .parking-find button { flex-basis: auto; }
   .ride-catalog .shop-card { flex-basis: 220px; width: 220px; }
   .review-ticker { display: none; }
+  .region-picker>div{grid-template-columns:repeat(2,1fr)}
+  .track-controls{right:8px;top:8px;width:225px}
 }

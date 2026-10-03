@@ -53,6 +53,9 @@ Open `http://127.0.0.1:8080` in a modern desktop browser.
 - Appearance reviews driven by atmosphere, cleanliness, path condition, visitor happiness, and a live review ticker
 - A 48% larger starter lot with 120-guest capacity, plus arcades, midway games, food stalls, a 4D cinema, gift shop, First Aid Lodge, fountains, and mascot stages
 - Beginner-friendly one-time cash rewards, a 10-second first build, early breakdown protection, and a lower-cost lot expansion milestone
+- Four selectable park regions—Meadow, Beach, Alpine, and Desert—with distinct terrain and ambient scenery such as coastal water, docks, boats, mountains, and cacti
+- Expanded scenery catalog with dock modules, palms, a lighthouse, umbrellas, tunnel portals, neon arches, and Beach, Carnival, Future Neon, and Alpine theme packs
+- Directional custom-track sculpting with on-screen or WASD/arrow controls, B1–B3 underground tunnels, and selectable 1–5 cart trains rendered moving on the completed track
 - Persistent local saves, lot expansion milestones, drifting-ride unlocks, responsive UI, keyboard controls, and accessible non-color placement feedback
 
 ## Smoke test
