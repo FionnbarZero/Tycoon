@@ -578,12 +578,8 @@
       ctx.fillStyle=shade(item.color,-20);ctx.beginPath();ctx.moveTo(p.x-width/2-6,p.y-height-48);ctx.lineTo(p.x,p.y-height-68);ctx.lineTo(p.x+width/2+6,p.y-height-48);ctx.closePath();ctx.fill();
       ctx.strokeStyle=item.color;ctx.lineWidth=2;ctx.strokeRect(p.x-width/2+8,p.y-height-35,width-16,25);
       drawDarkRideFacade(p,object,item,width,height);
-    } else if (object.type === "skywheel") {
-      const spin=object.open?performance.now()/5000:0,radius=42;
-      ctx.strokeStyle="#d9edf0";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(p.x-26,p.y+22);ctx.lineTo(p.x,p.y-42);ctx.lineTo(p.x+26,p.y+22);ctx.stroke();
-      ctx.strokeStyle=item.color;ctx.lineWidth=4;ctx.beginPath();ctx.arc(p.x,p.y-42,radius,0,Math.PI*2);ctx.stroke();
-      for(let i=0;i<8;i++){const angle=spin+i*Math.PI/4,x=p.x+Math.cos(angle)*radius,y=p.y-42+Math.sin(angle)*radius;ctx.strokeStyle="rgba(230,245,248,.6)";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.x,p.y-42);ctx.lineTo(x,y);ctx.stroke();ctx.fillStyle=i%2?item.color:"#fff1a8";ctx.fillRect(x-6,y-3,12,7);}
-    } else if (object.type === "carousel") drawCarouselRide(p,object,item);
+    } else if (object.type === "skywheel") drawSkywheelRide(p,object,item);
+    else if (object.type === "carousel") drawCarouselRide(p,object,item);
     else if (object.type === "whirlybird") drawWhirlybirdRide(p,object,item);
     else if (object.type === "wave") drawWaveSwingerRide(p,object,item);
     else if (object.type === "spinner") drawSpinnerRide(p,object,item);
@@ -599,7 +595,7 @@
       if(object.open){const angle=performance.now()/900,x=p.x+Math.cos(angle)*item.w*19,y=p.y-5+Math.sin(angle)*item.h*10;ctx.fillStyle=object.type==="safari"?"#d59c4f":item.color;ctx.fillRect(x-10,y-5,20,9);ctx.fillStyle="#e9f5f4";ctx.fillRect(x-6,y-8,5,4);ctx.fillRect(x+2,y-8,5,4);}
     }
     const displayName=object.customName||item.name;
-    const labelY=p.y-({dropTower:145,wave:94,skywheel:94,carousel:80,whirlybird:70,bumper:76}[object.type]||67);
+    const labelOffset={dropTower:150,wave:100,skywheel:108,carousel:88,whirlybird:76,bumper:98}[object.type]||(item.family==="Dark Ride"?item.h*11+82:67),labelY=p.y-labelOffset;
     if (object.broken) drawWorldLabel(p.x, labelY, "⚠ RIDE SHUTDOWN", "#ff5368");
     else if (object.open) drawWorldLabel(p.x, labelY, `${displayName.toUpperCase()} · OPEN`, "#53d998");
     else drawWorldLabel(p.x, labelY, `${displayName.toUpperCase()} · CLOSED`, "#91aab6");
@@ -609,72 +605,111 @@
   function rideSpin(object,speed=900){return object.open?performance.now()/speed:0;}
 
   function ridePlatform(p,item,rx=48,ry=22){
-    ctx.fillStyle=shade(item.color,-55);ctx.beginPath();ctx.ellipse(p.x,p.y+8,rx,ry,0,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle=item.color;ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(p.x,p.y+3,rx-5,ry-5,0,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle=shade(item.color,-70);ctx.beginPath();ctx.ellipse(p.x,p.y+12,rx,ry,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=shade(item.color,-42);ctx.beginPath();ctx.ellipse(p.x,p.y+6,rx,ry,0,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle=item.color;ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(p.x,p.y+2,rx-5,ry-5,0,0,Math.PI*2);ctx.stroke();
+    ctx.strokeStyle="#dce9e8";ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(p.x,p.y-1,rx-2,ry,0,Math.PI,Math.PI*2);ctx.stroke();
+    for(let i=0;i<=6;i++){const a=Math.PI+i*Math.PI/6,x=p.x+Math.cos(a)*(rx-2),y=p.y-1+Math.sin(a)*ry;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y+9);ctx.stroke();}
+  }
+
+  function drawSkywheelRide(p,object,item){
+    const spin=rideSpin(object,5000),hubY=p.y-50,radius=48;ridePlatform(p,item,55,23);
+    ctx.fillStyle="#314551";ctx.fillRect(p.x-33,p.y+2,66,9);ctx.strokeStyle="#d9edf0";ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(p.x-34,p.y+8);ctx.lineTo(p.x,hubY);ctx.lineTo(p.x+34,p.y+8);ctx.stroke();
+    ctx.strokeStyle=shade(item.color,-15);ctx.lineWidth=6;ctx.beginPath();ctx.arc(p.x,hubY,radius,0,Math.PI*2);ctx.stroke();ctx.strokeStyle="#dff5f5";ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,hubY,radius-7,0,Math.PI*2);ctx.stroke();
+    for(let i=0;i<12;i++){const angle=spin+i*Math.PI/6,x=p.x+Math.cos(angle)*radius,y=hubY+Math.sin(angle)*radius;ctx.strokeStyle="rgba(230,245,248,.75)";ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(p.x,hubY);ctx.lineTo(x,y);ctx.stroke();ctx.strokeStyle="#9db1b6";ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y+7);ctx.stroke();ctx.fillStyle=i%3===0?"#ff6b78":i%3===1?item.color:"#64d7d2";ctx.beginPath();ctx.roundRect(x-7,y+6,14,10,3);ctx.fill();ctx.fillStyle="#dff5f2";ctx.fillRect(x-4,y+8,3,3);ctx.fillRect(x+2,y+8,3,3);}
+    ctx.fillStyle="#edf6f5";ctx.beginPath();ctx.arc(p.x,hubY,7,0,Math.PI*2);ctx.fill();ctx.fillStyle=item.color;ctx.beginPath();ctx.arc(p.x,hubY,3,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#273b46";ctx.fillRect(p.x-25,p.y-12,50,18);ctx.fillStyle=item.color;ctx.fillRect(p.x-28,p.y-16,56,5);ctx.fillStyle="#dcebea";ctx.font="700 6px Inter";ctx.textAlign="center";ctx.fillText("BOARDING",p.x,p.y-2);
   }
 
   function drawCarouselRide(p,object,item){
-    const spin=rideSpin(object,1800);ridePlatform(p,item,48,21);
-    ctx.strokeStyle="#f7ead0";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(p.x,p.y+5);ctx.lineTo(p.x,p.y-58);ctx.stroke();
-    ctx.fillStyle=item.color;ctx.beginPath();ctx.moveTo(p.x-48,p.y-43);ctx.quadraticCurveTo(p.x,p.y-75,p.x+48,p.y-43);ctx.lineTo(p.x+38,p.y-34);ctx.lineTo(p.x-38,p.y-34);ctx.closePath();ctx.fill();
-    ctx.strokeStyle="#fff1c2";ctx.lineWidth=3;for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(p.x+i*16,p.y-60+Math.abs(i)*5);ctx.lineTo(p.x+i*13,p.y-35);ctx.stroke();}
-    for(let i=0;i<6;i++){const a=spin+i*Math.PI/3,x=p.x+Math.cos(a)*34,y=p.y-14+Math.sin(a)*12;ctx.strokeStyle="#e9e1cb";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y-24);ctx.lineTo(x,y+8);ctx.stroke();ctx.fillStyle=i%2?"#f06f69":"#7ad8e6";ctx.beginPath();ctx.ellipse(x,y,7,4,0,0,Math.PI*2);ctx.fill();ctx.fillRect(x-5,y-5,8,7);}
+    const spin=rideSpin(object,1800);ridePlatform(p,item,52,23);
+    ctx.fillStyle="#31515b";ctx.beginPath();ctx.ellipse(p.x,p.y+3,46,18,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#f7ead0";ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(p.x,p.y+6);ctx.lineTo(p.x,p.y-63);ctx.stroke();
+    const canopy=[["#ef5f66",-48,-26],["#fff1c2",-26,0],["#ef5f66",0,26],["#fff1c2",26,48]];for(const [color,left,right] of canopy){ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(p.x,p.y-76);ctx.lineTo(p.x+left,p.y-42);ctx.lineTo(p.x+right,p.y-42);ctx.closePath();ctx.fill();}
+    ctx.fillStyle=item.color;ctx.beginPath();ctx.ellipse(p.x,p.y-42,50,9,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#f6e097";ctx.beginPath();ctx.arc(p.x,p.y-77,5,0,Math.PI*2);ctx.fill();
+    for(let i=0;i<12;i++){const a=i*Math.PI/6;ctx.fillStyle=i%2?"#fff4bc":"#ff784f";ctx.beginPath();ctx.arc(p.x+Math.cos(a)*47,p.y-42+Math.sin(a)*7,2,0,Math.PI*2);ctx.fill();}
+    for(let i=0;i<8;i++){const a=spin+i*Math.PI/4,x=p.x+Math.cos(a)*37,y=p.y-14+Math.sin(a)*13,bob=object.open?Math.sin(spin*2+i)*3:0;ctx.strokeStyle="#f1e8d0";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,p.y-43+Math.sin(a)*7);ctx.lineTo(x,y+9);ctx.stroke();ctx.fillStyle=i%2?"#ef6f69":"#75d5df";ctx.beginPath();ctx.ellipse(x,y+bob,8,4,0,0,Math.PI*2);ctx.fill();ctx.fillRect(x-3,y-7+bob,7,7);ctx.beginPath();ctx.arc(x+7,y-5+bob,3,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#efe6cf";ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x-4,y+3+bob);ctx.lineTo(x-6,y+9+bob);ctx.moveTo(x+3,y+3+bob);ctx.lineTo(x+5,y+9+bob);ctx.stroke();ctx.fillStyle="#f0b48a";ctx.beginPath();ctx.arc(x,y-10+bob,2.5,0,Math.PI*2);ctx.fill();}
   }
 
   function drawWhirlybirdRide(p,object,item){
-    const spin=rideSpin(object,1300);ridePlatform(p,item,45,20);ctx.fillStyle="#d9edf0";ctx.fillRect(p.x-5,p.y-42,10,46);ctx.fillStyle=item.color;ctx.beginPath();ctx.arc(p.x,p.y-42,12,0,Math.PI*2);ctx.fill();
-    for(let i=0;i<5;i++){const a=spin+i*Math.PI*2/5,x=p.x+Math.cos(a)*39,y=p.y-24+Math.sin(a)*16+(object.open?Math.sin(spin*2+i)*6:0);ctx.strokeStyle="#b8d0d5";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(p.x,p.y-40);ctx.lineTo(x,y);ctx.stroke();ctx.fillStyle=i%2?"#ffd85e":"#54ccef";ctx.beginPath();ctx.ellipse(x,y,10,6,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#294553";ctx.fillRect(x-3,y-6,7,5);ctx.strokeStyle="#eff8f7";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x-13,y-8);ctx.lineTo(x+13,y-8);ctx.stroke();}
+    const spin=rideSpin(object,1300);ridePlatform(p,item,49,22);ctx.fillStyle="#cadbdd";ctx.fillRect(p.x-6,p.y-47,12,51);ctx.fillStyle=item.color;ctx.beginPath();ctx.arc(p.x,p.y-47,14,0,Math.PI*2);ctx.fill();ctx.fillStyle="#f3d665";ctx.beginPath();ctx.arc(p.x,p.y-47,5,0,Math.PI*2);ctx.fill();
+    for(let i=0;i<5;i++){const a=spin+i*Math.PI*2/5,x=p.x+Math.cos(a)*43,y=p.y-25+Math.sin(a)*17+(object.open?Math.sin(spin*2+i)*7:0);ctx.strokeStyle="#a8bec4";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(p.x,p.y-45);ctx.lineTo(x,y);ctx.stroke();drawHelicopterPod(x,y,a,i%2?"#ffd85e":"#54ccef");}
+  }
+
+  function drawHelicopterPod(x,y,angle,color){
+    ctx.save();ctx.translate(x,y);ctx.rotate(angle*.18);ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(0,0,12,7,0,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.moveTo(-9,-1);ctx.lineTo(-20,-6);ctx.lineTo(-19,1);ctx.closePath();ctx.fill();ctx.fillStyle="#bfe8ee";ctx.beginPath();ctx.ellipse(5,-2,5,3,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#eaf5f3";ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(-15,-10);ctx.lineTo(15,-10);ctx.moveTo(0,-10);ctx.lineTo(0,-5);ctx.moveTo(-8,7);ctx.lineTo(-6,10);ctx.lineTo(8,10);ctx.lineTo(10,6);ctx.stroke();ctx.fillStyle="#293842";ctx.beginPath();ctx.arc(-6,3,2,0,Math.PI*2);ctx.arc(6,3,2,0,Math.PI*2);ctx.fill();ctx.restore();
   }
 
   function drawWaveSwingerRide(p,object,item){
-    const spin=rideSpin(object,1050),swing=object.open?8:0;ridePlatform(p,item,50,23);ctx.strokeStyle="#d9e6e8";ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(p.x,p.y+5);ctx.lineTo(p.x,p.y-75);ctx.stroke();ctx.fillStyle=item.color;ctx.beginPath();ctx.moveTo(p.x-37,p.y-62);ctx.lineTo(p.x,p.y-84);ctx.lineTo(p.x+37,p.y-62);ctx.lineTo(p.x+29,p.y-54);ctx.lineTo(p.x-29,p.y-54);ctx.closePath();ctx.fill();
-    for(let i=0;i<8;i++){const a=spin+i*Math.PI/4,x=p.x+Math.cos(a)*(34+swing),y=p.y-22+Math.sin(a)*(14+swing*.4);ctx.strokeStyle="#d7e1df";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.x+Math.cos(a)*27,p.y-59+Math.sin(a)*7);ctx.lineTo(x,y);ctx.stroke();ctx.fillStyle=i%2?"#ffdb58":"#ff6f75";ctx.fillRect(x-5,y,10,6);}
+    const spin=rideSpin(object,1050),swing=object.open?12:2;ridePlatform(p,item,54,25);ctx.strokeStyle="#d9e6e8";ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(p.x,p.y+5);ctx.lineTo(p.x,p.y-78);ctx.stroke();ctx.fillStyle=shade(item.color,-20);ctx.beginPath();ctx.ellipse(p.x,p.y-59,36,10,0,0,Math.PI*2);ctx.fill();ctx.fillStyle=item.color;ctx.beginPath();ctx.moveTo(p.x-40,p.y-62);ctx.lineTo(p.x,p.y-88);ctx.lineTo(p.x+40,p.y-62);ctx.closePath();ctx.fill();ctx.fillStyle="#f5db68";ctx.beginPath();ctx.arc(p.x,p.y-89,5,0,Math.PI*2);ctx.fill();
+    for(let i=0;i<10;i++){const a=spin+i*Math.PI/5,x=p.x+Math.cos(a)*(38+swing),y=p.y-22+Math.sin(a)*(16+swing*.35),anchorX=p.x+Math.cos(a)*31,anchorY=p.y-60+Math.sin(a)*7;ctx.strokeStyle="#d7e1df";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(anchorX-2,anchorY);ctx.lineTo(x-4,y);ctx.moveTo(anchorX+2,anchorY);ctx.lineTo(x+4,y);ctx.stroke();ctx.fillStyle=i%2?"#ffdb58":"#ff6f75";ctx.fillRect(x-6,y-4,12,8);ctx.strokeStyle="#303f49";ctx.strokeRect(x-6,y-8,12,5);ctx.fillStyle="#efb18c";ctx.beginPath();ctx.arc(x,y-10,3,0,Math.PI*2);ctx.fill();}
   }
 
   function drawSpinnerRide(p,object,item){
-    const spin=rideSpin(object,520);ridePlatform(p,item,50,24);ctx.strokeStyle="#f1eaff";ctx.lineWidth=2;for(let i=0;i<8;i++){const a=i*Math.PI/4;ctx.beginPath();ctx.moveTo(p.x,p.y+2);ctx.lineTo(p.x+Math.cos(a)*42,p.y+2+Math.sin(a)*18);ctx.stroke();}
-    ctx.fillStyle=shade(item.color,15);ctx.beginPath();ctx.arc(p.x,p.y-3,10,0,Math.PI*2);ctx.fill();for(let i=0;i<6;i++){const a=spin+i*Math.PI/3,r=24+Math.sin(spin*2+i)*10,x=p.x+Math.cos(a)*r,y=p.y-2+Math.sin(a)*r*.45;ctx.save();ctx.translate(x,y);ctx.rotate(a+.6);ctx.fillStyle=i%2?"#55dfca":"#ffd058";ctx.fillRect(-8,-4,16,8);ctx.fillStyle="#253743";ctx.fillRect(-4,-6,8,4);ctx.restore();}
+    const spin=rideSpin(object,520);ridePlatform(p,item,54,26);ctx.fillStyle="#283a47";ctx.beginPath();ctx.ellipse(p.x,p.y+2,45,20,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#c9b7ff";ctx.lineWidth=2;for(let i=0;i<8;i++){const a=i*Math.PI/4;ctx.beginPath();ctx.moveTo(p.x,p.y+2);ctx.lineTo(p.x+Math.cos(a)*42,p.y+2+Math.sin(a)*18);ctx.stroke();}ctx.fillStyle=shade(item.color,15);ctx.beginPath();ctx.arc(p.x,p.y-3,11,0,Math.PI*2);ctx.fill();
+    for(let i=0;i<7;i++){const a=spin+i*Math.PI*2/7,r=25+Math.sin(spin*2+i)*11,x=p.x+Math.cos(a)*r,y=p.y-2+Math.sin(a)*r*.45;drawDriftCar(x,y,a+.7,i%2?"#55dfca":"#ffd058");}
+  }
+
+  function drawDriftCar(x,y,rotation,color){
+    ctx.save();ctx.translate(x,y);ctx.rotate(rotation);ctx.fillStyle="#101b24";ctx.beginPath();ctx.ellipse(0,2,11,6,0,0,Math.PI*2);ctx.fill();ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(-9,-6,18,10,4);ctx.fill();ctx.fillStyle="#bce9eb";ctx.fillRect(-4,-7,8,4);ctx.fillStyle="#111b23";ctx.beginPath();ctx.arc(-7,4,2,0,Math.PI*2);ctx.arc(7,4,2,0,Math.PI*2);ctx.fill();ctx.restore();
   }
 
   function drawCargoSkidRide(p,object,item){
-    const spin=rideSpin(object,760);ridePlatform(p,item,62,27);ctx.strokeStyle="#f6a25e";ctx.lineWidth=6;ctx.beginPath();ctx.ellipse(p.x,p.y+1,50,21,0,0,Math.PI*2);ctx.stroke();ctx.fillStyle="#48525a";ctx.fillRect(p.x-9,p.y-31,18,34);
-    for(let i=0;i<5;i++){const a=spin+i*Math.PI*2/5,x=p.x+Math.cos(a)*44,y=p.y+Math.sin(a)*18;ctx.strokeStyle="#8c969b";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(p.x,p.y-13);ctx.lineTo(x,y-2);ctx.stroke();ctx.save();ctx.translate(x,y);ctx.rotate(a+.5);ctx.fillStyle=i%2?item.color:"#e6bd55";ctx.fillRect(-12,-6,24,12);ctx.fillStyle="#262f35";ctx.fillRect(-8,-9,8,4);ctx.restore();}
+    const spin=rideSpin(object,760);ridePlatform(p,item,66,29);ctx.strokeStyle="#f6a25e";ctx.lineWidth=7;ctx.beginPath();ctx.ellipse(p.x,p.y+1,53,22,0,0,Math.PI*2);ctx.stroke();ctx.strokeStyle="#2d3740";ctx.lineWidth=3;ctx.setLineDash([8,5]);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle="#48525a";ctx.fillRect(p.x-11,p.y-35,22,38);ctx.fillStyle="#ffbf47";for(let y=-31;y<-3;y+=9)ctx.fillRect(p.x-10,p.y+y,20,4);
+    for(let i=0;i<5;i++){const a=spin+i*Math.PI*2/5,x=p.x+Math.cos(a)*47,y=p.y+Math.sin(a)*19;ctx.strokeStyle="#8c969b";ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(p.x,p.y-17);ctx.lineTo(x,y-2);ctx.stroke();ctx.save();ctx.translate(x,y);ctx.rotate(a+.5);ctx.fillStyle="#1c2931";ctx.fillRect(-15,-7,30,15);ctx.fillStyle=i%2?item.color:"#e6bd55";ctx.fillRect(-12,-7,24,10);ctx.strokeStyle="#ffd56e";ctx.lineWidth=2;for(let stripe=-8;stripe<=8;stripe+=8){ctx.beginPath();ctx.moveTo(stripe,-7);ctx.lineTo(stripe+5,3);ctx.stroke();}ctx.fillStyle="#b9dce0";ctx.fillRect(-6,-10,12,4);ctx.fillStyle="#101820";ctx.beginPath();ctx.arc(-10,8,3,0,Math.PI*2);ctx.arc(10,8,3,0,Math.PI*2);ctx.fill();ctx.restore();}
   }
 
   function drawBumperRide(p,object,item){
-    ctx.fillStyle="#263847";ctx.fillRect(p.x-60,p.y-44,120,50);ctx.strokeStyle=item.color;ctx.lineWidth=4;ctx.strokeRect(p.x-60,p.y-44,120,50);ctx.strokeStyle="#d7e9eb";ctx.lineWidth=3;for(let x=-52;x<=52;x+=26){ctx.beginPath();ctx.moveTo(p.x+x,p.y-44);ctx.lineTo(p.x+x,p.y-65);ctx.stroke();}ctx.strokeStyle=item.color;ctx.beginPath();ctx.moveTo(p.x-58,p.y-65);ctx.lineTo(p.x+58,p.y-65);ctx.stroke();
-    const motion=rideSpin(object,460);for(let i=0;i<6;i++){const x=p.x-40+(i%3)*39+(object.open?Math.sin(motion+i)*7:0),y=p.y-27+Math.floor(i/3)*22+(object.open?Math.cos(motion*.8+i)*3:0);ctx.fillStyle=i%2?"#59d8ec":"#ffcf52";ctx.beginPath();ctx.ellipse(x,y,11,6,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#182a35";ctx.fillRect(x-4,y-7,8,4);}
+    ctx.fillStyle="#1d303b";ctx.fillRect(p.x-64,p.y-45,128,51);ctx.strokeStyle=item.color;ctx.lineWidth=5;ctx.strokeRect(p.x-64,p.y-45,128,51);ctx.strokeStyle="#d7e9eb";ctx.lineWidth=3;for(let x=-57;x<=57;x+=38){ctx.beginPath();ctx.moveTo(p.x+x,p.y+5);ctx.lineTo(p.x+x,p.y-71);ctx.stroke();}ctx.strokeStyle=item.color;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(p.x-62,p.y-71);ctx.lineTo(p.x+62,p.y-71);ctx.stroke();ctx.strokeStyle="rgba(190,225,232,.45)";ctx.lineWidth=1;for(let x=-55;x<=55;x+=11){ctx.beginPath();ctx.moveTo(p.x+x,p.y-70);ctx.lineTo(p.x+x+18,p.y-46);ctx.stroke();}
+    ctx.fillStyle="#273e48";ctx.beginPath();ctx.moveTo(p.x-66,p.y-72);ctx.lineTo(p.x,p.y-87);ctx.lineTo(p.x+66,p.y-72);ctx.lineTo(p.x+57,p.y-66);ctx.lineTo(p.x-57,p.y-66);ctx.closePath();ctx.fill();ctx.strokeStyle="#ff65b8";ctx.lineWidth=3;ctx.stroke();
+    const motion=rideSpin(object,460);for(let i=0;i<7;i++){const x=p.x-43+(i%4)*29+(object.open?Math.sin(motion+i)*8:0),y=p.y-30+Math.floor(i/4)*22+(object.open?Math.cos(motion*.8+i)*4:0);drawBumperCar(x,y,i%3===0?"#59d8ec":i%3===1?"#ffcf52":"#ff67a8");}
+  }
+
+  function drawBumperCar(x,y,color){
+    ctx.fillStyle="#0d1820";ctx.beginPath();ctx.ellipse(x,y+2,13,7,0,0,Math.PI*2);ctx.fill();ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x-10,y-6,20,10,4);ctx.fill();ctx.fillStyle="#cbe9ed";ctx.fillRect(x-4,y-8,8,4);ctx.strokeStyle="#dfe8e7";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x+6,y-5);ctx.lineTo(x+10,y-20);ctx.stroke();ctx.fillStyle="#ffef78";ctx.beginPath();ctx.arc(x+10,y-21,2,0,Math.PI*2);ctx.fill();
   }
 
   function drawDropTowerRide(p,object,item){
-    const phase=object.open?(Math.sin(performance.now()/900)+1)/2:.08,gondolaY=p.y-20-phase*78;ridePlatform(p,item,43,19);ctx.fillStyle="#dfe9eb";ctx.fillRect(p.x-5,p.y-116,10,120);ctx.fillStyle=item.color;ctx.beginPath();ctx.moveTo(p.x,p.y-132);ctx.lineTo(p.x-14,p.y-114);ctx.lineTo(p.x+14,p.y-114);ctx.closePath();ctx.fill();ctx.strokeStyle="#5f7180";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p.x,p.y-111);ctx.lineTo(p.x,p.y-3);ctx.stroke();ctx.fillStyle=shade(item.color,-20);ctx.fillRect(p.x-27,gondolaY,54,13);for(let i=-2;i<=2;i++){ctx.fillStyle=i%2?"#f6d264":"#eef6f5";ctx.fillRect(p.x+i*10-3,gondolaY+3,6,7);}
+    const phase=object.open?(Math.sin(performance.now()/900)+1)/2:.08,gondolaY=p.y-22-phase*82;ridePlatform(p,item,47,21);ctx.strokeStyle="#dfe9eb";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(p.x-8,p.y+3);ctx.lineTo(p.x-5,p.y-120);ctx.lineTo(p.x+5,p.y-120);ctx.lineTo(p.x+8,p.y+3);ctx.stroke();ctx.strokeStyle="#758992";ctx.lineWidth=1.5;for(let y=p.y-110;y<p.y-5;y+=14){ctx.beginPath();ctx.moveTo(p.x-6,y);ctx.lineTo(p.x+7,y+12);ctx.moveTo(p.x+6,y);ctx.lineTo(p.x-7,y+12);ctx.stroke();}ctx.fillStyle=item.color;ctx.beginPath();ctx.moveTo(p.x,p.y-139);ctx.lineTo(p.x-16,p.y-119);ctx.lineTo(p.x+16,p.y-119);ctx.closePath();ctx.fill();ctx.fillStyle="#f5dc69";ctx.beginPath();ctx.arc(p.x,p.y-139,4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#192934";ctx.fillRect(p.x-31,gondolaY-4,62,17);ctx.fillStyle=shade(item.color,-10);ctx.fillRect(p.x-30,gondolaY,60,10);for(let i=-2;i<=2;i++){ctx.fillStyle=i%2?"#f6d264":"#eef6f5";ctx.fillRect(p.x+i*11-4,gondolaY+3,8,8);ctx.fillStyle="#efb18c";ctx.beginPath();ctx.arc(p.x+i*11,gondolaY-3,3,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#dce8e8";ctx.beginPath();ctx.moveTo(p.x+i*11-4,gondolaY);ctx.lineTo(p.x+i*11+4,gondolaY);ctx.stroke();}
   }
 
   function drawSafariRide(p,object,item){
-    ctx.strokeStyle="#9d7448";ctx.lineWidth=16;ctx.beginPath();ctx.ellipse(p.x,p.y-4,item.w*20,item.h*10,-.08,.15,Math.PI*1.92);ctx.stroke();ctx.strokeStyle="#d8bc83";ctx.lineWidth=2;ctx.setLineDash([7,6]);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle="#67523e";ctx.beginPath();ctx.arc(p.x+18,p.y-22,19,Math.PI,Math.PI*2);ctx.fill();ctx.fillRect(p.x-1,p.y-23,38,17);for(let i=0;i<3;i++){const x=p.x-62+i*58;ctx.fillStyle="#837052";ctx.beginPath();ctx.arc(x,p.y-8-i*5,9,0,Math.PI*2);ctx.fill();ctx.fillStyle="#477044";ctx.beginPath();ctx.arc(x-4,p.y-25-i*5,12,0,Math.PI*2);ctx.arc(x+6,p.y-29-i*5,10,0,Math.PI*2);ctx.fill();}
-    const angle=rideSpin(object,1150),x=p.x+Math.cos(angle)*item.w*18,y=p.y-4+Math.sin(angle)*item.h*8;ctx.fillStyle="#d59c4f";ctx.fillRect(x-13,y-7,26,12);ctx.fillStyle="#c9e7e8";ctx.fillRect(x-7,y-11,12,6);ctx.fillStyle="#202b30";ctx.beginPath();ctx.arc(x-8,y+7,3,0,Math.PI*2);ctx.arc(x+9,y+7,3,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle="#805e3e";ctx.lineWidth=20;ctx.beginPath();ctx.ellipse(p.x,p.y-4,item.w*20,item.h*10,-.08,.15,Math.PI*1.92);ctx.stroke();ctx.strokeStyle="#b48a5b";ctx.lineWidth=13;ctx.stroke();ctx.strokeStyle="#e1c58d";ctx.lineWidth=2;ctx.setLineDash([8,7]);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle="#4a4036";ctx.beginPath();ctx.arc(p.x+21,p.y-24,23,Math.PI,Math.PI*2);ctx.fill();ctx.fillRect(p.x-2,p.y-25,46,20);ctx.strokeStyle="#76604a";ctx.lineWidth=5;ctx.beginPath();ctx.arc(p.x+21,p.y-24,26,Math.PI,Math.PI*2);ctx.stroke();for(let i=0;i<3;i++){const x=p.x-65+i*61;ctx.fillStyle="#837052";ctx.beginPath();ctx.arc(x,p.y-7-i*5,10,0,Math.PI*2);ctx.fill();ctx.fillStyle="#477044";ctx.beginPath();ctx.arc(x-5,p.y-26-i*5,13,0,Math.PI*2);ctx.arc(x+7,p.y-30-i*5,11,0,Math.PI*2);ctx.fill();}
+    const angle=rideSpin(object,1150),x=p.x+Math.cos(angle)*item.w*18,y=p.y-4+Math.sin(angle)*item.h*8;drawSafariTruck(x,y,angle,item.color);
+  }
+
+  function drawSafariTruck(x,y,angle,color){
+    ctx.save();ctx.translate(x,y);ctx.rotate(angle*.12);ctx.fillStyle="#202a2d";ctx.fillRect(-16,-7,32,14);ctx.fillStyle=color;ctx.fillRect(-14,-9,28,12);ctx.fillStyle="#d59c4f";ctx.beginPath();ctx.moveTo(-7,-9);ctx.lineTo(-3,-17);ctx.lineTo(10,-17);ctx.lineTo(14,-9);ctx.closePath();ctx.fill();ctx.fillStyle="#bde0e0";ctx.fillRect(-1,-15,9,5);ctx.strokeStyle="#292d2c";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-8,-17);ctx.lineTo(10,-17);ctx.moveTo(-8,-19);ctx.lineTo(-8,-8);ctx.moveTo(10,-19);ctx.lineTo(10,-8);ctx.stroke();ctx.fillStyle="#11181b";for(const dx of [-10,10]){ctx.beginPath();ctx.arc(dx,7,4,0,Math.PI*2);ctx.fill();ctx.fillStyle="#9ea8a7";ctx.beginPath();ctx.arc(dx,7,1.5,0,Math.PI*2);ctx.fill();ctx.fillStyle="#11181b";}ctx.fillStyle="#ffe16b";ctx.fillRect(12,-6,3,3);ctx.restore();
   }
 
   function drawDarkRideFacade(p,object,item,width,height){
-    const top=p.y-height-18;ctx.textAlign="center";
+    const top=p.y-height-18;ctx.textAlign="center";ctx.fillStyle="#08131b";ctx.fillRect(p.x-19,p.y-32,38,32);ctx.strokeStyle=item.color;ctx.lineWidth=3;ctx.strokeRect(p.x-19,p.y-32,38,32);ctx.fillStyle="#d9edf0";ctx.fillRect(p.x-14,p.y-25,10,25);ctx.fillRect(p.x+4,p.y-25,10,25);ctx.fillStyle="#1a2a34";ctx.beginPath();ctx.arc(p.x-6,p.y-13,1.5,0,Math.PI*2);ctx.arc(p.x+6,p.y-13,1.5,0,Math.PI*2);ctx.fill();for(const side of [-1,1]){ctx.strokeStyle="#d5e4e5";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p.x+side*width*.35,p.y-3);ctx.lineTo(p.x+side*width*.35,p.y-23);ctx.stroke();ctx.fillStyle=item.color;ctx.beginPath();ctx.arc(p.x+side*width*.35,p.y-25,3,0,Math.PI*2);ctx.fill();}
     if(object.type==="buttonEye"){ctx.fillStyle="#eadcf0";for(let i=-1;i<=1;i++){ctx.beginPath();ctx.arc(p.x+i*25,top,9,0,Math.PI*2);ctx.fill();ctx.fillStyle=item.color;ctx.beginPath();ctx.arc(p.x+i*25,top,3,0,Math.PI*2);ctx.fill();ctx.fillStyle="#eadcf0";}ctx.strokeStyle="#f0b7da";ctx.lineWidth=2;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(p.x-width/2+15,top+14);ctx.lineTo(p.x+width/2-15,top+14);ctx.stroke();ctx.setLineDash([]);}
     else if(object.type==="shadow"){ctx.fillStyle="#0a0b18";ctx.fillRect(p.x-34,top-10,68,27);ctx.fillStyle="#ff6a88";ctx.beginPath();ctx.ellipse(p.x-10,top,7,3,0,0,Math.PI*2);ctx.ellipse(p.x+10,top,7,3,0,0,Math.PI*2);ctx.fill();}
     else {ctx.strokeStyle="#43ffe0";ctx.lineWidth=2;for(let x=-42;x<=42;x+=14){ctx.beginPath();ctx.moveTo(p.x+x,top-11);ctx.lineTo(p.x+x,top+14);ctx.stroke();}for(let y=-10;y<=14;y+=8){ctx.beginPath();ctx.moveTo(p.x-42,top+y);ctx.lineTo(p.x+42,top+y);ctx.stroke();}ctx.fillStyle="#ff5ccc";ctx.fillRect(p.x-5,top-7,10,14);}
+    ctx.fillStyle="#07121e";ctx.fillRect(p.x-45,top+18,90,12);ctx.fillStyle="#edf6f5";ctx.font="800 7px Inter";ctx.fillText(object.type==="buttonEye"?"BUTTON-EYE WORKSHOP":object.type==="shadow"?"ENTER THE CHASE":"GLITCH HUB",p.x,top+27);
   }
 
   function drawTrackedCoaster(object,item){
-    const nodes=object.track;
+    const nodes=object.track,screenNodes=nodes.map(node=>iso(node.x+.5,node.y+.5,node.z));
     ctx.save();ctx.lineCap="round";ctx.lineJoin="round";
-    for(const node of nodes){if(node.z>0){const top=iso(node.x+.5,node.y+.5,node.z),ground=iso(node.x+.5,node.y+.5,0);ctx.strokeStyle="rgba(80,96,104,.8)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(top.x,top.y+10);ctx.lineTo(ground.x,ground.y+12);ctx.stroke();}}
-    ctx.strokeStyle=object.state==="blueprint"?"rgba(75,255,181,.6)":item.color;ctx.lineWidth=item.id==="hydro"?10:6;ctx.setLineDash(object.state==="blueprint"?[7,5]:[]);ctx.beginPath();
-    nodes.forEach((node,index)=>{const p=iso(node.x+.5,node.y+.5,node.z);index?ctx.lineTo(p.x,p.y+12):ctx.moveTo(p.x,p.y+12);});ctx.stroke();
+    if(object.state==="built"){const station=screenNodes[0];ctx.fillStyle="#263945";ctx.fillRect(station.x-36,station.y-2,72,22);ctx.fillStyle=shade(item.color,-22);ctx.fillRect(station.x-40,station.y-7,80,7);ctx.strokeStyle="#d8e4e4";ctx.lineWidth=2;for(const dx of [-34,34]){ctx.beginPath();ctx.moveTo(station.x+dx,station.y-6);ctx.lineTo(station.x+dx,station.y-31);ctx.stroke();}ctx.fillStyle=item.color;ctx.beginPath();ctx.moveTo(station.x-40,station.y-31);ctx.lineTo(station.x,station.y-43);ctx.lineTo(station.x+40,station.y-31);ctx.lineTo(station.x+34,station.y-25);ctx.lineTo(station.x-34,station.y-25);ctx.closePath();ctx.fill();ctx.fillStyle="#eef7f5";ctx.font="700 6px Inter";ctx.textAlign="center";ctx.fillText("LOAD STATION",station.x,station.y-29);}
+    for(let index=0;index<nodes.length;index++){const node=nodes[index];if(node.z>0){const top=screenNodes[index],ground=iso(node.x+.5,node.y+.5,0);ctx.strokeStyle="rgba(80,96,104,.85)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(top.x-5,top.y+11);ctx.lineTo(ground.x-11,ground.y+12);ctx.moveTo(top.x+5,top.y+11);ctx.lineTo(ground.x+11,ground.y+12);ctx.moveTo(ground.x-11,ground.y+12);ctx.lineTo(ground.x+11,ground.y-4);ctx.stroke();}}
+    const blueprint=object.state==="blueprint";ctx.setLineDash(blueprint?[7,5]:[]);
+    if(item.id==="hydro"){ctx.strokeStyle=blueprint?"rgba(75,255,181,.6)":"#3188a9";ctx.lineWidth=15;ctx.beginPath();screenNodes.forEach((point,index)=>index?ctx.lineTo(point.x,point.y+12):ctx.moveTo(point.x,point.y+12));ctx.stroke();ctx.strokeStyle=blueprint?"rgba(225,255,241,.55)":"#7de4f0";ctx.lineWidth=9;ctx.stroke();}
+    else {ctx.strokeStyle=blueprint?"rgba(75,255,181,.6)":shade(item.color,-25);ctx.lineWidth=8;ctx.beginPath();screenNodes.forEach((point,index)=>index?ctx.lineTo(point.x,point.y+12):ctx.moveTo(point.x,point.y+12));ctx.stroke();ctx.strokeStyle=blueprint?"rgba(225,255,241,.55)":"#d7e1e2";ctx.lineWidth=2;for(const offset of [-3,3]){ctx.beginPath();screenNodes.forEach((point,index)=>index?ctx.lineTo(point.x,point.y+12+offset):ctx.moveTo(point.x,point.y+12+offset));ctx.stroke();}}
+    ctx.setLineDash([]);
+    if(!blueprint&&item.id!=="hydro")for(let index=0;index<screenNodes.length;index++){const point=screenNodes[index],next=screenNodes[(index+1)%screenNodes.length],dx=next.x-point.x,dy=next.y-point.y,length=Math.hypot(dx,dy)||1,nx=-dy/length*7,ny=dx/length*7;ctx.strokeStyle="#6b5540";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(point.x+nx,point.y+12+ny);ctx.lineTo(point.x-nx,point.y+12-ny);ctx.stroke();}
     for(let index=1;index<nodes.length;index++){const a=nodes[index-1],b=nodes[index];if(a.z>=0&&b.z>=0)continue;const pa=iso(a.x+.5,a.y+.5,a.z),pb=iso(b.x+.5,b.y+.5,b.z);ctx.strokeStyle="rgba(12,26,33,.9)";ctx.lineWidth=item.id==="hydro"?13:9;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(pa.x,pa.y+12);ctx.lineTo(pb.x,pb.y+12);ctx.stroke();ctx.strokeStyle="#66b7ae";ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);}
-    ctx.strokeStyle=object.state==="blueprint"?"rgba(225,255,241,.55)":"#d4e2e5";ctx.lineWidth=1.5;ctx.beginPath();nodes.forEach((node,index)=>{const p=iso(node.x+.5,node.y+.5,node.z);index?ctx.lineTo(p.x,p.y+9):ctx.moveTo(p.x,p.y+9);});ctx.stroke();ctx.setLineDash([]);
-    if(object.open&&nodes.length>1){const cars=clamp(object.cars||3,1,5);for(let car=0;car<cars;car++){const progress=((performance.now()/90)-car*.28+nodes.length)%nodes.length,index=Math.floor(progress),next=(index+1)%nodes.length,t=progress-index,a=iso(nodes[index].x+.5,nodes[index].y+.5,nodes[index].z),b=iso(nodes[next].x+.5,nodes[next].y+.5,nodes[next].z),x=a.x+(b.x-a.x)*t,y=a.y+(b.y-a.y)*t;ctx.fillStyle=item.id==="hydro"?"#e8b75d":car?item.color:"#f5f8f8";ctx.fillRect(x-7,y+2,14,8);ctx.fillStyle="#122937";ctx.fillRect(x-4,y,8,4);if(nodes[index].z<0){ctx.fillStyle="rgba(255,237,147,.4)";ctx.beginPath();ctx.arc(x,y+5,10,0,Math.PI*2);ctx.fill();}}}
+    if(object.open&&nodes.length>1){const cars=clamp(object.cars||3,1,5);for(let car=0;car<cars;car++){const progress=((performance.now()/90)-car*.3+nodes.length)%nodes.length,index=Math.floor(progress),next=(index+1)%nodes.length,t=progress-index,a=screenNodes[index],b=screenNodes[next],x=a.x+(b.x-a.x)*t,y=a.y+(b.y-a.y)*t,angle=Math.atan2(b.y-a.y,b.x-a.x);drawCoasterCar(x,y+8,angle,item,car);if(nodes[index].z<0){ctx.fillStyle="rgba(255,237,147,.35)";ctx.beginPath();ctx.arc(x,y+8,12,0,Math.PI*2);ctx.fill();}}}
     const center=nodes.reduce((sum,node)=>({x:sum.x+node.x,y:sum.y+node.y,z:sum.z+node.z}),{x:0,y:0,z:0});center.x/=nodes.length;center.y/=nodes.length;center.z/=nodes.length;const label=iso(center.x+.5,center.y+.5,center.z);
     const display=object.customName||item.name;if(object.broken)drawWorldLabel(label.x,label.y-45,"⚠ SAFE SHUTDOWN","#ff5368");else if(object.state==="blueprint")drawWorldLabel(label.x,label.y-45,"AUTHORIZE TRACK CONSTRUCTION","#53d998");else if(object.state==="constructing")drawWorldLabel(label.x,label.y-45,`TRACK ASSEMBLY ${Math.ceil(object.buildRemaining)}s`,"#ffb456");else drawWorldLabel(label.x,label.y-45,`${display.toUpperCase()} · ${object.open?"OPEN":"CLOSED"}`,object.open?"#53d998":"#91aab6");
     if(object.broken){for(let i=0;i<5;i++){const px=label.x+Math.sin(performance.now()/250+i)*10,py=label.y-35-i*7;ctx.fillStyle=`rgba(170,190,195,${.5-i*.07})`;ctx.beginPath();ctx.arc(px,py,5+i*2,0,Math.PI*2);ctx.fill();}}
     ctx.restore();
+  }
+
+  function drawCoasterCar(x,y,angle,item,index){
+    ctx.save();ctx.translate(x,y);ctx.rotate(angle);const hydro=item.id==="hydro",flyer=item.id==="flyer";ctx.fillStyle="#111c24";if(!hydro){ctx.beginPath();ctx.arc(-6,5,2.5,0,Math.PI*2);ctx.arc(6,5,2.5,0,Math.PI*2);ctx.fill();}ctx.fillStyle=hydro?"#e6ad45":index?item.color:"#f1f5f3";ctx.beginPath();if(hydro){ctx.moveTo(-10,-5);ctx.lineTo(11,-4);ctx.lineTo(7,6);ctx.lineTo(-7,6);ctx.closePath();}else ctx.roundRect(-10,-6,20,11,3);ctx.fill();ctx.fillStyle="#22343f";ctx.fillRect(-5,-7,10,5);ctx.strokeStyle="#eef5f3";ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(0,-3,5,Math.PI,Math.PI*2);ctx.stroke();ctx.fillStyle="#eeb28d";ctx.beginPath();ctx.arc(-3,-8,2.5,0,Math.PI*2);ctx.arc(4,-8,2.5,0,Math.PI*2);ctx.fill();if(flyer){ctx.strokeStyle=item.color;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-8,5);ctx.lineTo(-8,11);ctx.lineTo(8,11);ctx.lineTo(8,5);ctx.stroke();}ctx.restore();
   }
 
   function drawFacility(object, item) {
