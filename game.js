@@ -456,7 +456,6 @@
   function drawDistrict() {
     drawUsedRideParkingLot();
     drawBuilding(2.3, 9.3, 2.5, 2.2, "#2d5870", "JOB SHACK", "#39a8ff");
-    drawBuilding(20, 2, 5, 4, "#62333c", "USED RIDE LOT", "#ff5368");
     drawBuilding(23, 8, 5, 3.5, "#174f68", "BLUEPRINT FABRICATOR", "#39a8ff");
     drawBuilding(26, 4.5, 2.5, 2.5, "#3f365d", "LEGAL DISTRICT", "#b28cff");
     drawBuilding(19, 11, 3.5, 2.5, "#735320", "SHIPPING DESK", "#f3c753");
@@ -473,9 +472,15 @@
       const a=iso(18.7+index*1.55,6.8),b=iso(18.7+index*1.55,5.7);
       ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
     }
-    for(const [x,y,color] of [[19.2,6.1,"#cf4e42"],[21,6.1,"#e0b64d"],[22.8,6.1,"#4b87a7"],[24.6,6.1,"#6e7780"]]){
-      const p=iso(x,y);ctx.fillStyle=color;ctx.fillRect(p.x-15,p.y-14,30,11);ctx.fillStyle="#18242a";ctx.fillRect(p.x-10,p.y-18,20,6);
-    }
+    const sign=iso(21.4,1.2);ctx.fillStyle="#d94f5f";ctx.fillRect(sign.x-46,sign.y-54,92,19);ctx.fillStyle="#e9f3f5";ctx.font="800 9px Inter";ctx.textAlign="center";ctx.fillText("USED RIDE LOT",sign.x,sign.y-41);ctx.fillStyle="#59666b";ctx.fillRect(sign.x-40,sign.y-35,4,35);ctx.fillRect(sign.x+36,sign.y-35,4,35);
+
+    const carousel=iso(19.4,4.4);ctx.fillStyle="#9f3f4f";ctx.beginPath();ctx.ellipse(carousel.x,carousel.y,30,12,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#f0cf6a";ctx.beginPath();ctx.moveTo(carousel.x-31,carousel.y-22);ctx.lineTo(carousel.x,carousel.y-43);ctx.lineTo(carousel.x+31,carousel.y-22);ctx.closePath();ctx.fill();ctx.strokeStyle="#e8edf0";ctx.lineWidth=3;for(const dx of [-18,0,18]){ctx.beginPath();ctx.moveTo(carousel.x+dx,carousel.y-24);ctx.lineTo(carousel.x+dx,carousel.y-2);ctx.stroke();ctx.fillStyle="#68b9cc";ctx.fillRect(carousel.x+dx-6,carousel.y-12,12,6);}
+
+    const wheel=iso(22.3,3);ctx.strokeStyle="#57b6cf";ctx.lineWidth=4;ctx.beginPath();ctx.arc(wheel.x,wheel.y-31,32,0,Math.PI*2);ctx.stroke();ctx.strokeStyle="#c9dadd";ctx.lineWidth=2;for(let i=0;i<8;i++){const angle=i*Math.PI/4,x=wheel.x+Math.cos(angle)*32,y=wheel.y-31+Math.sin(angle)*32;ctx.beginPath();ctx.moveTo(wheel.x,wheel.y-31);ctx.lineTo(x,y);ctx.stroke();ctx.fillStyle=i%2?"#f1be55":"#e66372";ctx.fillRect(x-5,y-3,10,7);}ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(wheel.x-20,wheel.y+10);ctx.lineTo(wheel.x,wheel.y-31);ctx.lineTo(wheel.x+20,wheel.y+10);ctx.stroke();
+
+    const swinger=iso(24.3,5);ctx.strokeStyle="#d9e2e3";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(swinger.x,swinger.y);ctx.lineTo(swinger.x,swinger.y-48);ctx.stroke();ctx.fillStyle="#678cb8";ctx.beginPath();ctx.ellipse(swinger.x,swinger.y-48,27,8,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#e6c96b";ctx.lineWidth=1;for(let i=0;i<6;i++){const angle=i*Math.PI/3,x=swinger.x+Math.cos(angle)*25,y=swinger.y-48+Math.sin(angle)*6;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.cos(angle)*10,y+24);ctx.stroke();ctx.fillStyle="#d95f68";ctx.fillRect(x+Math.cos(angle)*10-4,y+21,8,5);}
+
+    const train=iso(21.2,6.3);ctx.strokeStyle="#adb9bd";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(train.x-42,train.y+5);ctx.lineTo(train.x+42,train.y-16);ctx.stroke();for(let i=0;i<3;i++){const x=train.x-27+i*27,y=train.y-i*7;ctx.fillStyle=i?"#dc6a4e":"#f0c657";ctx.fillRect(x-11,y-13,22,11);ctx.fillStyle="#13252f";ctx.beginPath();ctx.arc(x-6,y,4,0,Math.PI*2);ctx.arc(x+7,y-3,4,0,Math.PI*2);ctx.fill();}
     if((state.parkingCashFound||0)<3){const p=iso(24.8,7);ctx.fillStyle="#69f0a9";ctx.shadowColor="#69f0a9";ctx.shadowBlur=12;ctx.font="800 13px Inter";ctx.textAlign="center";ctx.fillText("$",p.x,p.y-8);ctx.shadowBlur=0;}
     ctx.restore();
   }
