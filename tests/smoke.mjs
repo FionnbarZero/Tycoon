@@ -98,7 +98,7 @@ const usedLot = await evaluate(`({
   cashSearch: Boolean(document.querySelector('#searchParkingCash')),
   directPurchase: !document.querySelector('[data-buy-ride="carousel"]').disabled
 })`);
-expect(usedLot.cards === 13, "Used Ride Lot should list all 13 freight rides");
+expect(usedLot.cards === 16, "Used Ride Lot should list all 16 freight rides");
 expect(usedLot.scrollable, "Used Ride Lot inventory should scroll horizontally");
 expect(usedLot.cashSearch, "Used Ride Lot parking area should contain a cash search");
 expect(usedLot.directPurchase, "Starter rides should be directly purchasable from the horizontal catalog");
@@ -157,7 +157,7 @@ expect(loaded.cash.includes("74,250"), "Saved cash was not restored");
 expect(loaded.rep === "78%", "Saved reputation was not restored");
 expect(!loaded.dockLocked, "Toolkit should unlock the dock");
 expect(loaded.complete === "COMPLETE", "Completed tutorial was not recognized");
-expect(loaded.rideRoster === 14, "The active ride roster should contain 14 rides");
+expect(loaded.rideRoster === 17, "The active ride roster should contain 17 rides");
 expect(loaded.rating.includes('4.3') && loaded.rating.includes('2 REVIEWS'), "Saved appearance reviews were not restored");
 expect(loaded.capacity === 'LOT CAPACITY 220', "Expanded park capacity was not restored");
 expect(loaded.reviewTicker, "Latest guest review should be visible in the live review ticker");
@@ -167,8 +167,8 @@ await wait(50);
 expect(await evaluate("document.querySelector('#modal').textContent.includes('Beautiful paths and scenery!')"), "Visitor review panel did not show saved reviews");
 await evaluate("document.querySelector('[data-close]').click(); true");
 await evaluate("document.querySelector('[data-tab=commerce]').click(); true");
-const newBuildings = await evaluate("['arcade','cinema','giftShop','firstAid'].every(id => Boolean(document.querySelector(`[data-item=${id}]`)))");
-expect(newBuildings, "Arcade, cinema, gift shop, and first-aid buildings should appear in Commerce");
+const newBuildings = await evaluate("['arcade','cinema','giftShop','firstAid','iceCream','gameBooth'].every(id => Boolean(document.querySelector(`[data-item=${id}]`)))");
+expect(newBuildings, "Arcade, cinema, gift shop, first-aid, ice-cream, and midway buildings should appear in Commerce");
 await evaluate(`(() => {
   document.querySelector('[data-item=arcade]').click();
   const canvas=document.querySelector('#world'),rect=canvas.getBoundingClientRect();
@@ -179,6 +179,9 @@ await evaluate(`(() => {
 })()`);
 await wait(100);
 expect(await evaluate("JSON.parse(localStorage.getItem('amusement-park-tycoon-v1')).objects.some(object => object.type === 'arcade' && object.x < 0)"), "Arcade could not be built in the enlarged park area");
+expect(await evaluate("JSON.parse(localStorage.getItem('amusement-park-tycoon-v1')).bonuses.firstArcade === true"), "Building the first arcade did not award its one-time bonus");
+await evaluate("document.querySelector('[data-tab=atmosphere]').click(); true");
+expect(await evaluate("['fountain','mascotStage'].every(id => Boolean(document.querySelector(`[data-item=${id}]`)))"), "New plaza scenery should appear in Atmosphere");
 await evaluate("document.querySelector('[data-tab=attractions]').click(); true");
 await evaluate("document.querySelector('[data-item=timber]').click(); true");
 await wait(100);

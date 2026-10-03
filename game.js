@@ -21,6 +21,9 @@
     whirlybird: { name: "Whirlybird Helicopters", icon: "✣", family: "Family Flat", cost: 14000, freight: 600, delivery: 90, w: 3, h: 3, capacity: 16, cycle: 80, excitement: 4.4, intensity: 3.1, nausea: 2.2, reliability: 88, power: 12, color: "#53d998", description: "Family favorite with hydraulic lifting arms that need regular oiling." },
     wave: { name: "Wave Swinger", icon: "✺", family: "Thrill Flat", cost: 18000, freight: 800, delivery: 120, w: 4, h: 4, capacity: 20, cycle: 95, excitement: 6.9, intensity: 6.1, nausea: 4.8, reliability: 75, power: 18, color: "#39a8ff", description: "Strong teen appeal, overhead cables, and demanding inspections." },
     safari: { name: "Backyard Truck / Cavern Safari", icon: "▰", family: "Tracked Ride", cost: 25000, freight: 1500, delivery: 240, w: 6, h: 5, capacity: 24, cycle: 150, excitement: 5.8, intensity: 3.4, nausea: 2.3, reliability: 85, power: 15, color: "#9dc65a", description: "Expedition trucks thread through canyon gaps and compact underground caves." },
+    skywheel: { name: "Skywheel Vista", icon: "◯", family: "Family Flat", cost: 18000, freight: 700, delivery: 90, w: 4, h: 4, capacity: 32, cycle: 100, excitement: 5.4, intensity: 3.2, nausea: 2, reliability: 89, power: 16, color: "#f8b657", description: "A glowing observation wheel with huge capacity and a beautiful skyline view." },
+    bumper: { name: "Neon Bumper Garage", icon: "⬡", family: "Family Flat", cost: 16500, freight: 650, delivery: 75, w: 4, h: 3, capacity: 20, cycle: 85, excitement: 5.8, intensity: 4.8, nausea: 2.8, reliability: 87, power: 18, color: "#ff65b8", description: "Colorful electric cars turn every cycle into a friendly, chaotic competition." },
+    dropTower: { name: "Comet Drop Tower", icon: "↕", family: "Thrill Flat", cost: 28000, freight: 1100, delivery: 120, w: 4, h: 4, capacity: 16, cycle: 75, excitement: 8.1, intensity: 8.5, nausea: 6.2, reliability: 80, power: 26, color: "#8d79ff", description: "A compact skyline tower with a fast launch, long pause, and sudden drop." },
     hairpin: { name: "Hairpin Slideway", icon: "ϟ", family: "Drift Coaster", coaster: true, maxSpeed: 48, maxHeight: 2, cost: 85000, freight: 3200, delivery: 300, w: 8, h: 6, capacity: 16, cycle: 110, excitement: 8.8, intensity: 8.2, nausea: 6.5, reliability: 78, power: 36, color: "#ff5368", description: "Free-swinging whip cars drift through sharp lateral corners." },
     hydro: { name: "Hydro-Slide Drift", icon: "≈", family: "Water Coaster", coaster: true, maxSpeed: 55, maxHeight: 4, cost: 140000, freight: 5000, delivery: 420, w: 10, h: 8, capacity: 20, cycle: 150, excitement: 9.1, intensity: 7.5, nausea: 5.4, reliability: 72, power: 50, color: "#44c7e8", description: "Water-coaster boats hydroplane across broad fishtail curves." },
     neon: { name: "Neon Circuit", icon: "↯", family: "Launched Coaster", coaster: true, maxSpeed: 92, maxHeight: 5, cost: 125000, freight: 4500, delivery: 360, w: 8, h: 6, capacity: 20, cycle: 105, excitement: 9.3, intensity: 8.7, nausea: 6.1, reliability: 76, power: 75, color: "#33d6ff", description: "A high-speed hydraulic launch coaster with synchronized LED track lighting." },
@@ -83,9 +86,11 @@
       { id: "fry", name: "Neon Fry Basket", icon: "▥", cost: 4000, kind: "food", w: 2, h: 2, power: 6, price: 6.5, aura: 4, description: "Salty boardwalk food raises thirst and adjacent drink demand." },
       { id: "wok", name: "Sichuan Wok Express", icon: "♨", cost: 6500, kind: "food", w: 3, h: 2, power: 8, price: 8.5, aura: 7, description: "Aromatic street kitchen that pulls guests from nearby paths." },
       { id: "pizza", name: "Dairy-Free Pizza Parlor", icon: "◒", cost: 8000, kind: "food", w: 3, h: 3, power: 18, price: 9, aura: 5, description: "High-capacity open kitchen demanding a stronger power grid." },
+      { id: "iceCream", name: "Cloud Cone Creamery", icon: "♢", cost: 3500, kind: "food", w: 2, h: 2, power: 5, price: 5.5, aura: 3, description: "A cheerful ice-cream kiosk that cools guests down and sells quickly near family rides." },
       { id: "restroomSingle", name: "Comfort Station", icon: "WC", cost: 3000, kind: "restroom", w: 1, h: 1, capacity: 2, price: 0, water: 4, aura: 3, description: "Tiny two-guest relief station for tight spaces." },
       { id: "restroomMulti", name: "Utility Restroom", icon: "▦", cost: 7000, kind: "restroom", w: 2, h: 2, capacity: 12, price: 0, water: 12, aura: 4, description: "Stackable, high-throughput facility requiring a water connection." },
       { id: "arcade", name: "Pixel Palace Arcade", icon: "▣", cost: 12000, kind: "venue", w: 4, h: 3, capacity: 30, price: 4, power: 20, aura: 5, atmosphere: 12, description: "A neon indoor arcade packed with cabinets, prize machines, and family games." },
+      { id: "gameBooth", name: "Midway Skill Games", icon: "◎", cost: 5000, kind: "venue", w: 2, h: 2, capacity: 12, price: 2.5, power: 6, aura: 3, atmosphere: 6, description: "Quick carnival games and prizes add an affordable activity between rides." },
       { id: "cinema", name: "Starlight 4D Cinema", icon: "▶", cost: 16500, kind: "venue", w: 4, h: 4, capacity: 40, price: 7.5, power: 28, aura: 6, atmosphere: 14, description: "An indoor motion theater that keeps visitors entertained during rain." },
       { id: "giftShop", name: "Uptown Gift Shop", icon: "◆", cost: 7500, kind: "shop", w: 3, h: 2, price: 8, power: 4, aura: 4, atmosphere: 7, description: "A bright souvenir building selling ride photos, plush toys, and park merchandise." },
       { id: "firstAid", name: "First Aid Lodge", icon: "+", cost: 5500, kind: "rest", w: 2, h: 2, price: 0, power: 3, aura: 3, atmosphere: 4, description: "A staffed recovery building that lowers fatigue and improves visitor confidence." },
@@ -97,6 +102,8 @@
       { id: "lantern", name: "Mason Lantern", icon: "✦", cost: 800, kind: "decor", w: 1, h: 1, aura: 2, atmosphere: 4, description: "Low-power-free lighting made from upcycled materials." },
       { id: "dino", name: "Dino Skeleton", icon: "☠", cost: 7500, kind: "decor", w: 4, h: 4, aura: 8, atmosphere: 15, description: "Large landmark adding Immersive Wonder to nearby rides." },
       { id: "tree", name: "Redwood Cluster", icon: "♠", cost: 450, kind: "decor", w: 1, h: 1, aura: 2, atmosphere: 3, description: "Natural shade and stress relief for nearby guests." },
+      { id: "fountain", name: "Dancing Light Fountain", icon: "♒", cost: 2500, kind: "decor", w: 2, h: 2, aura: 4, atmosphere: 10, description: "Animated water jets and colored lights create a lively plaza centerpiece." },
+      { id: "mascotStage", name: "Mascot Mini Stage", icon: "★", cost: 4500, kind: "decor", w: 3, h: 2, aura: 5, atmosphere: 12, description: "Short character shows delight families and brighten nearby paths." },
       { id: "themeBoardwalk", name: "Boardwalk Theme", icon: "≈", cost: 5000, kind: "theme", theme: "boardwalk", description: "Paints connected ground with sand and weathered decking." },
       { id: "themeForest", name: "Eco-Forest Theme", icon: "♣", cost: 6000, kind: "theme", theme: "forest", description: "Redwoods, rocks, and lanterns reduce guest stress." },
       { id: "themeShipyard", name: "Shipyard Theme", icon: "⌗", cost: 4500, kind: "theme", theme: "shipyard", description: "Industrial ground treatment that speeds mechanical construction." }
@@ -125,7 +132,7 @@
     blueprintPacks: { concrete: false, queue: false }, materials: {}, rideInventory: {}, pendingOrders: [], shipments: [],
     objects: [], themes: [], staff: { janitors: 0, mechanics: 0 }, admission: { model: "open", gatePrice: 0, dayPass: 35, seasonPass: 120 },
     player: { x: 8, y: 12, z: 0 }, stats: { expenses: 0, profit: 0, complaints: 0 }, weather: "clear",
-    reviewTotal: 0, reviewCount: 0, reviews: [], parkingCashFound: 0,
+    reviewTotal: 0, reviewCount: 0, reviews: [], parkingCashFound: 0, bonuses: {},
     unlocked: { spinner: false, skid: false, hairpin: false, hydro: false, neon: false, flyer: false }, coasterLicenses: {}, powerTier: 1, level: 1, milestones: { path: false, freight: false }, lastSave: Date.now()
   });
 
@@ -151,6 +158,7 @@
   let audioContext = null;
   let walkTarget = null;
   let movementTimer = null;
+  let celebrationUntil = 0;
 
   const canvas = $("#world");
   const ctx = canvas.getContext("2d");
@@ -342,6 +350,19 @@
     drawPlayer();
     drawPreview();
     ctx.restore();
+    drawCelebration();
+  }
+
+  function drawCelebration() {
+    if (performance.now() >= celebrationUntil) return;
+    const width=canvas.viewWidth||canvas.width,height=canvas.viewHeight||canvas.height,time=performance.now();
+    const colors=["#ffcc55","#53d998","#ff65b8","#55cfff","#ffffff"];
+    ctx.save();
+    for(let i=0;i<48;i++){
+      const speed=.035+(i%5)*.008,x=(i*127+time*speed)%width,y=(i*83+time*(.055+(i%4)*.012))%height;
+      ctx.save();ctx.fillStyle=colors[i%colors.length];ctx.translate(x,y);ctx.rotate(time/900+i);ctx.fillRect(-3,-6,6,12);ctx.restore();
+    }
+    ctx.restore();
   }
 
   function drawTerrain() {
@@ -506,7 +527,12 @@
       ctx.fillStyle=shade(item.color,-20);ctx.beginPath();ctx.moveTo(p.x-width/2-6,p.y-height-48);ctx.lineTo(p.x,p.y-height-68);ctx.lineTo(p.x+width/2+6,p.y-height-48);ctx.closePath();ctx.fill();
       ctx.strokeStyle=item.color;ctx.lineWidth=2;ctx.strokeRect(p.x-width/2+8,p.y-height-35,width-16,25);
       ctx.fillStyle="#07121e";ctx.font="700 9px Inter";ctx.textAlign="center";ctx.fillText(item.icon,p.x,p.y-height-18);
-    } else if (["carousel", "wave", "spinner", "skid", "whirlybird"].includes(object.type)) {
+    } else if (object.type === "skywheel") {
+      const spin=object.open?performance.now()/5000:0,radius=42;
+      ctx.strokeStyle="#d9edf0";ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(p.x-26,p.y+22);ctx.lineTo(p.x,p.y-42);ctx.lineTo(p.x+26,p.y+22);ctx.stroke();
+      ctx.strokeStyle=item.color;ctx.lineWidth=4;ctx.beginPath();ctx.arc(p.x,p.y-42,radius,0,Math.PI*2);ctx.stroke();
+      for(let i=0;i<8;i++){const angle=spin+i*Math.PI/4,x=p.x+Math.cos(angle)*radius,y=p.y-42+Math.sin(angle)*radius;ctx.strokeStyle="rgba(230,245,248,.6)";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.x,p.y-42);ctx.lineTo(x,y);ctx.stroke();ctx.fillStyle=i%2?item.color:"#fff1a8";ctx.fillRect(x-6,y-3,12,7);}
+    } else if (["carousel", "wave", "spinner", "skid", "whirlybird", "bumper", "dropTower"].includes(object.type)) {
       ctx.fillStyle = shade(item.color, -35); ctx.beginPath(); ctx.ellipse(p.x, p.y + 6, Math.max(28, item.w * 18), Math.max(14, item.h * 9), 0, 0, Math.PI * 2); ctx.fill();
       ctx.strokeStyle = item.color; ctx.lineWidth = 4; ctx.beginPath(); ctx.ellipse(p.x, p.y + 2, Math.max(22, item.w * 15), Math.max(11, item.h * 7), 0, 0, Math.PI * 2); ctx.stroke();
       ctx.strokeStyle = "#dcecf0"; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(p.x, p.y + 4); ctx.lineTo(p.x, p.y - 47 - (object.open ? pulse : 0)); ctx.stroke();
@@ -727,6 +753,8 @@
     }
     state.objects.push(object);
     if (item.atmosphere) state.atmosphere += item.atmosphere;
+    if(id==="arcade")awardMilestone("firstArcade","Arcade Opening Bonus",1500,"The city entertainment board sponsored your first arcade.");
+    if(item.kind==="decor")awardMilestone("firstDecor","Beautification Bonus",500,"Your first decoration made the park more welcoming.");
     if (item.kind === "path") {
       state.milestones ||= { path: false, freight: false }; state.milestones.path = true;
       if (state.tutorial === 6) { advanceTutorial(7); if (state.milestones.freight) advanceTutorial(8); }
@@ -848,6 +876,13 @@
     setTimeout(()=>toast.remove(),5000);
   }
 
+  function awardMilestone(id, title, amount, message) {
+    state.bonuses ||= {};
+    if(state.bonuses[id])return false;
+    state.bonuses[id]=true;state.cash+=amount;celebrationUntil=performance.now()+4000;
+    notify(`${title} · ${money(amount)}`,message);saveTimer=99;save();updateUI();return true;
+  }
+
   let messageTimer;
   function showWorldMessage(message) { const node=$("#worldMessage");node.textContent=message;node.classList.remove("hidden");clearTimeout(messageTimer);messageTimer=setTimeout(()=>node.classList.add("hidden"),2200); }
 
@@ -868,7 +903,7 @@
   function openUsedRideLot() {
     selectedShopVisited=true;if(state.tutorial===2)advanceTutorial(3);
     refreshCoasterUnlocks();
-    const base=["carousel","whirlybird","wave","safari"],shop=Object.entries(RIDES).filter(([id,ride])=>!ride.ledgerBuild),cards=shop.map(([id,ride])=>{const unlocked=base.includes(id)||(id==="spinner"||id==="skid"?state.lotTier>1:!!state.unlocked[id]);let action=`<button data-buy-ride="${id}" ${!unlocked||state.cash<ride.cost?"disabled":""}>${unlocked?`PURCHASE · FREIGHT ${money(ride.freight)}`:"LOCKED"}</button>`;
+    const base=["carousel","whirlybird","wave","safari","skywheel","bumper","dropTower"],shop=Object.entries(RIDES).filter(([id,ride])=>!ride.ledgerBuild),cards=shop.map(([id,ride])=>{const unlocked=base.includes(id)||(id==="spinner"||id==="skid"?state.lotTier>1:!!state.unlocked[id]);let action=`<button data-buy-ride="${id}" ${!unlocked||state.cash<ride.cost?"disabled":""}>${unlocked?`PURCHASE · FREIGHT ${money(ride.freight)}`:"LOCKED"}</button>`;
       if(id==="hairpin"&&!state.coasterLicenses.hairpin)action=`<button data-license="hairpin" ${parkNetWorth()<50000||state.cash<10000?"disabled":""}>LICENSE BLUEPRINT · $10,000</button>`;
       if(id==="flyer"&&!state.coasterLicenses.flyer)action=`<button disabled>VISIT LEGAL DISTRICT OFFICES</button>`;
       return `<article class="shop-card"><header><h3>${ride.icon} ${ride.name}</h3><strong>${money(ride.cost)}</strong></header><p>${ride.description}</p><div class="shop-stats"><span>EXC ${ride.excitement}</span><span>REL ${ride.reliability}%</span><span>${ride.coaster?`${ride.maxSpeed} MPH · H${ride.maxHeight}`:`${ride.w}×${ride.h}`}</span></div>${unlocked?action:`<p class="inspector-copy">${coasterRequirement(id)}</p>${action}`}</article>`;}).join("");
@@ -912,7 +947,7 @@
   function openShippingDesk() {
     const active=state.shipments.filter(shipment=>shipment.status==="transit");
     const orders=state.pendingOrders.length?`<div class="shop-grid">${state.pendingOrders.map(order=>{const ride=RIDES[order.ride];return `<article class="shop-card"><header><h3>${ride.name}</h3><strong>${money(ride.freight)}</strong></header><p>${Math.ceil(ride.delivery/60)} minute delivery · industrial flatbed</p><button data-dispatch="${order.id}" ${state.cash<ride.freight?"disabled":""}>DISPATCH FREIGHT</button></article>`}).join("")}</div>`:`<p class="modal-copy">No purchased machinery is awaiting dispatch. Visit the Used Ride Lot first.</p>`;
-    const transit=active.length?`<p class="inspector-label" style="margin-top:18px">ACTIVE SHIPMENTS</p><div class="shop-grid">${active.map(shipment=>{const ride=RIDES[shipment.ride],cost=Math.ceil(ride.freight*.5*(shipment.rushes+1));return `<article class="shop-card"><header><h3>${ride.name}</h3><strong>${Math.ceil(shipment.remaining)}s</strong></header><p>${shipment.event==="delay"?"Traffic delay active":shipment.event==="damage"?"Crate inspection flagged":"Truck is en route"} · rush reduces remaining time by 50%</p><button data-rush="${shipment.id}" ${state.cash<cost?"disabled":""}>EXPEDITE · ${money(cost)}</button></article>`}).join("")}</div>`:"";
+    const transit=active.length?`<p class="inspector-label" style="margin-top:18px">ACTIVE SHIPMENTS</p><div class="shop-grid">${active.map(shipment=>{const ride=RIDES[shipment.ride],cost=Math.ceil(ride.freight*.5*(shipment.rushes+1));return `<article class="shop-card"><header><h3>${ride.name}</h3><strong>${Math.ceil(shipment.remaining)}s</strong></header><p>${shipment.event==="starter"?"Starter express lane active":shipment.event==="delay"?"Traffic delay active":shipment.event==="damage"?"Crate inspection flagged":"Truck is en route"} · rush reduces remaining time by 50%</p><button data-rush="${shipment.id}" ${state.cash<cost?"disabled":""}>EXPEDITE · ${money(cost)}</button></article>`}).join("")}</div>`:"";
     const body=`<p class="modal-copy">Dispatch purchased machinery to your eastern Freight Depot. Delivery timers use simulation time.</p>${orders}${transit}`;
     openModal(modalShell("DISTRICT LOGISTICS","Freight shipping desk",body,`<button class="modal-button" data-close>Close ledger</button>`),()=>{$$("[data-close]").forEach(b=>b.onclick=closeModal);$$('[data-dispatch]').forEach(button=>button.onclick=()=>dispatchOrder(button.dataset.dispatch));$$('[data-rush]').forEach(button=>button.onclick=()=>{rushShipment(state.shipments.find(shipment=>shipment.id===button.dataset.rush));openShippingDesk();});});
   }
@@ -920,9 +955,10 @@
   function dispatchOrder(orderId) {
     const index=state.pendingOrders.findIndex(order=>order.id===orderId);if(index<0)return;const order=state.pendingOrders[index],ride=RIDES[order.ride];if(state.cash<ride.freight)return;
     state.cash-=ride.freight;state.stats.expenses+=ride.freight;state.pendingOrders.splice(index,1);
-    const roll=Math.random();let event="clear",remaining=ride.delivery;if(roll<.12){event="delay";remaining*=1.35;}else if(roll<.2)event="parts";else if(roll<.27)event="damage";
+    const firstDelivery=!state.shipments.length&&!state.objects.some(object=>getItem(object.type)?.kind==="ride")&&!Object.values(state.rideInventory||{}).some(Boolean);
+    const roll=Math.random();let event="clear",remaining=ride.delivery;if(firstDelivery){event="starter";remaining=Math.min(20,ride.delivery);}else if(roll<.12){event="delay";remaining*=1.35;}else if(roll<.2)event="parts";else if(roll<.27)event="damage";
     state.shipments.push({id:uid("ship"),ride:order.ride,remaining,status:"transit",event,rushes:0});
-    notify(`${ride.name} dispatched`,`${Math.ceil(remaining/60)} minute live freight window.${event==="delay"?" Traffic delay reported.":event==="parts"?" The driver found bonus spare parts.":event==="damage"?" Crate damage inspection required.":""}`,event==="delay"||event==="damage"?"warning":"");
+    notify(`${ride.name} dispatched`,event==="starter"?"Your first attraction gets free express handling and arrives in 20 seconds.":`${Math.ceil(remaining/60)} minute live freight window.${event==="delay"?" Traffic delay reported.":event==="parts"?" The driver found bonus spare parts.":event==="damage"?" Crate damage inspection required.":""}`,event==="delay"||event==="damage"?"warning":"");
     if(state.tutorial===5)advanceTutorial(6);closeModal();updateUI();
   }
 
@@ -968,10 +1004,10 @@
     $$('[data-action]',$("#inspectorBody")).forEach(button=>button.onclick=()=>{
       const action=button.dataset.action,item=getItem(object.type);
       if(action.startsWith("upgrade:")){const tier=Number(action.split(":")[1]),earned=Math.min(3,1+Math.floor((object.cycles||0)/20));object.upgrades||=[];if(tier===object.upgrades.length&&object.upgrades.length<earned){object.upgrades.push(tier);if(object.type==="neon"&&tier===1)state.atmosphere+=10;notify(`${COASTER_UPGRADES[object.type][tier][0]} installed`,COASTER_UPGRADES[object.type][tier][1]);renderInspector(object);updateUI();}return;}
-      if(action==="authorize"){object.state="constructing";object.buildRemaining=item.coaster?60:item.family==="Drifting Thrill"?45:25;if(state.themes.some(t=>t.type==="shipyard"&&Math.abs(t.x-object.x)<4&&Math.abs(t.y-object.y)<4))object.buildRemaining*=.75;if(state.tutorial===9)advanceTutorial(10);renderInspector(object);}
+      if(action==="authorize"){const firstBuild=!state.objects.some(other=>other!==object&&getItem(other.type)?.kind==="ride"&&["constructing","built"].includes(other.state));object.state="constructing";object.buildRemaining=firstBuild?10:item.coaster?45:item.family==="Drifting Thrill"?30:18;if(state.themes.some(t=>t.type==="shipyard"&&Math.abs(t.x-object.x)<4&&Math.abs(t.y-object.y)<4))object.buildRemaining*=.75;if(firstBuild)notify("Starter crew fast-track","Your first attraction will be assembled in only 10 seconds.");if(state.tutorial===9)advanceTutorial(10);renderInspector(object);}
       if(action==="rushBuild"&&state.cash>=1000){state.cash-=1000;state.stats.expenses+=1000;object.buildRemaining=Math.max(1,object.buildRemaining*.5);renderInspector(object);updateUI();}
       if(action==="operator"){object.operator=!object.operator;if(!object.operator)object.open=false;renderInspector(object);}
-      if(action==="open"){if(!object.open&&!hasAdjacentQueue(object)){showWorldMessage("Connect a dedicated queue tile beside this ride");return;}if(!object.open&&!hasAdjacentPath(object)){showWorldMessage("Connect the ride area to a main pedestrian path");return;}if(!object.open&&!routeToTarget({x:8.5,y:14.5},object,true)){showWorldMessage("Connect this queue to the main gate with an unbroken path");return;}const firstOpening=!state.objects.some(other=>other!==object&&getItem(other.type)?.kind==="ride"&&other.open);object.open=!object.open;if(object.open&&firstOpening){spawnTimer=0;notify("Your first ride is drawing a crowd",`Visitors are heading to ${object.customName||item.name}. Keep every entrance connected to the main gate by paths.`);}if(object.open&&state.tutorial===11)advanceTutorial(12);renderInspector(object);updateUI();}
+      if(action==="open"){if(!object.open&&!hasAdjacentQueue(object)){showWorldMessage("Connect a dedicated queue tile beside this ride");return;}if(!object.open&&!hasAdjacentPath(object)){showWorldMessage("Connect the ride area to a main pedestrian path");return;}if(!object.open&&!routeToTarget({x:8.5,y:14.5},object,true)){showWorldMessage("Connect this queue to the main gate with an unbroken path");return;}const firstOpening=!state.objects.some(other=>other!==object&&getItem(other.type)?.kind==="ride"&&other.open);object.open=!object.open;if(object.open&&firstOpening){spawnTimer=0;awardMilestone("grandOpening","Grand Opening Bonus",2500,`Visitors are racing toward ${object.customName||item.name}.`);}if(object.open&&state.tutorial===11)advanceTutorial(12);renderInspector(object);updateUI();}
       if(action==="repair"){const cost=Math.max(300,Math.round((100-object.condition)*25));if(state.cash>=cost){state.cash-=cost;state.stats.expenses+=cost;object.condition=100;object.broken=false;notify(`${item.name} repaired`,"Safety inspection passed. The ride can reopen.");renderInspector(object);updateUI();}}
       if(action==="aura"){auraOverlay=!auraOverlay;renderInspector(object);}
       if(action==="penalty"){penaltyOverlay=!penaltyOverlay;renderInspector(object);}
@@ -997,10 +1033,10 @@
     openModal(modalShell("VISITOR REVIEWS · APPEARANCE","What guests think of your park",`<div class="review-summary"><strong>${average?average.toFixed(1):"—"}</strong><span>AVERAGE STARS<br>${state.reviewCount||0} VERIFIED REVIEW${state.reviewCount===1?"":"S"}</span></div><div class="shop-stats review-factors"><span>ATMOSPHERE ${Math.round(state.atmosphere)}</span><span>CLEANLINESS ${Math.round(state.cleanliness)}%</span><span>PATH QUALITY ${Math.round(pathQuality)}%</span></div><div class="review-list">${recent}</div>`,`<button class="modal-button primary" data-close>Back to park</button>`),()=>{$$("[data-close]").forEach(button=>button.onclick=closeModal);});
   }
 
-  function openMenu(){openModal(modalShell("PARK MANAGEMENT","Session controls",`<p class="modal-copy">${state.profile?`${state.profile}'s park`:"Unregistered park"} · Day ${state.day} · Local browser save</p><div class="shop-grid"><article class="shop-card"><h3>Staff roster</h3><p>Janitors sweep assigned paths. Mechanics automatically respond to safe ride shutdowns.</p><div class="shop-stats"><span>${state.staff.janitors} JANITORS</span><span>${state.staff.mechanics} MECHANICS</span></div><button id="hireJanitor">HIRE JANITOR · $80/day</button><button id="hireMechanic" style="margin-top:5px">HIRE MECHANIC · $120/day</button></article><article class="shop-card"><h3>Lot expansion</h3><p>Unlock drifting attractions and raise park capacity after operating two rides and reaching 250 lifetime guests.</p><button id="expandLot" ${state.lotTier>1||state.cash<20000||state.totalGuests<250||state.objects.filter(o=>getItem(o.type)?.kind==="ride"&&o.open).length<2?"disabled":""}>PERMIT · $20,000</button></article></div>`,`<button class="modal-button" data-close>Resume</button><button id="saveNow" class="modal-button primary">SAVE NOW</button><button id="resetGame" class="modal-button">RESET PARK</button>`),()=>{
+  function openMenu(){openModal(modalShell("PARK MANAGEMENT","Session controls",`<p class="modal-copy">${state.profile?`${state.profile}'s park`:"Unregistered park"} · Day ${state.day} · Local browser save</p><div class="shop-grid"><article class="shop-card"><h3>Staff roster</h3><p>Janitors sweep assigned paths. Mechanics automatically respond to safe ride shutdowns.</p><div class="shop-stats"><span>${state.staff.janitors} JANITORS</span><span>${state.staff.mechanics} MECHANICS</span></div><button id="hireJanitor">HIRE JANITOR · $80/day</button><button id="hireMechanic" style="margin-top:5px">HIRE MECHANIC · $120/day</button></article><article class="shop-card"><h3>Lot expansion</h3><p>Unlock drifting attractions and raise park capacity after operating two rides and welcoming 50 lifetime guests.</p><button id="expandLot" ${state.lotTier>1||state.cash<12000||state.totalGuests<50||state.objects.filter(o=>getItem(o.type)?.kind==="ride"&&o.open).length<2?"disabled":""}>PERMIT · $12,000</button></article></div>`,`<button class="modal-button" data-close>Resume</button><button id="saveNow" class="modal-button primary">SAVE NOW</button><button id="resetGame" class="modal-button">RESET PARK</button>`),()=>{
       $$("[data-close]").forEach(b=>b.onclick=closeModal);$("#saveNow").onclick=()=>{saveTimer=99;save();closeModal();notify("Park saved","All progress is stored in this browser.");};
       $("#hireJanitor").onclick=()=>{state.staff.janitors++;notify("Janitor hired","Automatic sweeping coverage expanded.");openMenu();};$("#hireMechanic").onclick=()=>{state.staff.mechanics++;notify("Mechanic hired","Breakdown response is now available.");openMenu();};
-      $("#expandLot").onclick=()=>{state.cash-=20000;state.stats.expenses+=20000;state.lotTier=2;Object.keys(state.unlocked).forEach(key=>state.unlocked[key]=true);state.powerCapacity+=100;notify("Expansion permit approved","Drifting Thrills and a 200 kW grid are now available.");closeModal();updateUI();};
+      $("#expandLot").onclick=()=>{state.cash-=12000;state.stats.expenses+=12000;state.lotTier=2;Object.keys(state.unlocked).forEach(key=>state.unlocked[key]=true);state.powerCapacity+=100;celebrationUntil=performance.now()+4000;notify("Expansion permit approved","Drifting Thrills, a larger crowd capacity, and a 200 kW grid are now available.");closeModal();updateUI();};
       $("#resetGame").onclick=()=>{if(confirm("Reset the entire park and erase the local save?")){localStorage.removeItem(SAVE_KEY);location.reload();}};
     });}
 
@@ -1028,6 +1064,7 @@
     updateConstruction(scaled);updateRides(scaled);updateGuests(scaled);updateCleanliness(scaled);spawnTimer-=scaled;
     const openRides=state.objects.filter(object=>getItem(object.type)?.kind==="ride"&&object.open&&!object.broken);
     if(openRides.length&&spawnTimer<=0&&guests.length<(state.lotTier>1?220:120)){spawnGuest(openRides);const stars=state.reviewCount?state.reviewTotal/state.reviewCount:3;spawnTimer=Math.max(.8,3.8-openRides.length*.25-stars*.25-state.reputation/100);}
+    if(state.totalGuests>=25)awardMilestone("guest25","Rising Park Bonus",2000,"Twenty-five visitors have entered your growing park.");
     if(saveTimer>8)save();
   }
 
@@ -1065,7 +1102,7 @@
   function updateRides(dt){
     const load=state.objects.reduce((sum,o)=>sum+effectivePower(o),0),brownout=load>state.powerCapacity;
     for(const object of state.objects){const item=getItem(object.type);if(item?.kind!=="ride"||!object.open||object.broken)continue;let wear=dt*(100-item.reliability)/18000*(object.type==="hairpin"?2:1);if(object.type==="timber"&&hasUpgrade(object,0))wear*=.85;if(object.type==="hydro"&&state.weather==="rain"&&!hasUpgrade(object,1))wear*=1.5;object.condition-=wear;if(brownout)object.condition-=dt*.015;
-      if(object.condition<18&&Math.random()<dt*.025){object.broken=true;object.open=false;state.reputation=clamp(state.reputation-2,0,100);notify(`${object.customName||item.name} safely shut down`,object.type==="hydro"?"Water-pressure control triggered a safe stop.":object.type==="neon"||object.type==="glitch"?"Power-control diagnostics isolated the affected launch circuit.":"Preventive sensors detected excessive component wear.","danger");playBreakdownSound(object.type);if(state.staff.mechanics>0)setTimeout(()=>autoRepair(object),5000);}
+      if((object.cycles||0)>=15&&object.condition<18&&Math.random()<dt*.025){object.broken=true;object.open=false;state.reputation=clamp(state.reputation-2,0,100);notify(`${object.customName||item.name} safely shut down`,object.type==="hydro"?"Water-pressure control triggered a safe stop.":object.type==="neon"||object.type==="glitch"?"Power-control diagnostics isolated the affected launch circuit.":"Preventive sensors detected excessive component wear.","danger");playBreakdownSound(object.type);if(state.staff.mechanics>0)setTimeout(()=>autoRepair(object),5000);}
     }
   }
   function autoRepair(object){if(!object.broken)return;const cost=Math.max(250,Math.round((100-object.condition)*18));if(state.cash>=cost){state.cash-=cost;state.stats.expenses+=cost;object.condition=90;object.broken=false;notify(`${getItem(object.type).name} repaired`,`${money(cost)} in parts used by your mechanic.`);updateUI();}}
@@ -1126,8 +1163,9 @@
   }
 
   function submitGuestReview(guest){
-    const hasArcade=state.objects.some(object=>object.type==="arcade"),stars=parkAppearanceStars(guest),comments=stars>=4.5?(hasArcade?["The arcade and park look amazing!","Loved the games, rides, and beautiful scenery!"]:["Beautiful paths and scenery!","This park looks incredible."]):stars>=3.5?(hasArcade?["The arcade was great and the park looks good.","Fun games, clean paths, and a nice atmosphere."]:["Clean, fun, and welcoming.","A good-looking park with lots of potential."]):["The attractions were fun; add more scenery.","More decorations would make this place even better."];
+    const hasArcade=state.objects.some(object=>["arcade","gameBooth"].includes(object.type)),stars=parkAppearanceStars(guest),comments=stars>=4.5?(hasArcade?["The arcade and park look amazing!","Loved the games, rides, and beautiful scenery!"]:["Beautiful paths and scenery!","This park looks incredible."]):stars>=3.5?(hasArcade?["The midway games were great and the park looks good.","Fun games, clean paths, and a nice atmosphere."]:["Clean, fun, and welcoming.","A good-looking park with lots of potential."]):["The attractions were fun; add more scenery.","More decorations would make this place even better."];
     const text=comments[Math.floor(Math.random()*comments.length)];state.reviewTotal=(state.reviewTotal||0)+stars;state.reviewCount=(state.reviewCount||0)+1;state.reviews||=[];state.reviews.unshift({stars,text,type:guest.type,day:state.day});state.reviews=state.reviews.slice(0,12);state.reputation=clamp(state.reputation+(stars-3)*.08,0,100);
+    if(state.reviewCount===1)awardMilestone("firstReview","First Review Bonus",1000,"Your first public park review is live.");
     if(state.reviewCount<=3||state.reviewCount%5===0)notify(`${stars.toFixed(1)}★ visitor review`,text,stars<3?"warning":"");updateUI();
   }
 
