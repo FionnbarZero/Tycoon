@@ -5,7 +5,6 @@
   overflow-y: hidden;
   overscroll-behavior: contain;
   scroll-snap-type: x proximity;
-  scroll-behavior: smooth;
   scrollbar-color: #3d7895 #081923;
 }
 
@@ -59,8 +58,11 @@
 .review-row p { margin: 5px 0; color: #d9e8ee; font-size: 10px; }
 .review-row small { color: #67899a; font-size: 8px; }
 
+.review-ticker{position:absolute;z-index:6;top:18px;left:50%;width:300px;padding:10px 13px;transform:translateX(-50%);border:1px solid rgba(243,199,83,.35);background:rgba(8,24,35,.92);box-shadow:var(--shadow);text-align:left;cursor:pointer}.review-ticker small,.review-ticker strong,.review-ticker span{display:block}.review-ticker small{color:#7193a4;font-size:8px;font-weight:700;letter-spacing:.12em}.review-ticker strong{margin-top:3px;color:var(--gold);font-size:10px}.review-ticker span{margin-top:3px;overflow:hidden;color:#d6e6ec;font-size:9px;white-space:nowrap;text-overflow:ellipsis}
+
 @media (max-width: 720px) {
   .parking-find { align-items: stretch; flex-direction: column; }
   .parking-find button { flex-basis: auto; }
   .ride-catalog .shop-card { flex-basis: 220px; width: 220px; }
+  .review-ticker { display: none; }
 }

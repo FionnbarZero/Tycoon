@@ -50,7 +50,8 @@ Open `http://127.0.0.1:8080` in a modern desktop browser.
 - Food stalls, item pricing, thirst interactions, restrooms and bladder needs, ATMs, bins, scenery radii, themed ground, atmosphere, litter, janitors, mechanics, weather, and daily payroll
 - Guest wallets, demographic preferences, price tolerance, value-for-money decisions, complaints, park reputation, admission models, and a global economic ledger
 - Path-locked guest routing from the main gate through connected walkways and queues
-- Appearance reviews driven by atmosphere, cleanliness, path condition, and visitor happiness
+- Appearance reviews driven by atmosphere, cleanliness, path condition, visitor happiness, and a live review ticker
+- A 48% larger starter lot with 120-guest capacity, plus a functional arcade, 4D cinema, gift shop, and First Aid Lodge
 - Persistent local saves, lot expansion milestones, drifting-ride unlocks, responsive UI, keyboard controls, and accessible non-color placement feedback
 
 ## Smoke test

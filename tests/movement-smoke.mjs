@@ -88,7 +88,7 @@ const jobShackPoint = await evaluate(`(() => {
 })()`);
 await command("Input.dispatchMouseEvent", { type: "mousePressed", button: "left", clickCount: 1, x: jobShackPoint.x, y: jobShackPoint.y });
 await command("Input.dispatchMouseEvent", { type: "mouseReleased", button: "left", clickCount: 1, x: jobShackPoint.x, y: jobShackPoint.y });
-await wait(5000);
+await wait(7000);
 const clickResult = await evaluate(`(() => {
   window.dispatchEvent(new Event('beforeunload'));
   return {

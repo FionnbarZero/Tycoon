@@ -149,6 +149,8 @@ const loaded = await evaluate(`({
   errors: document.querySelectorAll('.event-toast.danger').length,
   rideRoster: document.querySelectorAll('#buildItems .build-item').length,
   rating: document.querySelector('#reputationLabel').textContent,
+  capacity: document.querySelector('#parkCapacity').textContent,
+  reviewTicker: !document.querySelector('#reviewTicker').classList.contains('hidden'),
   timberAvailable: !document.querySelector('[data-item=timber]').classList.contains('locked')
 })`);
 expect(loaded.cash.includes("74,250"), "Saved cash was not restored");
@@ -157,11 +159,27 @@ expect(!loaded.dockLocked, "Toolkit should unlock the dock");
 expect(loaded.complete === "COMPLETE", "Completed tutorial was not recognized");
 expect(loaded.rideRoster === 14, "The active ride roster should contain 14 rides");
 expect(loaded.rating.includes('4.3') && loaded.rating.includes('2 REVIEWS'), "Saved appearance reviews were not restored");
+expect(loaded.capacity === 'LOT CAPACITY 220', "Expanded park capacity was not restored");
+expect(loaded.reviewTicker, "Latest guest review should be visible in the live review ticker");
 expect(loaded.timberAvailable, "Timber Ridge should be available directly from the construction ledger");
 await evaluate("document.querySelector('#reviewCard').click(); true");
 await wait(50);
 expect(await evaluate("document.querySelector('#modal').textContent.includes('Beautiful paths and scenery!')"), "Visitor review panel did not show saved reviews");
 await evaluate("document.querySelector('[data-close]').click(); true");
+await evaluate("document.querySelector('[data-tab=commerce]').click(); true");
+const newBuildings = await evaluate("['arcade','cinema','giftShop','firstAid'].every(id => Boolean(document.querySelector(`[data-item=${id}]`)))");
+expect(newBuildings, "Arcade, cinema, gift shop, and first-aid buildings should appear in Commerce");
+await evaluate(`(() => {
+  document.querySelector('[data-item=arcade]').click();
+  const canvas=document.querySelector('#world'),rect=canvas.getBoundingClientRect();
+  const x=rect.left+rect.width*.38-96,y=rect.top+26;
+  canvas.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,button:0,pointerId:88,clientX:x,clientY:y}));
+  canvas.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,button:0,pointerId:88,clientX:x,clientY:y}));
+  return true;
+})()`);
+await wait(100);
+expect(await evaluate("JSON.parse(localStorage.getItem('amusement-park-tycoon-v1')).objects.some(object => object.type === 'arcade' && object.x < 0)"), "Arcade could not be built in the enlarged park area");
+await evaluate("document.querySelector('[data-tab=attractions]').click(); true");
 await evaluate("document.querySelector('[data-item=timber]').click(); true");
 await wait(100);
 expect(await evaluate("document.querySelector('#modal').textContent.includes('Custom Track')"), "Timber Ridge should open the custom track builder");
