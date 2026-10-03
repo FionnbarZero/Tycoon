@@ -961,8 +961,8 @@
 
   function rushShipment(shipment){if(!shipment||shipment.status!=="transit")return;const ride=RIDES[shipment.ride],cost=Math.ceil(ride.freight*.5*(shipment.rushes+1));if(state.cash<cost)return;state.cash-=cost;state.stats.expenses+=cost;shipment.remaining*=.5;shipment.rushes++;notify("Freight expedited",`${money(cost)} paid. Remaining delivery time reduced by half.`);updateUI();}
 
-  function updateSimulation(dt){
-    updatePlayer(dt);
+  function updateSimulation(dt,inputDt=dt){
+    updatePlayer(inputDt);
     if(state.speed===0)return;
     const scaled=dt*state.speed;state.time+=scaled*3;saveTimer+=dt;
     if(state.time>=1440){state.time-=1440;state.day++;runDailyCosts();rollWeather();}
@@ -973,7 +973,7 @@
     if(saveTimer>8)save();
   }
 
-  function updatePlayer(dt){if(!walkMode||$("#modalLayer").classList.contains("hidden")===false)return;let dx=0,dy=0;if(keys.has("w")||keys.has("ArrowUp"))dy-=1;if(keys.has("s")||keys.has("ArrowDown"))dy+=1;if(keys.has("a")||keys.has("ArrowLeft"))dx-=1;if(keys.has("d")||keys.has("ArrowRight"))dx+=1;if(!dx&&!dy)return;const length=Math.hypot(dx,dy),speed=keys.has("Shift")?4.2:2.7;state.player.x=clamp(state.player.x+dx/length*speed*dt,-1,28);state.player.y=clamp(state.player.y+dy/length*speed*dt,0,15.5);}
+  function updatePlayer(dt){if(!walkMode||$("#modalLayer").classList.contains("hidden")===false)return;const horizontal=(keys.has("d")||keys.has("ArrowRight")?1:0)-(keys.has("a")||keys.has("ArrowLeft")?1:0),vertical=(keys.has("s")||keys.has("ArrowDown")?1:0)-(keys.has("w")||keys.has("ArrowUp")?1:0);let dx=horizontal+vertical,dy=vertical-horizontal;if(!dx&&!dy)return;const length=Math.hypot(dx,dy),speed=keys.has("Shift")?4.2:2.7;state.player.x=clamp(state.player.x+dx/length*speed*dt,-1,28);state.player.y=clamp(state.player.y+dy/length*speed*dt,0,15.5);}
 
   function updateConstruction(dt){for(const object of state.objects){if(object.state==="constructing"){object.buildRemaining-=dt;if(object.buildRemaining<=0){object.state="built";object.buildRemaining=0;notify(`${getItem(object.type).name} assembled`,"Construction passed its initial safety check.");if(selected===object.id)renderInspector(object);}}}}
 
@@ -1028,7 +1028,7 @@
   function runDailyCosts(){const operators=state.objects.filter(o=>o.operator).length,wages=operators*50+state.staff.janitors*80+state.staff.mechanics*120;if(wages){state.cash-=wages;state.stats.expenses+=wages;notify("Daily payroll processed",`${money(wages)} paid to ${operators+state.staff.janitors+state.staff.mechanics} staff.`);}for(const path of state.objects.filter(o=>getItem(o.type)?.kind==="path"))path.condition=Math.max(0,(path.condition||100)-(path.type==="pathConcrete"?1.2:path.type==="pathWood"?.7:.4));}
   function rollWeather(){const roll=Math.random();state.weather=roll<.2?"rain":roll>.88?"heat":"clear";if(state.weather==="rain")notify("Rain system moving in","Puddles slow basic paths. LED asphalt retains full visibility.","warning");if(state.weather==="heat")notify("Heat advisory","Guest thirst rises faster and water rides gain demand.","warning");}
 
-  function frame(now){const dt=Math.min(.05,(now-lastTime)/1000);lastTime=now;accumulator+=dt;updateSimulation(dt);drawWorld();if(Math.floor(now/500)%2===0)updateUI();requestAnimationFrame(frame);}
+  function frame(now){const elapsed=Math.max(0,(now-lastTime)/1000),dt=Math.min(.05,elapsed),inputDt=Math.min(.5,elapsed);lastTime=now;accumulator+=dt;updateSimulation(dt,inputDt);drawWorld();if(Math.floor(now/500)%2===0)updateUI();requestAnimationFrame(frame);}
 
   function bindEvents(){
     window.addEventListener("resize",resize);
@@ -1067,6 +1067,8 @@
       ensureAudio();
       const typing=["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName);if(typing){if(event.key==="Escape")document.activeElement.blur();return;}
       keys.add(event.key.length===1?event.key.toLowerCase():event.key);keys.add(event.key);
+      const movementKey=["w","W","a","A","s","S","d","D","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(event.key);
+      if(movementKey){event.preventDefault();if(!walkMode&&!state.activeTool?.startsWith("track:")&&!state.activeTool?.startsWith("prebuilt:")){walkMode=true;state.activeTool=null;trackDraft=null;closeInspector();updateUI();}if(!event.repeat)updatePlayer(.08);}
       if(event.key==="Tab"&&$("#modalLayer").classList.contains("hidden")){event.preventDefault();$("#buildDock").classList.toggle("hidden");return;}
       if(event.key==="Escape"){if(!$("#modalLayer").classList.contains("hidden")){closeModal();return;}state.activeTool=null;trackDraft=null;state.buildLevel=Math.max(0,state.buildLevel);closeInspector();renderBuildItems();return;}
       if(event.key==="Enter"&&state.activeTool?.startsWith("track:")){finalizeTrack();return;}
@@ -1086,6 +1088,8 @@
       if(/^[1-5]$/.test(event.key)){setTab(["infrastructure","attractions","commerce","atmosphere","finance"][+event.key-1]);}
     });
     window.addEventListener("keyup",event=>{keys.delete(event.key.length===1?event.key.toLowerCase():event.key);keys.delete(event.key);});
+    window.addEventListener("blur",()=>keys.clear());
+    document.addEventListener("visibilitychange",()=>{if(document.hidden)keys.clear();});
     window.addEventListener("beforeunload",()=>save(true));
   }
 

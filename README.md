@@ -55,4 +55,5 @@ The browser smoke test expects Chrome to be running with a remote debugging endp
 
 ```bash
 TYCOON_CDP_ENDPOINT=http://127.0.0.1:9245 node tests/smoke.mjs
+TYCOON_CDP_ENDPOINT=http://127.0.0.1:9245 node tests/movement-smoke.mjs
 ```
