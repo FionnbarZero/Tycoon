@@ -1,145 +1,133 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#07121e" />
-    <title>Amusement Park Tycoon</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="ui-extras.css" />
-  </head>
-  <body>
-    <div id="game" class="game-shell">
-      <header class="topbar">
-        <div class="brand-block">
-          <div class="brand-badge"><span>AP</span><i></i></div>
-          <div><p class="kicker">LOT 01 · DISTRICT 7</p><h1>AMUSEMENT PARK <em>TYCOON</em></h1></div>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#3f9d57">
+  <meta name="description" content="Build a cheerful fruit empire in Fruitopia Tycoon.">
+  <title>Fruitopia Tycoon</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%8D%93%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#worldViewport">Skip to the game world</a>
+  <div id="app" class="app-shell">
+    <header class="topbar" aria-label="Empire resources">
+      <button class="brand" id="brandButton" type="button" aria-label="Open help">
+        <span class="brand-mark" aria-hidden="true">🍓</span>
+        <span><strong>Fruitopia</strong><small>TYCOON</small></span>
+      </button>
+      <div class="resource-strip" id="resourceStrip">
+        <div class="resource cash" title="Cash buys improvements, workers, buildings, and vehicles.">
+          <span aria-hidden="true">💵</span><span><small>Cash</small><strong id="cashValue">$0</strong></span>
         </div>
-        <div class="resource-strip">
-          <button class="resource" id="moneyCard"><small>AVAILABLE CASH</small><strong id="moneyValue">$0</strong><span id="cashFlow">REGISTER TO BEGIN</span></button>
-          <div class="resource"><small>GUESTS</small><strong id="guestValue">0</strong><span id="parkCapacity">LOT CAPACITY 120</span></div>
-          <button class="resource" id="reviewCard"><small>REPUTATION</small><strong id="reputationValue">—</strong><span id="reputationLabel">UNRATED · OPEN A RIDE</span></button>
-          <div class="resource power-resource"><small>GRID LOAD</small><strong id="powerValue">0 / 100 kW</strong><span class="mini-meter"><i id="powerFill"></i></span></div>
+        <div class="resource coins" title="Fruit Coins buy minigames, rare improvements, and special vehicles.">
+          <span aria-hidden="true">🪙</span><span><small>Fruit Coins</small><strong id="coinValue">0</strong></span>
         </div>
-        <div class="time-cluster">
-          <div><small id="weatherValue">CLEAR · 68°F</small><strong id="clockValue">8:00 AM</strong></div>
-          <div class="speed-controls" aria-label="Simulation speed">
-            <button data-speed="0" title="Pause">Ⅱ</button><button data-speed="1" class="active" title="Normal speed">▶</button><button data-speed="2" title="Fast speed">▶▶</button><button data-speed="4" title="Maximum speed">▶▶▶</button>
-          </div>
-          <button id="menuButton" class="round-button" aria-label="Open game menu">•••</button>
+        <button class="resource basket" id="basketButton" type="button" title="Open your fruit collection and inventory.">
+          <span aria-hidden="true">🧺</span><span><small>Basket</small><strong id="basketValue">0 / 30</strong></span>
+        </button>
+        <div class="resource income" title="Combined passive district income each second.">
+          <span aria-hidden="true">↗</span><span><small>Income</small><strong id="incomeValue">$0/s</strong></span>
         </div>
-      </header>
-
-      <main class="world-shell">
-        <canvas id="world" aria-label="Interactive amusement park construction lot"></canvas>
-
-        <section id="objectivePanel" class="glass-panel objective-panel">
-          <div class="panel-cap"><span>STARTER BLUEPRINT</span><b id="objectiveStep">01 / 08</b></div>
-          <h2 id="objectiveTitle">Report to the job shack</h2>
-          <p id="objectiveText">Walk through your empty lot and register at the blueprints desk.</p>
-          <div class="objective-progress"><i id="objectiveFill"></i></div>
-          <div class="objective-controls"><kbd>WASD</kbd><span>Move</span><kbd>E</kbd><span>Interact</span></div>
-        </section>
-
-        <section id="telemetry" class="glass-panel telemetry-panel">
-          <div class="telemetry-title"><span>LOT TELEMETRY</span><i id="statusLight"></i></div>
-          <div class="telemetry-grid">
-            <div><small>LEVEL</small><strong id="levelValue">L1</strong></div>
-            <div><small>ATMOSPHERE</small><strong id="atmosphereValue">0</strong></div>
-            <div><small>CLEANLINESS</small><strong id="cleanValue">100%</strong></div>
-            <div><small>DAILY PROFIT</small><strong id="profitValue">$0</strong></div>
-          </div>
-          <button id="walkToggle" class="mode-button active"><span>◆</span> WALK MODE <kbd>V</kbd></button>
-        </section>
-
-        <div id="worldMessage" class="world-message hidden"></div>
-        <div id="hoverTooltip" class="hover-tooltip hidden"></div>
-        <div id="eventStack" class="event-stack" aria-live="polite"></div>
-        <button id="reviewTicker" class="review-ticker hidden" aria-label="Open visitor reviews"><small>LIVE GUEST REVIEW</small><strong id="reviewTickerStars">★★★★★</strong><span id="reviewTickerText"></span></button>
-
-        <section id="trackControls" class="track-controls hidden" aria-label="Custom track controls">
-          <header><div><small>CUSTOM TRACK SCULPTOR</small><strong id="trackControlStatus">CLICK A STATION TILE</strong></div><span id="trackDepthStatus">L1</span></header>
-          <div class="track-pad">
-            <button data-track-move="up" aria-label="Track up">↑<small>UP</small></button>
-            <button data-track-move="left" aria-label="Track left">←<small>LEFT</small></button>
-            <button data-track-move="down" aria-label="Track down">↓<small>DOWN</small></button>
-            <button data-track-move="right" aria-label="Track right">→<small>RIGHT</small></button>
-          </div>
-          <div class="track-levels"><button id="trackDive">Q · DIVE</button><button id="trackRise">E · RISE</button></div>
-          <div class="track-finish"><button id="trackUndo">UNDO</button><button id="trackFinish">FINISH LOOP</button></div>
-          <p>Click the first station tile, then use these controls or WASD/arrow keys. Choose a level before placing the next segment. Underground supports B1–B3.</p>
-        </section>
-
-        <aside id="inspector" class="inspector hidden" aria-label="Context inspector">
-          <div class="inspector-top"><div><p class="kicker" id="inspectorKicker">CONTEXT INSPECTOR</p><h2 id="inspectorTitle">Selection</h2></div><button id="closeInspector">×</button></div>
-          <div id="inspectorBody"></div>
-        </aside>
-
-        <section id="buildDock" class="build-dock locked">
-          <nav class="dock-tabs" aria-label="Build categories">
-            <button data-tab="infrastructure" class="active blue"><kbd>1</kbd><span>Infrastructure</span></button>
-            <button data-tab="attractions" class="red"><kbd>2</kbd><span>Attractions</span></button>
-            <button data-tab="commerce" class="orange"><kbd>3</kbd><span>Commerce</span></button>
-            <button data-tab="atmosphere" class="green"><kbd>4</kbd><span>Atmosphere</span></button>
-            <button data-tab="finance" class="gold"><kbd>5</kbd><span>Finance</span></button>
-          </nav>
-          <div class="dock-content">
-            <div class="dock-mode">
-              <small id="dockCategory">BLUEPRINT INVENTORY</small>
-              <strong id="dockInstruction">Register and collect your toolkit</strong>
-            </div>
-            <div id="buildItems" class="build-items"></div>
-            <div class="dock-actions">
-              <button id="levelDown" title="Level down"><kbd>Q</kbd><span>− LEVEL</span></button>
-              <div class="level-readout"><small>BUILD LEVEL</small><strong id="buildLevel">L1</strong></div>
-              <button id="levelUp" title="Level up"><kbd>E</kbd><span>+ LEVEL</span></button>
-              <button id="rotateButton"><kbd>R</kbd><span>ROTATE</span></button>
-              <button id="demolishButton"><kbd>⌫</kbd><span>DEMOLISH</span></button>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <footer class="statusbar">
-        <div><i class="online-dot"></i><span id="saveStatus">Local save ready</span></div>
-        <div id="controlHint">WASD move · E interact · drag to look around</div>
-        <div><span id="coordsValue">LOT 01 · L1</span></div>
-      </footer>
-    </div>
-
-    <div id="modalLayer" class="modal-layer hidden">
-      <div id="modal" class="modal"></div>
-    </div>
-
-    <div id="intro" class="intro-screen">
-      <div class="intro-grid"></div>
-      <div class="intro-glow"></div>
-      <div class="intro-card">
-        <p class="kicker">OFFICIAL STARTER TUTORIAL · LOT START</p>
-        <div class="intro-mark"><span>AP</span><i></i></div>
-        <h1>BUILD AN EMPIRE<br/><em>FROM THE GROUND UP.</em></h1>
-        <p>You have a fenced lot, a job shack, and a road into the Manufacturing District. Register on-site, source real machinery, and build every path, platform, and ride yourself.</p>
-        <div class="intro-features">
-          <div><b>01</b><span>Walk the district</span></div><div><b>02</b><span>Source & ship</span></div><div><b>03</b><span>Build vertically</span></div>
-        </div>
-        <div class="region-picker">
-          <small>CHOOSE YOUR PARK REGION</small>
-          <div>
-            <button data-region="meadow" class="active"><b>▰</b><span>Meadow</span></button>
-            <button data-region="coast"><b>≈</b><span>Beach</span></button>
-            <button data-region="alpine"><b>▲</b><span>Alpine</span></button>
-            <button data-region="desert"><b>◇</b><span>Desert</span></button>
-          </div>
-          <p id="regionDescription">Open green terrain with balanced weather and classic park scenery.</p>
-        </div>
-        <button id="enterGame">ENTER YOUR PARK LOT <span>→</span></button>
-        <small>Progress is saved automatically in this browser.</small>
       </div>
-    </div>
+      <button class="level-card" id="levelButton" type="button" aria-label="View empire progress">
+        <span class="level-badge" id="levelValue">1</span>
+        <span class="level-copy"><small id="levelTitle">Stand Starter</small><span class="xp-track"><span id="xpFill"></span></span><em id="xpValue">0 / 85 XP</em></span>
+      </button>
+    </header>
 
-    <script src="game.js"></script>
-  </body>
+    <main class="game-layout">
+      <section class="world-card" aria-label="Fruitopia world">
+        <div class="world-toolbar" aria-label="World controls">
+          <button class="icon-button" id="zoomOut" type="button" aria-label="Zoom out">−</button>
+          <output id="zoomValue" aria-live="polite">75%</output>
+          <button class="icon-button" id="zoomIn" type="button" aria-label="Zoom in">+</button>
+          <button class="pill-button" id="panToggle" type="button" aria-pressed="false">✋ Pan</button>
+          <button class="pill-button" id="centerPlayer" type="button">📍 Find me</button>
+          <button class="pill-button map-open" id="mapButton" type="button">🗺️ Map</button>
+        </div>
+        <div id="eventBanner" class="event-banner hidden" role="status"></div>
+        <div id="worldViewport" class="world-viewport" tabindex="0" aria-label="Explorable Fruitopia map. Use WASD or arrow keys to move.">
+          <div id="worldSizer" class="world-sizer">
+            <div id="world" class="world" aria-live="off">
+              <div class="world-sky-speckles" aria-hidden="true"></div>
+              <div class="river river-a" aria-hidden="true"></div>
+              <div class="river river-b" aria-hidden="true"></div>
+              <div class="lake" aria-hidden="true"><span>🐟</span><span>🪷</span></div>
+              <div class="snowfield" aria-hidden="true"></div>
+              <div class="island-sand" aria-hidden="true"></div>
+              <div class="path path-main" aria-hidden="true"></div>
+              <div class="path path-cross" aria-hidden="true"></div>
+              <div id="worldDecor" class="world-decor" aria-hidden="true"></div>
+              <div id="treeLayer" class="tree-layer"></div>
+              <div id="districtLayer" class="district-layer"></div>
+              <div id="crateLayer" class="crate-layer"></div>
+              <div id="vehicleLayer" class="vehicle-layer" aria-hidden="true"></div>
+              <div id="player" class="player" role="img" aria-label="Your orchard keeper">
+                <span class="player-shadow"></span><span class="player-body">🧑‍🌾</span><span class="player-ring"></span>
+              </div>
+              <div id="moveMarker" class="move-marker" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+        <div class="touch-pad" aria-label="Touch movement controls">
+          <button type="button" data-move="up" aria-label="Move up">▲</button>
+          <button type="button" data-move="left" aria-label="Move left">◀</button>
+          <button type="button" data-move="down" aria-label="Move down">▼</button>
+          <button type="button" data-move="right" aria-label="Move right">▶</button>
+        </div>
+        <div class="world-hint" id="worldHint">Click the ground or use WASD to explore · click a building to visit</div>
+      </section>
+
+      <aside class="side-rail" aria-label="Quests and requests">
+        <section class="panel quest-panel">
+          <div class="panel-heading"><span><b>Today’s quests</b><small>Fresh goals, bright rewards</small></span><button id="milestoneButton" class="text-button" type="button">Milestones</button></div>
+          <div id="questList" class="quest-list"></div>
+        </section>
+        <section class="panel request-panel" id="requestPanel">
+          <div class="panel-heading"><span><b>Customer request</b><small id="requestTimer">A neighbor is arriving…</small></span><span class="customer-face" id="customerFace" aria-hidden="true">🙂</span></div>
+          <div id="customerRequest" class="customer-request"></div>
+        </section>
+        <section class="panel feature-panel">
+          <div class="panel-heading"><span><b>Featured special</b><small>+40% sale price for 2 minutes</small></span><span aria-hidden="true">📣</span></div>
+          <label for="featuredSelect">Choose a fruit or product</label>
+          <div class="inline-form"><select id="featuredSelect"></select><button id="featureButton" type="button">Feature</button></div>
+          <div id="featuredStatus" class="micro-status">Nothing featured yet.</div>
+        </section>
+        <section class="panel company-panel">
+          <div class="panel-heading"><span><b>Company pulse</b><small>People, research & reputation</small></span><span aria-hidden="true">🍓</span></div>
+          <div class="company-stats"><button type="button" id="reputationButton"><b id="reputationValue">10</b><small>Reputation</small></button><button type="button" id="happinessButton"><b id="happinessValue">65%</b><small>Happiness</small></button><button type="button" id="researchButton"><b id="researchValue">0</b><small>Research</small></button></div>
+        </section>
+      </aside>
+    </main>
+
+    <nav class="dock" aria-label="Game screens">
+      <button type="button" data-screen="office"><span>🏢</span><small>Office</small></button>
+      <button type="button" data-screen="company"><span>🏗️</span><small>Company</small></button>
+      <button type="button" data-screen="recipes"><span>🧃</span><small>Recipes</small></button>
+      <button type="button" data-screen="deliveries" class="dock-primary"><span>🚚</span><small>Deliveries</small><i id="deliveryBadge" class="badge hidden">!</i></button>
+      <button type="button" data-screen="phone" class="phone-dock"><span>📱</span><small>Phone</small><i id="phoneBadge" class="badge hidden">!</i></button>
+      <button type="button" data-screen="arcade"><span>🎮</span><small>Arcade</small></button>
+      <button type="button" data-screen="fruit"><span>📚</span><small>Fruit Book</small></button>
+      <button type="button" data-screen="season"><span>🌻</span><small>Season</small></button>
+      <button type="button" data-screen="more"><span>☰</span><small>More</small></button>
+    </nav>
+  </div>
+
+  <div id="modalHost"></div>
+  <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="false"></div>
+  <div id="saveIndicator" class="save-indicator" role="status">✓ Saved</div>
+
+  <template id="modalTemplate">
+    <div class="modal-backdrop">
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <header class="modal-header"><div><span class="eyebrow" id="modalEyebrow"></span><h2 id="modalTitle"></h2></div><button class="modal-close" type="button" aria-label="Close dialog">×</button></header>
+        <div class="modal-body"></div>
+      </section>
+    </div>
+  </template>
+
+  <script type="module" src="js/app.js"></script>
+</body>
 </html>
