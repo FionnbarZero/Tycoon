@@ -1,11 +1,11 @@
 {
   "name": "fruitopia-tycoon",
-  "version": "10.0.0",
+  "version": "13.0.0",
   "private": true,
   "type": "module",
   "description": "A cheerful, offline-capable browser fruit-company tycoon.",
   "scripts": {
-    "check": "node --check game.js && node --check src/config.js && node --check src/sewer-config.js && node --check src/mafia-config.js && node --check src/mafia-game.js && node --check src/core.js && node --check src/world.js && node --check src/minigames.js",
+    "check": "node --check game.js && node --check src/config.js && node --check src/upgrade-config.js && node --check src/outside-config.js && node --check src/sewer-config.js && node --check src/mafia-config.js && node --check src/mafia-game.js && node --check src/core.js && node --check src/world.js && node --check src/minigames.js",
     "test": "node --test tests/unit.test.mjs",
     "test:browser": "node tests/smoke.mjs && node tests/movement-smoke.mjs",
     "build": "node scripts/build.mjs"

@@ -17,15 +17,16 @@
         <span><small>WELCOME TO</small><strong>FRUITOPIA <em>TYCOON</em></strong></span>
       </button>
       <section class="resource-row" aria-label="Company resources">
-        <button class="resource cash" data-nav="company"><small>Cash</small><strong id="cashValue">$1</strong><span id="passiveValue">+$0/min</span></button>
+        <button class="resource cash" data-nav="company"><small>Cash</small><strong id="cashValue">$1</strong><span id="passiveValue">+$0/sec</span><em id="cashTransaction" class="cash-transaction" aria-live="polite"></em></button>
         <button class="resource coins" data-nav="more" data-page="quests"><small>Fruit Coins</small><strong id="coinValue">0</strong><span>Rare rewards</span></button>
         <button class="resource basket" data-nav="fruitbook"><small>Basket</small><strong id="basketValue">0 / 12</strong><span>Fresh fruit</span></button>
         <button class="resource warehouse" data-nav="recipes"><small>Warehouse</small><strong id="warehouseValue">0 / 10</strong><span>Products</span></button>
         <button class="resource level" data-nav="more" data-page="progress"><small id="levelTitle">Stand Starter</small><strong id="levelValue">Level 1</strong><span id="xpValue">0 / 100 XP</span></button>
+        <button class="resource location" data-nav="map"><small>Current district</small><strong id="locationValue">Starter Valley</strong><span id="locationElevation">Valley Floor</span></button>
       </section>
       <div class="top-actions">
         <button id="soundToggle" class="icon-button" data-action="toggle-sound" aria-label="Toggle sound">🔊</button>
-        <button class="icon-button" data-nav="phone" aria-label="Open smartphone">📱<i id="messageBadge" class="badge hidden">0</i></button>
+        <button class="icon-button phone-launch" data-nav="phone" aria-label="Open smartphone and notifications">📱<i id="messageBadge" class="badge hidden">0</i><span id="importantBadge" class="important-badge hidden">!</span></button>
       </div>
     </header>
 
@@ -42,6 +43,7 @@
           <button data-action="find-player">Find Me</button>
         </div>
         <div id="worldHint" class="world-hint" role="status">Pick fruit from one of your six ripe apple trees.</div>
+        <section id="purchasePadPanel" class="purchase-pad-panel hidden" aria-live="polite" aria-label="Nearby tycoon purchase pad"></section>
         <div id="sewerHud" class="sewer-hud hidden" aria-live="polite"><strong>UNDER FRUITOPIA</strong><span id="sewerSection">Drainage Entrance</span><span>💧 <b id="sewerWaterCount">0</b> samples</span><span>🟣 <b id="clubChipCount">0</b> Club Chips</span></div>
         <div id="touchPad" class="touch-pad" aria-label="Touch movement controls">
           <button data-move="up" aria-label="Move up">▲</button>
@@ -74,12 +76,25 @@
 
     <nav id="mainNav" class="main-nav" aria-label="Main game navigation">
       <button data-nav="office"><span>🏡</span>Office</button>
+      <button data-nav="upgrades"><span>✨</span>Upgrades</button>
       <button data-nav="company"><span>🏗️</span>Company</button>
+      <button data-nav="company" data-page="buildings"><span>🏢</span>Buildings</button>
       <button data-nav="recipes"><span>🥤</span>Recipes</button>
       <button data-nav="deliveries"><span>🚚</span>Deliveries</button>
-      <button data-nav="phone"><span>📱</span>Phone</button>
+      <button data-nav="phone" class="nav-phone" aria-label="Open Smartphone">
+        <span>📱</span>Smartphone<i id="navPhoneBadge" class="badge hidden">0</i>
+        <span class="phone-badge-cluster" aria-label="Smartphone activity by app">
+          <i id="phoneMessageBadge" class="phone-mini-badge hidden" title="Unread messages">💬 <b>0</b></i>
+          <i id="phoneOrderBadge" class="phone-mini-badge hidden" title="Active orders">🧾 <b>0</b></i>
+          <i id="phoneWorkerBadge" class="phone-mini-badge hidden" title="Worker requests">👥 <b>0</b></i>
+          <i id="phoneApplicantBadge" class="phone-mini-badge hidden" title="Applicants">📋 <b>0</b></i>
+          <i id="phoneDeliveryBadge" class="phone-mini-badge hidden" title="Completed deliveries">🚚 <b>0</b></i>
+          <i id="phoneResearchBadge" class="phone-mini-badge hidden" title="Finished research">🔬 <b>0</b></i>
+        </span>
+      </button>
       <button data-nav="arcade"><span>🎮</span>Arcade</button>
       <button data-nav="fruitbook"><span>📖</span>Fruit Book</button>
+      <button data-nav="map"><span>🗺️</span>World Map</button>
       <button data-nav="season"><span>🌱</span>Season</button>
       <button data-nav="more"><span>☰</span>More</button>
     </nav>

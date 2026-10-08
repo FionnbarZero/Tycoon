@@ -9,6 +9,6 @@ for(const file of ["index.html","styles.css","game.js"])await cp(new URL(`../${f
 await cp(new URL("../src",import.meta.url),new URL("../dist/src",import.meta.url),{recursive:true});
 const html=await readFile(new URL("../dist/index.html",import.meta.url),"utf8");
 if(!html.includes("Fruitopia Tycoon")||html.includes("Amusement Park Tycoon"))throw new Error("Production build identity check failed");
-const required=["dist/index.html","dist/styles.css","dist/game.js","dist/src/config.js","dist/src/sewer-config.js","dist/src/mafia-config.js","dist/src/mafia-game.js","dist/src/core.js","dist/src/world.js","dist/src/minigames.js"];
+const required=["dist/index.html","dist/styles.css","dist/game.js","dist/src/config.js","dist/src/upgrade-config.js","dist/src/outside-config.js","dist/src/sewer-config.js","dist/src/mafia-config.js","dist/src/mafia-game.js","dist/src/core.js","dist/src/world.js","dist/src/minigames.js"];
 for(const relative of required){const info=await stat(join(new URL("..",import.meta.url).pathname,relative));if(!info.isFile()||info.size===0)throw new Error(`Missing production asset: ${relative}`);}
 console.log(`Fruitopia Tycoon production build complete: ${required.length} verified assets in dist/`);

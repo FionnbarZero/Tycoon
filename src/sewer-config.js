@@ -1,11 +1,11 @@
 export const SEWER_WORLD={width:240,height:180,worldWidth:2400,worldHeight:1800,unitScale:10,layoutId:"fruitopia-sewer-fixed-v2"};
 
 export const SEWER_ENTRANCES=[
-  {id:"sunny-manhole",name:"Fruit Stand Road Manhole",x:15,y:56,sewerX:20,sewerY:160,zone:"front-drain-entrance",unlock:"Discover a sewer clue, speak with Bruno Bramble, or inspect the Hidden Office Basement."},
-  {id:"depot-manhole",name:"Delivery Depot Manhole",x:54,y:59,sewerX:58,sewerY:145,zone:"central-pump-station",unlock:"Repair the first pump from underground."},
-  {id:"market-manhole",name:"Market Alley Manhole",x:73,y:44,sewerX:154,sewerY:67,zone:"yellow-maintenance-quarter",unlock:"Open it from inside the Yellow Maintenance Quarter."},
-  {id:"juice-manhole",name:"Juice Lab Drain Manhole",x:84,y:31,sewerX:62,sewerY:113,zone:"sewer-test-laboratory",unlock:"Complete the first safe Green-Water experiment."},
-  {id:"mafia-alley-manhole",name:"Golden Grape Manhole",x:78,y:18,sewerX:222,sewerY:35,zone:"fruit-mafia-club",unlock:"Become a permanent Fruit Mafia Club member.",undergroundOnly:true}
+  {id:"sunny-manhole",name:"Fruit Stand Road Manhole",x:82,y:253,sewerX:20,sewerY:160,zone:"front-drain-entrance",unlock:"Discover a sewer clue, speak with Bruno Bramble, or inspect the Hidden Office Basement."},
+  {id:"depot-manhole",name:"Delivery Depot Manhole",x:176,y:264,sewerX:58,sewerY:145,zone:"central-pump-station",unlock:"Repair the first pump from underground."},
+  {id:"market-manhole",name:"Market Alley Manhole",x:237,y:207,sewerX:154,sewerY:67,zone:"yellow-maintenance-quarter",unlock:"Open it from inside the Yellow Maintenance Quarter."},
+  {id:"juice-manhole",name:"Juice Lab Drain Manhole",x:288,y:197,sewerX:62,sewerY:113,zone:"sewer-test-laboratory",unlock:"Complete the first safe Green-Water experiment."},
+  {id:"mafia-alley-manhole",name:"Golden Grape Manhole",x:243,y:195,sewerX:222,sewerY:35,zone:"fruit-mafia-club",unlock:"Become a permanent Fruit Mafia Club member.",undergroundOnly:true}
 ];
 export const SEWER_ENTRANCE_BY_ID=Object.fromEntries(SEWER_ENTRANCES.map(item=>[item.id,item]));
 

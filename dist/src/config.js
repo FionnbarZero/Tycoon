@@ -1,9 +1,11 @@
-export const SAVE_VERSION = 10;
+export const SAVE_VERSION = 13;
 export const SAVE_KEY = `fruitopia-tycoon-v${SAVE_VERSION}`;
-export const LEGACY_SAVE_KEYS = ["fruitopia-tycoon-v9", "fruitopia-tycoon-v8", "fruitopia-tycoon-v7", "fruitopia-tycoon-v6", "fruitopia-tycoon-v5", "fruitopia-tycoon"];
+export const LEGACY_SAVE_KEYS = ["fruitopia-tycoon-v12", "fruitopia-tycoon-v11", "fruitopia-tycoon-v10", "fruitopia-tycoon-v9", "fruitopia-tycoon-v8", "fruitopia-tycoon-v7", "fruitopia-tycoon-v6", "fruitopia-tycoon-v5", "fruitopia-tycoon"];
 
 export * from "./sewer-config.js";
 export * from "./mafia-config.js";
+export * from "./outside-config.js";
+export * from "./upgrade-config.js";
 
 export const slug = value => String(value).toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
@@ -77,7 +79,7 @@ const districtRows = [
   ["Frozen Fruit Valley","🏔️",11,{district:"tropical-island",completion:50},["Snow Boots","Berry Tunnels","Fruit Sleigh","Flash Freezer","Cocoa Cabin","Crate Ski Lift","Cold Research Dome","Crystal Fruit Palace"],"Berry Slide","frozen fruit, deliveries, storage, research, and rare fruit"],
   ["Grand Fruit Festival","🎪",15,{district:"frozen-fruit-valley",completion:75},["Festival Gate","Carnival Games","Fruit Parade","Festival Kitchen","Orchard Sky Wheel","Golden Arena","Festival Crew Hall","Rainbow Fruit Crown"],"Golden Fruit Frenzy","tickets, crowds, crafting, championships, automation, and endgame progress"]
 ];
-export const DISTRICTS = districtRows.map(([name,icon,level,requirement,upgrades,minigame,summary],index)=>({id:slug(name),name,icon,unlockLevel:level,requirement,upgrades,minigame:slug(minigame),summary,index,x:[11,29,49,70,87,77,51,24][index],y:[58,69,61,47,28,10,7,21][index]}));
+export const DISTRICTS = districtRows.map(([name,icon,level,requirement,upgrades,minigame,summary],index)=>({id:slug(name),name,icon,unlockLevel:level,requirement,upgrades,minigame:slug(minigame),summary,index,x:[92,118,184,226,294,424,126,215][index],y:[246,207,260,211,190,311,49,158][index]}));
 export const DISTRICT_BY_ID = Object.fromEntries(DISTRICTS.map(district=>[district.id,district]));
 
 const buildingCategories = {
@@ -156,7 +158,7 @@ const workerRows=[
 export const WORKERS=workerRows.map(([name,role,personality,favoriteFruit,strength,weakness,specialAbility,avatar],index)=>({id:slug(name),name,role,personality,favoriteFruit,strength,weakness,specialAbility,avatar,rank:index<4?"Common":index<9?"Skilled":index<13?"Expert":"Legendary",expectedSalary:8+index*3,preferredSchedule:index%3===0?"Morning":index%3===1?"Flexible":"Evening",experience:1+Math.floor(index/2),education:index>5?"Fruitopia vocational certificate":"Hands-on local experience",reference:`Reference ${index+1}: reliable and eager to improve.`,personalStatement:`I want to help Fruitopia grow through ${strength.toLowerCase()}.` }));
 export const WORKER_BY_ID=Object.fromEntries(WORKERS.map(worker=>[worker.id,worker]));
 
-export const JOB_ROLES=["Fruit Picker","Tree Caretaker","Irrigation Worker","Orchard Supervisor","Seed Specialist","Pest-Control Specialist","Harvest Manager","Cashier","Salesperson","Stock Clerk","Customer Service Worker","Stand Manager","Market Seller","Juice Maker","Smoothie Maker","Baker","Candy Maker","Ice-Cream Maker","Quality Inspector","Production Supervisor","Bicycle Courier","Van Driver","Delivery Dispatcher","Route Planner","Vehicle Mechanic","Subscription Manager","Fleet Supervisor","Drone Operator","Cold-Chain Specialist","Lab Assistant","Fruit Researcher","Genetics Scientist","Flavor Chemist","Nutrition Researcher","Laboratory Safety Officer","Head Scientist","Receptionist","Accountant","Human Resources Worker","Marketing Worker","Phone Support Worker","Business Manager","Operations Manager","Personal Assistant","Festival Worker","Tour Guide","Minigame Host","Mascot Performer","Museum Guide","Event Manager"];
+export const JOB_ROLES=["Fruit Picker","Tree Caretaker","Irrigation Worker","Orchard Supervisor","Seed Specialist","Pest-Control Specialist","Harvest Manager","Cashier","Salesperson","Stock Clerk","Customer Service Worker","Stand Manager","Market Seller","Juice Maker","Smoothie Maker","Baker","Candy Maker","Ice-Cream Maker","Quality Inspector","Production Supervisor","Bicycle Courier","Van Driver","Delivery Dispatcher","Route Planner","Vehicle Mechanic","Subscription Manager","Fleet Supervisor","Drone Operator","Cold-Chain Specialist","Lab Assistant","Fruit Researcher","Genetics Scientist","Flavor Chemist","Nutrition Researcher","Laboratory Safety Officer","Head Scientist","Receptionist","Accountant","Human Resources Worker","Marketing Worker","Phone Support Worker","Business Manager","Operations Manager","Personal Assistant","Festival Worker","Tour Guide","Minigame Host","Mascot Performer","Museum Guide","Event Manager","Surveyor","Road Worker","Bridge Builder","Electrician","Plumber","Cable-Car Engineer","Snowplow Driver","Mountain Mechanic","Construction Manager","Safety Inspector"];
 
 const officeGroups={
   Communication:["Basic Desk Phone","Fruitopia Smartphone","Group Messages","Customer Database","Custom Counteroffers","Priority Notifications","Remote Management"],
@@ -171,6 +173,8 @@ export const OFFICE_UPGRADES=Object.entries(officeGroups).flatMap(([category,nam
 export const OFFICE_OBJECTS=["Player Desk","Chair","Filing Cabinet","Wall Map","Meeting Table","Employee Board","Trophy Cabinet","Company Safe","Phone Charger","Computer","Accountant Desk","Assistant Desk","Research Board","Break Area","Conference Room","Executive Office","Elevator"].map((name,index)=>({id:slug(name),name,icon:["🪑","🪑","🗄️","🗺️","🪵","📋","🏆","🔐","🔌","💻","🧮","📝","🔬","☕","🤝","👑","🛗"][index]}));
 export const OFFICE_LEVELS=["Wooden Shed Office","Small Business Office","Modern Fruit Headquarters","Fruit Corporation Tower","Fruitopia Command Center"];
 
+// Kept as the original 13-app compatibility list. The expanded device uses
+// PHONE_APPS_EXPANDED, and both lists route into the same game systems.
 export const PHONE_APPS=["Messages","Contacts","Orders","Workers","Delivery Tracker","Fruit Market","Company Bank","Quests","Achievements","Research","World Map","Settings","Secrets"].map((name,index)=>({id:slug(name),name,icon:["💬","👥","🧾","🧑‍🌾","🚚","📈","🏦","📌","🏆","🔬","🗺️","⚙️","🔐"][index]}));
 export const CONTACTS=["Mayor Marigold","Chef Sorrel","Nora North","Ivy Venture","Festival Committee","Professor Pome","Rowan Rind","Unknown Orchard"];
 export const COMPANY_FUNDS=["Orchard Equipment Fund","Market Expansion Fund","Fruit Research Fund"].map((name,index)=>({id:slug(name),name,rate:[.05,.08,.12][index],seconds:[60,90,120][index]}));
