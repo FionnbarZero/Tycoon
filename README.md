@@ -1,40 +1,52 @@
 # Fruitopia Tycoon
 
-Fruitopia Tycoon is a complete, buildless browser management game. Start with $1, six ripe apple trees, a roadside stand, and a wooden office; grow into a fruit corporation with workers, factories, delivery fleets, negotiated phone orders, hybrid research, entertainment, secrets, and seasonal prestige.
+Fruitopia Tycoon is a dependency-free, responsive browser game about growing six apple trees and a $1 roadside stand into a magical fruit corporation. It combines a walkable canvas world with orchard care, crafting, districts, construction, workers, recruiting, research, automatic deliveries, minigames, secrets, quests, events, office management, and seasonal prestige.
 
-## Run
-
-No dependency install or backend is required.
+## Play locally
 
 ```bash
-python3 -m http.server 8000
+python3 -m http.server 8080
 ```
 
-Open <http://localhost:8000>. Progress is stored locally in a versioned `localStorage` save.
+Open `http://127.0.0.1:8080` in a modern browser. Progress is stored locally under the version-9 Fruitopia save key; older saves migrate automatically and no account or backend is required.
 
 ## Controls
 
-- Move in the world or office with WASD, arrow keys, touch controls, click/tap-to-move, or a connected gamepad.
-- Use `−` / `+` to zoom and **Pan** to drag the world map.
-- Press `O` for the office and `P` for the smartphone.
-- Click ripe trees to harvest; click growing trees to water, fertilize, or treat them.
-- Tab navigates every control, Enter/Space activates it, and Escape closes dialogs.
+- `WASD` or arrow keys: walk in the world or office
+- Click or tap: walk to a destination or interact
+- Touch direction pad: mobile movement
+- Connected gamepad left stick: world movement
+- Mouse wheel or `+` / `−` controls: zoom
+- Drag the world: pan
+- Find Me: recenter on the player
+- `Enter` or `Space`: activate focused controls
+- `Escape`: close dialogs
 
-## Included systems
+Reduced motion, sound, music, and autosave are available under More → Settings.
 
-- Eight explorable, visually developing districts with 8 improvements each, teleporters, completion rewards, workers, and district minigames
-- 86 three-stage company buildings across starter, production, farming, worker, business, transport, entertainment, secret, and late-game categories
-- A walkable five-level office, 44-upgrade tree, 17 interactive objects, and queued worker meetings with consequential choices
-- 14 named workers with roles, personality, skill, happiness, energy, loyalty, equipment, assignments, dialogue, messages, and memories
-- An unlockable 13-app smartphone with contacts, messages, negotiated orders, single-collection fictional payments, worker management, market, investments, delivery tracking, research, maps, and secrets
-- 28 fruits including 11 research hybrids; 21 recipes; ten timed production businesses; separate basket and warehouse capacity
-- Twelve purchasable vehicles and automatic routes spanning bicycles, scooters, refrigerated trucks, trains, boats, planes, drones, helicopters, and rockets
-- 20 economy-changing random events and 11 fully playable, replayable minigames
-- Quests, achievements, automatic sales, customer requests, tips, tickets, market combos, patents, advertising, investments, hidden crates, and offline progress
-- Versioned v5 save migration, corruption repair, duplicate-reward guards, four-hour offline cap, and **Start a New Season** prestige with nine permanent Golden Seed upgrades and six evolution ages
-- Responsive desktop/tablet/mobile UI, keyboard/gamepad/touch support, focus-trapped dialogs, optional Web Audio, and reduced-motion support
+## Game systems
 
-## Verify and build
+- Eight developing districts with 64 working improvements, hidden crates, teleporters, workers, completion bonuses, and district minigames
+- 28 fruit varieties, five quality grades, renewable cared-for trees, 21 recipes, and separate basket/product storage
+- 11 timed hybrid experiments with safe failure recovery, patents, research notes, and renewable hybrid trees
+- 106 unique company buildings across 11 categories, each with three upgrade levels and live company effects
+- Ten fruit laboratories and ten timed production businesses
+- Seven delivery tiers, 12 vehicles, and 18 automatic routes with cargo, product, subscription, reputation, streak, subscriber, and one-time payment rules
+- 14 named workers with assignments, energy, happiness, loyalty, equipment, skills, ranks, memories, conversations, and recruiting files
+- Job advertisements, applicant conversations, interviews, reference checks, trial shifts, negotiated offers, and hiring
+- Five office stages, 17 interactive office objects, and 44 office upgrades
+- A 13-app smartphone with messages, contacts, negotiated orders, fictional market/bank features, research, maps, settings, and secrets
+- 11 replayable timed minigames with keyboard/touch/pointer control, high scores, and one-time run rewards
+- 20 timed events, 11 discoverable secrets, daily quests, milestones, achievements, and seasonal Golden Seed prestige
+- Six surface manholes and a second walkable underground world with five sewer sections, water channels, landmarks, characters, puzzles, gates, shortcuts, and one-time treasures
+- Container-based Green Sewer Water collection, eight discoverable mixing recipes, timed offline experiments, 17 sewer quests, and six additional underground secrets
+- A hidden, family-friendly Fruit Mafia Club with permanent $100 fictional membership, non-purchasable Club Chips, visible daily limits, posted prize tables, Plinko, and fruit slots
+- Fruit Mafia: The Mystery Crate, an original members-only one-hit survival game for one player and 3–9 strategic computer opponents, with 23 timed/automatic/manual/reaction cards, 16 crate events, rebound chains, spectators, family-friendly object mode, AI memories, and one-time round rewards
+- Versioned migration, corrupted-save repair, capped offline progress, and duplicate-payment protection
+
+All employment, banking, investments, money, applicants, contacts, Club Chips, and gambling-style activities are fictional in-game systems with no real-money purchase or cash-out.
+
+## Verification
 
 ```bash
 npm run check
@@ -42,17 +54,10 @@ npm test
 npm run build
 ```
 
-The Node suite checks configuration coverage, economy safety, both storage types, all ten production lines, all 86 purchasable buildings, office/workers, orders, research, secrets, migration, offline progress, and prestige.
-
-For the interaction and responsive browser suite, start the local server and a Chrome debugging session, then run:
+The browser suite expects Chrome with a remote-debugging endpoint and the game served locally:
 
 ```bash
-"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
-  --headless=new --use-angle=swiftshader --enable-unsafe-swiftshader \
-  --remote-debugging-port=9228 --user-data-dir=/tmp/fruitopia-browser-test \
-  'http://127.0.0.1:8000/?testMode=1'
-
-npm run test:browser
+TYCOON_CDP_ENDPOINT=http://127.0.0.1:9246 npm run test:browser
 ```
 
-The browser test covers fresh progression, keyboard movement, office/phone unlocks, worker conversations, orders/payments, production, district progression, all 11 minigames, all 20 events, deliveries, hybrid research, save/reload, teleporting, reset cancellation, prestige, accessibility focus/Escape behavior, desktop/tablet/mobile sizing, and console errors. `npm run build` creates the deployable static site in `dist/`.
+The production build is written to `dist/` and remains a static site.

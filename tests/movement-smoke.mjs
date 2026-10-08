@@ -1,0 +1,22 @@
+import {connect,expect} from "./cdp.mjs";
+
+const browser=await connect();const{command,evaluate,wait,exceptions}=browser;
+await command("Page.reload",{ignoreCache:true});await wait(800);await command("Page.bringToFront");
+await evaluate("document.querySelector('[data-action=close-dialog]')?.click();document.querySelector('#world').focus();window.__FRUITOPIA__.core.state.player={x:18,y:63,district:'apple-grove-orchard'};true");
+const start=await evaluate("structuredClone(window.__FRUITOPIA__.core.state.player)");
+await command("Input.dispatchKeyEvent",{type:"keyDown",key:"w",code:"KeyW",windowsVirtualKeyCode:87});for(let attempt=0;attempt<30;attempt++){await wait(100);if(await evaluate(`window.__FRUITOPIA__.core.state.player.y<${start.y-.5}`))break;}await command("Input.dispatchKeyEvent",{type:"keyUp",key:"w",code:"KeyW",windowsVirtualKeyCode:87});
+const afterW=await evaluate("structuredClone(window.__FRUITOPIA__.core.state.player)");expect(afterW.y<start.y-.5,`W movement failed: ${start.y} -> ${afterW.y}`);
+await command("Input.dispatchKeyEvent",{type:"keyDown",key:"ArrowRight",code:"ArrowRight",windowsVirtualKeyCode:39});for(let attempt=0;attempt<30;attempt++){await wait(100);if(await evaluate(`window.__FRUITOPIA__.core.state.player.x>${afterW.x+.5}`))break;}await command("Input.dispatchKeyEvent",{type:"keyUp",key:"ArrowRight",code:"ArrowRight",windowsVirtualKeyCode:39});
+const afterArrow=await evaluate("structuredClone(window.__FRUITOPIA__.core.state.player)");expect(afterArrow.x>afterW.x+.5,"Arrow movement failed");
+await evaluate("document.querySelector('[data-move=left]').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,pointerId:2}));true");const afterTouch=await evaluate("structuredClone(window.__FRUITOPIA__.core.state.player)");expect(afterTouch.x<afterArrow.x,"Touch directional movement failed");
+await evaluate(`(()=>{const game=window.__FRUITOPIA__,district=game.Config.DISTRICTS[0],p=game.world.worldToScreen(district.x,district.y),r=document.querySelector('#world').getBoundingClientRect();window.__target={x:r.left+p.x,y:r.top+p.y};return true;})()`);const target=await evaluate("window.__target");
+await command("Input.dispatchMouseEvent",{type:"mousePressed",button:"left",clickCount:1,x:target.x,y:target.y});await command("Input.dispatchMouseEvent",{type:"mouseReleased",button:"left",clickCount:1,x:target.x,y:target.y});await wait(2500);
+const clickResult=await evaluate("({player:structuredClone(__FRUITOPIA__.core.state.player),dialog:document.querySelector('#dialogTitle')?.textContent||''})");
+expect(await evaluate("window.__FRUITOPIA__.core.state.player.x!==18 || window.__FRUITOPIA__.core.state.player.y!==63"),"Click/tap walk failed");
+await evaluate(`(()=>{const game=window.__FRUITOPIA__;document.querySelector('[data-action=close-dialog]')?.click();game.core.state.sewer.entrances['sunny-manhole'].open=true;game.core.enterSewer('sunny-manhole');game.world.target=null;game.world.findPlayer();document.querySelector('#world').focus();return true;})()`);await wait(120);
+const sewerStart=await evaluate("structuredClone(window.__FRUITOPIA__.core.state.sewer.player)");
+await command("Input.dispatchKeyEvent",{type:"keyDown",key:"d",code:"KeyD",windowsVirtualKeyCode:68});for(let attempt=0;attempt<25;attempt++){await wait(80);if(await evaluate(`window.__FRUITOPIA__.core.state.sewer.player.x>${sewerStart.x+.4}`))break;}await command("Input.dispatchKeyEvent",{type:"keyUp",key:"d",code:"KeyD",windowsVirtualKeyCode:68});
+const sewerAfterKeyboard=await evaluate("structuredClone(window.__FRUITOPIA__.core.state.sewer.player)");expect(sewerAfterKeyboard.x>sewerStart.x+.4,"Sewer keyboard movement failed");
+await evaluate("document.querySelector('[data-move=down]').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,pointerId:4}));true");const sewerAfterTouch=await evaluate("structuredClone(window.__FRUITOPIA__.core.state.sewer.player)");expect(sewerAfterTouch.y>sewerAfterKeyboard.y,"Sewer touch movement failed");
+await evaluate("window.__FRUITOPIA__.core.leaveSewer();true");
+expect(exceptions.length===0,`Runtime exceptions:\n${exceptions.join("\n")}`);browser.close();console.log(JSON.stringify({ok:true,start,afterW,afterArrow,afterTouch,clickResult},null,2));
