@@ -1,6 +1,6 @@
-export const SAVE_VERSION = 9;
+export const SAVE_VERSION = 10;
 export const SAVE_KEY = `fruitopia-tycoon-v${SAVE_VERSION}`;
-export const LEGACY_SAVE_KEYS = ["fruitopia-tycoon-v8", "fruitopia-tycoon-v7", "fruitopia-tycoon-v6", "fruitopia-tycoon-v5", "fruitopia-tycoon"];
+export const LEGACY_SAVE_KEYS = ["fruitopia-tycoon-v9", "fruitopia-tycoon-v8", "fruitopia-tycoon-v7", "fruitopia-tycoon-v6", "fruitopia-tycoon-v5", "fruitopia-tycoon"];
 
 export * from "./sewer-config.js";
 export * from "./mafia-config.js";
