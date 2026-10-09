@@ -41,7 +41,7 @@ export const levelForXp=xp=>clamp(1+Math.floor(Math.sqrt(Math.max(0,xp)/100)),1,
 export const xpForLevel=level=>Math.pow(Math.max(0,level-1),2)*100;
 export const levelTitle=level=>[...LEVEL_TITLES].reverse().find(([required])=>level>=required)?.[1]||"Stand Starter";
 
-const initialTrees=()=>Array.from({length:6},(_,index)=>({id:`apple-tree-${index+1}`,fruit:"apple",status:"ripe",readyAt:0,watered:false,fertilized:false,diseased:false,golden:false,x:78+(index%3)*8,y:408+Math.floor(index/3)*10,harvests:0}));
+const initialTrees=()=>Array.from({length:6},(_,index)=>({id:`apple-tree-${index+1}`,fruit:"apple",status:"ripe",readyAt:0,watered:false,fertilized:false,diseased:false,golden:false,x:78+(index%3)*9,y:425+Math.floor(index/3)*11,harvests:0}));
 const initialDistricts=()=>Object.fromEntries(DISTRICTS.map((district,index)=>[district.id,{unlocked:index<2,upgrades:[],crateFound:false,teleporter:false,visits:0}]));
 const initialFruit=()=>Object.fromEntries(FRUITS.map(fruit=>[fruit.id,0]));
 const initialProducts=()=>Object.fromEntries(RECIPES.map(recipe=>[recipe.id,0]));
@@ -117,7 +117,7 @@ export function createDefaultState(now=Date.now()){
     cash:1,fruitCoins:0,xp:0,level:1,lifetimeCash:1,researchPoints:0,reputation:50,tickets:0,goldenSeeds:0,season:1,evolutionAge:0,
     deliveryReputation:0,deliverySubscribers:0,deliveryStreak:0,completedContracts:0,
     basketCapacity:12,warehouseCapacity:10,fruitInventory:initialFruit(),productInventory:initialProducts(),fruitQuality:initialQualities(),discoveredFruit:initialDiscovered(),
-    trees:initialTrees(),districts:initialDistricts(),player:{x:105,y:430,district:"sunny-side-fruit-stand",facing:0},camera:{x:105,y:430,zoom:3.5,distance:8,normalDistance:8,yaw:0,pitch:-.18,mode:"third-person"},
+    trees:initialTrees(),districts:initialDistricts(),player:{x:105,y:425,district:"sunny-side-fruit-stand",facing:0},camera:{x:105,y:425,zoom:3.5,distance:8,normalDistance:8,yaw:0,pitch:-.18,mode:"third-person"},
     buildings:{"roadside-fruit-stand":{level:1,state:"open",builtAt:now},"orchard-shed":{level:1,state:"open",builtAt:now},"tiny-office":{level:1,state:"open",builtAt:now}},
     production:[],researchJobs:[],patents:[],researchNotebook:[],studies:{},hybridTrees:[],
     vehicles:{},activeDeliveries:[],deliveryHistory:[],serviceTier:1,
@@ -173,9 +173,14 @@ export function migrateSave(raw,now=Date.now()){
   const hadOutside=Boolean(raw.outside);
   repaired.outside=mergeDefaults(initialOutside(now),repaired.outside);
   repaired.outside.layoutId=OUTSIDE_WORLD.layoutId;
+  if(sourceVersion<23){
+    repaired.trees=repaired.trees.map(tree=>{const match=/^apple-tree-([1-6])$/.exec(tree.id||"");if(!match)return tree;const slot=Number(match[1])-1;return{...tree,x:78+(slot%3)*9,y:425+Math.floor(slot/3)*11};});
+    const nearFormerStart=Math.hypot((Number(repaired.player?.x)||105)-105,(Number(repaired.player?.y)||430)-430)<90;
+    if(repaired.outside.currentRegion==="starter-valley"&&nearFormerStart){repaired.player={...repaired.player,x:105,y:425,district:"sunny-side-fruit-stand"};repaired.camera={...repaired.camera,x:105,y:425};}
+  }
   for(const key of Object.keys(repaired.outside.materials))repaired.outside.materials[key]=Math.max(0,Math.floor(Number(repaired.outside.materials[key])||0));
   if(!hadOutside){
-    repaired.player={x:105,y:430,district:"sunny-side-fruit-stand",facing:0};repaired.camera={x:105,y:430,zoom:3.2,distance:10,normalDistance:10,yaw:0,pitch:-.18,mode:"third-person"};
+    repaired.player={x:105,y:425,district:"sunny-side-fruit-stand",facing:0};repaired.camera={x:105,y:425,zoom:3.2,distance:10,normalDistance:10,yaw:0,pitch:-.18,mode:"third-person"};
     repaired.trees=repaired.trees.map((tree,index)=>{if(Number(tree.x)<=100&&Number(tree.y)<=80){const fruit=FRUIT_BY_ID[tree.fruit],anchor=DISTRICTS.find(district=>district.name===fruit?.source)||DISTRICT_BY_ID["apple-grove-orchard"];return{...tree,x:anchor.x-14+(index%5)*5,y:anchor.y+7+Math.floor(index/5)*5};}return tree;});
     const legacyPlacements={"roadside-fruit-stand":"stand-corner","orchard-shed":"orchard-shed-yard","tiny-office":"office-clearing"};for(const plot of OUTSIDE_PLOTS)if(plot.defaultBuilding&&repaired.buildings[plot.defaultBuilding])legacyPlacements[plot.defaultBuilding]=plot.id;
     for(const [buildingId,plotId] of Object.entries(legacyPlacements))if(repaired.buildings[buildingId])Object.assign(repaired.outside.plots[plotId],{buildingId,level:repaired.buildings[buildingId].level||1,state:"open",builtAt:repaired.buildings[buildingId].builtAt||now});

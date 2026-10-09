@@ -10,7 +10,7 @@ npm run build
 python3 -m http.server 8080 --directory dist
 ```
 
-Open `http://127.0.0.1:8080` in a modern WebGL-capable browser. Progress is stored locally under the version-22 Fruitopia save key; older saves migrate automatically and no account or backend is required. The hosted game installs an offline app shell, including its 3D modules, after the first successful visit, so temporary connection loss does not interrupt play.
+Open `http://127.0.0.1:8080` in a modern WebGL-capable browser. Progress is stored locally under the version-23 Fruitopia save key; older saves migrate automatically and no account or backend is required. The hosted game installs an offline app shell, including its 3D modules, after the first successful visit, so temporary connection loss does not interrupt play.
 
 ## Controls
 
@@ -38,8 +38,8 @@ Shadows, render distance, model quality, effects quality, reduced motion, sound,
 - A real perspective 3D world with rolling terrain, tall mountains, individual fruit trees, modeled buildings, broad roads, bridges, water, workers, vehicles, physical purchase pads, camera collision, and distance-based detail culling
 - Country-scale district spacing with landscaped building lots, entrances, sidewalks, delivery lanes, open scenery, a two-row starter orchard, mounted high-resolution text signs, road directions, and proximity-faded supplemental labels
 - Smooth saved first-person, close third-person, normal third-person, and wide third-person camera distances on the surface and underground
-- A connected 7,200 × 7,200 north-to-south Fruitopia country with 40 regions, 88 buildable plots, distinct terrain and sound identities, illustrated map layers, and progression-based fast travel
-- An authoritative country plan running from Summit Observatory through the mountain farms, orchard/research/farm belt, Upper Main Road civic belt, Office Headquarters, starter/market/delivery districts, Grand Central Road, festival/factory/shipping belt, freight harbor, Lemon Coast, and Fruit Islands
+- A connected 7,200 × 9,000 north-to-south Lemon City country with 40 regions, 88 buildable plots, distinct terrain and sound identities, illustrated map layers, and progression-based fast travel
+- An authoritative three-column plan running from Lemon Hill Lookout, Research Ridge, and Mountain Expansion through the Grand Lemon Orchard, City Reservoir, Sunrise Neighborhood, Lemon City Boulevard, West/Center/East City, the Large City Roundabout, business/park/shopping districts, South Commercial Road, factories/freight/warehouses, Harbor Way, Shipping Harbor, Lemon Coast, and the Fruit Islands
 - Berrywood Forest, Melon Wetlands, Peach Blossom Hills, Citrus Highlands, Old Fruitopia Town, Railway Junction, a clean fruit-themed Industrial District, Lemon Coast, Coconut Bay, Dragon Fruit Desert, Starfruit Observatory Basin, Frozen Peaks, and a five-island Fruit Archipelago
 - 28 fruit varieties, five quality grades, renewable cared-for trees, 21 recipes, and separate basket/product storage
 - A 15-section Orchard Estate with 114 land, soil, water, tree-care, pollination, harvesting, storage, worker, transport, and research upgrades across seven visible estate stages

@@ -2,7 +2,7 @@ import {connect,expect} from "./cdp.mjs";
 
 const browser=await connect();const{command,evaluate,wait,exceptions}=browser;
 await command("Page.reload",{ignoreCache:true});await wait(350);for(let attempt=0;attempt<120;attempt++){if(await evaluate("Boolean(window.__FRUITOPIA__?.world)"))break;await wait(100);}await command("Page.bringToFront");expect(await evaluate("Boolean(window.__FRUITOPIA__?.world)"),"3D world did not initialize after reload");
-await evaluate("document.querySelector('[data-action=close-dialog]')?.click();document.querySelector('#world').focus();window.__FRUITOPIA__.core.state.player={x:105,y:430,district:'sunny-side-fruit-stand'};window.__FRUITOPIA__.world.findPlayer();true");
+await evaluate("document.querySelector('[data-action=close-dialog]')?.click();document.querySelector('#world').focus();window.__FRUITOPIA__.world.yaw=0;window.__FRUITOPIA__.world.pitch=-.18;window.__FRUITOPIA__.core.state.player={x:145,y:455,district:'sunny-side-fruit-stand'};window.__FRUITOPIA__.world.findPlayer();true");
 const start=await evaluate("structuredClone(window.__FRUITOPIA__.core.state.player)");
 await command("Input.dispatchKeyEvent",{type:"keyDown",key:"w",code:"KeyW",windowsVirtualKeyCode:87});for(let attempt=0;attempt<30;attempt++){await wait(100);if(await evaluate(`window.__FRUITOPIA__.core.state.player.y<${start.y-.5}`))break;}await command("Input.dispatchKeyEvent",{type:"keyUp",key:"w",code:"KeyW",windowsVirtualKeyCode:87});
 const afterW=await evaluate("structuredClone(window.__FRUITOPIA__.core.state.player)");expect(afterW.y<start.y-.5,`W movement failed: ${start.y} -> ${afterW.y}`);

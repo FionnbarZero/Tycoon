@@ -53,11 +53,11 @@ export const SEWER_MAZE_MARKERS=[
 ];
 
 export const SEWER_ENTRANCES=[
-  {id:"sunny-manhole",name:"Manhole A · West Sewer Tunnel",x:105,y:476,sewerX:35,sewerY:20,zone:"front-drain-entrance",unlock:"Discover a sewer clue, speak with Bruno Bramble, or inspect the Hidden Office Basement."},
-  {id:"market-manhole",name:"Manhole B · Central Sewer Hub",x:360,y:476,sewerX:120,sewerY:20,zone:"central-pump-station",unlock:"Open it from inside the Yellow Maintenance Quarter."},
-  {id:"depot-manhole",name:"Manhole C · East Sewer Tunnel",x:600,y:476,sewerX:205,sewerY:20,zone:"surface-exit-network",unlock:"Repair the first pump from underground."},
-  {id:"juice-manhole",name:"Research Ridge Drain Manhole",x:372,y:255,sewerX:215,sewerY:160,zone:"sewer-test-laboratory",unlock:"Complete the first safe Green-Water experiment."},
-  {id:"mafia-alley-manhole",name:"Golden Grape Manhole",x:132,y:330,sewerX:120,sewerY:52,zone:"fruit-mafia-club",unlock:"Become a permanent Fruit Mafia Club member.",undergroundOnly:true}
+  {id:"sunny-manhole",name:"Manhole A · West Sewer Tunnel",x:105,y:348,sewerX:35,sewerY:20,zone:"front-drain-entrance",unlock:"Discover a sewer clue, speak with Bruno Bramble, or inspect the Hidden Office Basement."},
+  {id:"market-manhole",name:"Manhole B · Central Sewer Hub",x:360,y:348,sewerX:120,sewerY:20,zone:"central-pump-station",unlock:"Open it from inside the Yellow Maintenance Quarter."},
+  {id:"depot-manhole",name:"Manhole C · East Sewer Tunnel",x:615,y:348,sewerX:205,sewerY:20,zone:"surface-exit-network",unlock:"Repair the first pump from underground."},
+  {id:"juice-manhole",name:"Research Ridge Drain Manhole",x:382,y:118,sewerX:215,sewerY:160,zone:"sewer-test-laboratory",unlock:"Complete the first safe Green-Water experiment."},
+  {id:"mafia-alley-manhole",name:"Golden Grape Manhole",x:145,y:548,sewerX:120,sewerY:52,zone:"fruit-mafia-club",unlock:"Become a permanent Fruit Mafia Club member.",undergroundOnly:true}
 ];
 export const SEWER_ENTRANCE_BY_ID=Object.fromEntries(SEWER_ENTRANCES.map(item=>[item.id,item]));
 

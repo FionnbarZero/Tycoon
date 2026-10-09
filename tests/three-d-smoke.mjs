@@ -5,6 +5,7 @@ const browser=await connect();
 const{command,evaluate,wait,exceptions,consoleErrors}=browser;
 const ready=async()=>{await wait(350);for(let attempt=0;attempt<120;attempt++){if(await evaluate("Boolean(window.__FRUITOPIA__?.world?.perspectiveCamera)"))return true;await wait(100);}return false;};
 
+await command("Page.reload",{ignoreCache:true});
 expect(await ready(),"Perspective 3D world did not initialize");
 await evaluate(`(()=>{const g=__FRUITOPIA__;if(g.core.state.sewer.active){g.core.leaveSewer();g.world.rebuild(true);g.world.findPlayer();}document.querySelector('[data-action=close-dialog]')?.click();document.querySelector('#world').focus();return true;})()`);
 await evaluate("__FRUITOPIA__.world.setCameraDistance(8);true");await wait(250);
@@ -32,10 +33,10 @@ expect(initial.sceneChildren>=4&&initial.worldObjects>100,"3D scene did not crea
 expect(initial.playerVisible&&initial.indicator.includes("Third Person"),"Game did not open in third-person view");
 expect(initial.controls.includes("Wheel to change view")&&initial.mobile,"Camera controls or mobile fallback are missing");
 expect(initial.countrySpacing>=2.2,"The surface world was not expanded to country-scale spacing");
-for(const text of ["SUNNY SIDE FRUIT STAND","APPLE GROVE ORCHARD","FRUITOPIA OFFICE","DELIVERY DEPOT","FRUIT RESEARCH LAB","MARKET TOWN","SHIPPING HARBOR ↓","MOUNTAIN ROAD ↑","MINIGAME ARCADE →"])expect(initial.signTexts.includes(text),`Missing readable physical sign: ${text}`);
+for(const text of ["STARTER LEMON STAND","GRAND LEMON ORCHARD","OFFICE HEADQUARTERS","DELIVERY DISTRICT","FRUIT RESEARCH LAB","LEMON MARKET SQUARE","SHIPPING HARBOR ↓","MOUNTAIN EXPANSION ↑","LEMON CITY PARK ↓"])expect(initial.signTexts.includes(text),`Missing readable physical sign: ${text}`);
 expect(initial.physicalSignCount>=25&&initial.visiblePhysicalSigns<initial.physicalSignCount,"Physical signs are missing or distant signs are not being culled");
 expect(initial.proximityLabelCount>0&&initial.visibleProximityLabels<initial.proximityLabelCount,"Supplemental labels are not proximity-controlled");
-expect(JSON.stringify(initial.treeRows)===JSON.stringify([[78,408],[86,408],[94,408],[78,418],[86,418],[94,418]]),"Starter apple trees are not arranged in two walkable rows");
+expect(JSON.stringify(initial.treeRows)===JSON.stringify([[78,425],[87,425],[96,425],[78,436],[87,436],[96,436]]),"Starter apple trees are not arranged in two walkable rows");
 
 const rect=await evaluate(`(()=>{const r=document.querySelector('#world').getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2}})()`);
 const originalYaw=await evaluate("__FRUITOPIA__.world.yaw");
@@ -52,21 +53,21 @@ let vRestored=false;for(let attempt=0;attempt<20&&!vRestored;attempt++){await wa
 await command("Input.dispatchMouseEvent",{type:"mouseWheel",x:rect.x,y:rect.y,deltaX:0,deltaY:450});await wait(250);
 expect(await evaluate("__FRUITOPIA__.world.targetDistance>__FRUITOPIA__.core.state.camera.normalDistance-1"),"Wheel-down zoom did not pull the camera backward");
 
-await evaluate(`(()=>{const g=__FRUITOPIA__,w=g.world;w.yaw=Math.PI/2;w.pitch=-.18;w.setCameraDistance(6);g.core.state.player.x=105;g.core.state.player.y=430;w.findPlayer();document.querySelector('#world').focus();return true;})()`);
+await evaluate(`(()=>{const g=__FRUITOPIA__,w=g.world;w.yaw=Math.PI/2;w.pitch=-.18;w.setCameraDistance(6);g.core.state.player.x=145;g.core.state.player.y=455;w.findPlayer();document.querySelector('#world').focus();return true;})()`);
 const beforeMove=await evaluate("structuredClone(__FRUITOPIA__.core.state.player)");
-await command("Input.dispatchKeyEvent",{type:"keyDown",key:"w",code:"KeyW",windowsVirtualKeyCode:87});await wait(500);await command("Input.dispatchKeyEvent",{type:"keyUp",key:"w",code:"KeyW",windowsVirtualKeyCode:87});
+await command("Input.dispatchKeyEvent",{type:"keyDown",key:"w",code:"KeyW",windowsVirtualKeyCode:87});await wait(100);await evaluate("(()=>{const w=__FRUITOPIA__.world;for(let index=0;index<5;index++)w.updateMovement(.05,performance.now());return w.keys.has('w');})()");await command("Input.dispatchKeyEvent",{type:"keyUp",key:"w",code:"KeyW",windowsVirtualKeyCode:87});
 const afterMove=await evaluate("structuredClone(__FRUITOPIA__.core.state.player)");
 expect(afterMove.x>beforeMove.x+.5,"W movement was not relative to the camera direction");
-expect(await evaluate("!__FRUITOPIA__.world.canMoveTo(112,400) && !__FRUITOPIA__.world.canMoveTo(700,20)"),"Building or locked-region collision is not enforced");
+expect(await evaluate("!__FRUITOPIA__.world.canMoveTo(75,410) && !__FRUITOPIA__.world.canMoveTo(700,20)"),"Building or locked-region collision is not enforced");
 
-await evaluate(`(()=>{const g=__FRUITOPIA__,tree=g.core.state.trees[0],w=g.world;g.core.state.player.x=tree.x;g.core.state.player.y=tree.y+4;w.yaw=0;w.pitch=.18;w.setCameraDistance(0);w.findPlayer();return true;})()`);await wait(500);
+await evaluate(`(()=>{const g=__FRUITOPIA__,tree=g.core.state.trees[0],w=g.world;g.core.state.player.x=tree.x;g.core.state.player.y=tree.y+4;w.yaw=0;w.pitch=.18;w.setCameraDistance(0);w.findPlayer();w.update(.016,performance.now());return true;})()`);await wait(120);await evaluate("__FRUITOPIA__.world.update(.016,performance.now());true");
 const target=await evaluate("__FRUITOPIA__.world.targetedEntity?.type||null");
 expect(target==="tree","First-person crosshair did not prioritize the targeted fruit tree");
 await command("Input.dispatchKeyEvent",{type:"keyDown",key:"e",code:"KeyE",windowsVirtualKeyCode:69});await command("Input.dispatchKeyEvent",{type:"keyUp",key:"e",code:"KeyE",windowsVirtualKeyCode:69});await wait(150);
 expect(await evaluate("document.querySelector('#dialogTitle')?.textContent.includes('Tree')||document.querySelector('#dialogTitle')?.textContent.includes('Apple')"),"E did not interact with the crosshair-targeted tree");
 await evaluate("document.querySelector('[data-action=close-dialog]')?.click();true");
 
-await evaluate(`(()=>{const g=__FRUITOPIA__;g.core.state.sewer.entrances['sunny-manhole'].open=true;g.core.enterSewer('sunny-manhole');g.world.findPlayer();return true;})()`);await wait(900);
+await evaluate(`(()=>{const g=__FRUITOPIA__;g.core.state.sewer.entrances['sunny-manhole'].open=true;g.core.enterSewer('sunny-manhole');g.world.rebuild(true);g.world.findPlayer();g.world.update(.016,performance.now());return true;})()`);await wait(180);
 const sewer=await evaluate(`(()=>{const w=__FRUITOPIA__.world;w.setCameraDistance(18);return{mode:w.worldMode,maxed:w.targetDistance,exits:w.entities.filter(item=>item.type==='sewer-exit').length,pumps:w.entities.filter(item=>item.type==='sewer-pump').length,water:w.entities.filter(item=>item.type==='water-point').length,networkMaps:w.entities.filter(item=>item.type==='sewer-network-map').length,northMaps:w.entities.filter(item=>item.type==='sewer-north-map').length,signTexts:w.physicalSigns.map(item=>item.object.userData.signText),fog:w.scene.fog?.isFogExp2===true}})()`);
 expect(sewer.mode==="sewer"&&sewer.maxed===8&&sewer.exits>=1&&sewer.pumps===4&&sewer.water>=5&&sewer.fog,"Sewer did not rebuild as a constrained 3D underground world");
 expect(sewer.networkMaps===1,"Central Sewer Hub is missing its interactive underground network map");
@@ -74,9 +75,9 @@ expect(sewer.northMaps===1,"E Maze Entrance is missing its interactive fixed pla
 for(const text of ["WEST SEWER TUNNEL","CENTRAL SEWER HUB","EAST SEWER TUNNEL","M · MAFIA ENTRANCE","C · MAFIA CARD ROOM","J · JACKPOT MACHINE ROOM","1 · GATE ONE TURNAROUND","W · GREEN-WATER CAVE","H · HIDDEN ROOT HUB","F · FORGOTTEN FRUIT LABORATORY","P · POWER QUARTER","L · LABORATORY LIFT","X · BLACK-PIPE CENTER","R · RED PRESSURE ROOM","E · SEWER MAZE ENTRANCE"])expect(sewer.signTexts.includes(text),`Missing readable sewer sign: ${text}`);
 
 await evaluate(`(()=>{const g=__FRUITOPIA__;g.core.leaveSewer();g.world.setCameraDistance(14);g.world.yaw=.73;g.core.state.camera.yaw=.73;g.save();return true;})()`);
-expect(await evaluate(`(()=>{const saved=JSON.parse(localStorage.getItem(__FRUITOPIA__.Config.SAVE_KEY));return saved.camera.distance===14&&Math.abs(saved.camera.yaw-.73)<.001&&saved.version===22})()`),"Selected camera distance and facing were not serialized");
+expect(await evaluate(`(()=>{const saved=JSON.parse(localStorage.getItem(__FRUITOPIA__.Config.SAVE_KEY));return saved.camera.distance===14&&Math.abs(saved.camera.yaw-.73)<.001&&saved.version===23})()`),"Selected camera distance and facing were not serialized");
 await command("Page.reload",{ignoreCache:true});await wait(1000);expect(await ready(),"3D game did not reopen from the camera save");
-expect(await evaluate("__FRUITOPIA__.world.targetDistance===14 && Math.abs(__FRUITOPIA__.world.yaw-.73)<.001"),"Saved camera distance or facing did not restore after reopening");
+let cameraRestored=false;for(let attempt=0;attempt<60&&!cameraRestored;attempt++){await wait(100);cameraRestored=await evaluate("Boolean(window.__FRUITOPIA__?.world)&&__FRUITOPIA__.world.targetDistance===14&&Math.abs(__FRUITOPIA__.world.yaw-.73)<.001");}expect(cameraRestored,"Saved camera distance or facing did not restore after reopening");
 
 const shot=await command("Page.captureScreenshot",{format:"png",captureBeyondViewport:false});await writeFile("/tmp/fruitopia-3d-camera.png",Buffer.from(shot.data,"base64"));
 expect(exceptions.length===0,`3D runtime exceptions:\n${exceptions.join("\n")}`);

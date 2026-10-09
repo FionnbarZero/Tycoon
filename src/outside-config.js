@@ -2,48 +2,61 @@ import {EXPANSION_REGIONS,EXPANSION_PATHS,EXPANSION_PLOTS,EXPANSION_NPCS} from "
 
 const key=value=>String(value).toLowerCase().replace(/&/g,"and").replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
 
-export const OUTSIDE_WORLD={width:720,height:720,worldWidth:7200,worldHeight:7200,unitScale:10,layoutId:"fruitopia-country-v4-north-south"};
+export const OUTSIDE_WORLD={width:720,height:900,worldWidth:7200,worldHeight:9000,unitScale:10,layoutId:"fruitopia-lemon-city-v5"};
 
 // Stable region IDs preserve every save record. This table only moves and presents
 // those records in the authoritative north-to-south country plan.
 export const COUNTRY_REGION_LAYOUT={
-  "summit-observatory":{x:360,y:24,w:84,h:28,name:"Summit Observatory",primary:true,elevation:4400},
-  "cosmic-summit":{x:540,y:20,w:92,h:30},"starfruit-observatory-basin":{x:420,y:62,w:100,h:38},
-  "cloud-orchard-plateau":{x:500,y:58,w:104,h:38},"frozen-peaks":{x:94,y:62,w:92,h:42},
-  "frozen-fruit-valley":{x:150,y:104,w:100,h:44},"volcano-ridge":{x:574,y:78,w:88,h:42},
-  "dragon-fruit-desert":{x:610,y:132,w:105,h:54},
-  "mountain-laboratories":{x:270,y:112,w:112,h:52,name:"High Mountain Building Area",primary:true,elevation:2200},
-  "alpine-pass":{x:450,y:126,w:110,h:50,primary:true,elevation:2000},"mountain-base-camp":{x:300,y:158,w:100,h:44},
-  "berrywood-forest":{x:100,y:184,w:118,h:52,primary:true},"citrus-highlands":{x:360,y:184,w:112,h:52,primary:true,elevation:920},
-  "apple-grove-hills":{x:105,y:246,w:112,h:50,name:"Apple Grove Orchard",primary:true},
-  "juice-lab-ridge":{x:360,y:246,w:112,h:50,name:"Research Ridge",primary:true},
-  "river-farms":{x:600,y:246,w:114,h:50,name:"River Farms",primary:true},"riverside-farms":{x:520,y:286,w:94,h:40},
-  "peach-blossom-hills":{x:205,y:286,w:98,h:42},"melon-wetlands":{x:55,y:292,w:92,h:44},
-  "old-fruitopia-town":{x:105,y:326,w:108,h:46,name:"Old Fruitopia",primary:true},
-  "starter-valley":{x:105,y:422,w:116,h:54,primary:true},"sunny-side-stand":{x:112,y:400,w:72,h:34},
-  "market-town":{x:360,y:422,w:112,h:52,primary:true},
-  "delivery-industrial-road":{x:600,y:422,w:112,h:52,name:"Delivery District",primary:true},
-  "grand-fruit-festival":{x:105,y:522,w:112,h:50,name:"Festival Grounds",primary:true},
-  "industrial-district":{x:360,y:522,w:118,h:52},
-  "railway-junction":{x:360,y:590,w:112,h:48,name:"Train Freight Yard",primary:true},
-  "fruit-shipping-harbor":{x:600,y:590,w:124,h:52,name:"Shipping Harbor",primary:true},
-  "container-port":{x:505,y:618,w:96,h:38},"international-pier":{x:455,y:660,w:94,h:36},
-  "lemon-coast":{x:600,y:650,w:112,h:44,primary:true},"coconut-bay":{x:665,y:610,w:82,h:40},
-  "tropical-coast":{x:650,y:660,w:84,h:38},"tropical-island":{x:648,y:694,w:70,h:34},
-  "fruit-archipelago":{x:585,y:704,w:110,h:30,name:"Fruit Islands",primary:true},
-  "pineapple-island":{x:520,y:695,w:48,h:28},"mango-island":{x:555,y:675,w:48,h:28},
-  "coconut-island":{x:665,y:702,w:48,h:28},"starfruit-island":{x:705,y:676,w:28,h:28},"secret-island":{x:700,y:710,w:28,h:18}
+  "summit-observatory":{x:520,y:20,w:76,h:26,name:"Summit Observatory",primary:true,elevation:4400},
+  "cosmic-summit":{x:635,y:25,w:86,h:28},"starfruit-observatory-basin":{x:455,y:52,w:90,h:34},
+  "cloud-orchard-plateau":{x:565,y:55,w:92,h:34},"frozen-peaks":{x:80,y:38,w:82,h:36},
+  "frozen-fruit-valley":{x:160,y:68,w:96,h:40},"volcano-ridge":{x:665,y:65,w:78,h:38},
+  "dragon-fruit-desert":{x:680,y:118,w:76,h:44},
+  "mountain-laboratories":{x:490,y:92,w:92,h:42,name:"High Mountain Building Area",primary:true,elevation:2200},
+  "alpine-pass":{x:565,y:87,w:88,h:40,primary:true,elevation:2000},
+  "mountain-base-camp":{x:615,y:110,w:118,h:58,name:"Mountain Expansion",primary:true,elevation:900,description:"Locked building plots, mountain orchards, and the observatory road begin here."},
+  "berrywood-forest":{x:45,y:175,w:78,h:44},
+  "citrus-highlands":{x:105,y:105,w:118,h:56,name:"Lemon Hill Lookout",primary:true,elevation:650,description:"A scenic lemon hill, hiking minigame, and overlook above Lemon City."},
+  "apple-grove-hills":{x:105,y:235,w:132,h:74,name:"Grand Lemon Orchard",primary:true,description:"Six organized lemon-tree fields, workers, tractors, fertilizer, harvesting, and orchard expansion."},
+  "juice-lab-ridge":{x:360,y:105,w:124,h:58,name:"Research Ridge",primary:true,description:"Fruit Research Lab, test laboratory, green-water storage, and experimental greenhouse."},
+  "river-farms":{x:360,y:235,w:122,h:72,name:"City Reservoir",primary:true,description:"Fresh water, treatment controls, fishing dock, irrigation pumps, and a working waterwheel."},
+  "riverside-farms":{x:290,y:245,w:76,h:42},"peach-blossom-hills":{x:190,y:180,w:86,h:40},"melon-wetlands":{x:270,y:285,w:82,h:42},
+  "old-fruitopia-town":{x:615,y:235,w:126,h:72,name:"Sunrise Neighborhood",primary:true,description:"Customer homes, worker housing, delivery destinations, a neighborhood park, and bus stop."},
+  "starter-valley":{x:105,y:410,w:132,h:70,name:"West City",primary:true,description:"The spacious tutorial district with the original lemon stand, lemonade table, starter orchard, and open lawn."},
+  "sunny-side-stand":{x:105,y:390,w:70,h:30,hideRegionSign:true},
+  "market-town":{x:360,y:410,w:132,h:70,name:"City Center",primary:true,description:"Lemon Market Square, customer plaza, fountain, farmers market, juice shop, bakery, and outdoor tables."},
+  "delivery-industrial-road":{x:615,y:410,w:132,h:70,name:"East City",primary:true,description:"Delivery offices, bicycle and scooter garages, vans, packages, timed routes, and a practice course."},
+  "grand-fruit-festival":{x:360,y:540,w:140,h:82,name:"Lemon City Park",primary:true,description:"A large public park with the Festival Field, stage, pond, bridge, picnic paths, and rotating minigames."},
+  "industrial-district":{x:105,y:675,w:132,h:68,name:"Factory District",primary:true},
+  "railway-junction":{x:360,y:675,w:126,h:68,name:"Freight Station",primary:true},
+  "fruit-shipping-harbor":{x:360,y:800,w:142,h:72,name:"Shipping Harbor",primary:true},
+  "container-port":{x:325,y:820,w:82,h:38},"international-pier":{x:405,y:835,w:80,h:34},
+  "lemon-coast":{x:615,y:800,w:132,h:68,primary:true},"coconut-bay":{x:650,y:842,w:74,h:34},
+  "tropical-coast":{x:560,y:838,w:78,h:34},"tropical-island":{x:585,y:872,w:68,h:30},
+  "fruit-archipelago":{x:615,y:888,w:104,h:24,name:"Fruit Islands",primary:true},
+  "pineapple-island":{x:535,y:882,w:42,h:22},"mango-island":{x:575,y:892,w:42,h:20},
+  "coconut-island":{x:655,y:889,w:42,h:20},"starfruit-island":{x:690,y:875,w:30,h:22},"secret-island":{x:705,y:892,w:24,h:16}
 };
 
 export const COUNTRY_LANDMARKS=[
-  {id:"alpine-fruit-farm",name:"Alpine Fruit Farm",icon:"🍐",x:455,y:112,kind:"farm",style:"mountain",description:"A 2,000 m fruit farm reached by the mountain road."},
-  {id:"highland-waterfall",name:"Waterfall",icon:"💦",x:606,y:184,kind:"waterfall",style:"mountain",description:"The highland falls feed River Farms below."},
-  {id:"investor-plaza",name:"Investor Plaza",icon:"⭐",x:360,y:326,kind:"investor",style:"professional",description:"Investor offices, income reports, and star upgrades."},
-  {id:"hiring-center",name:"Job and Hiring Center",icon:"📋",x:600,y:326,kind:"hiring",style:"professional",description:"Applications, interviews, trial shifts, and worker training."},
-  {id:"office-headquarters",name:"Office Headquarters",icon:"🏢",x:360,y:370,kind:"office",style:"professional",description:"Manager office, conversations, smartphone, messages, and orders."},
-  {id:"packing-factory-landmark",name:"Packing Factory",icon:"📦",x:360,y:510,kind:"factory",style:"industrial",description:"Washing, sorting, crates, boxes, and quality control."},
-  {id:"shipping-center",name:"Shipping Center",icon:"📑",x:600,y:510,kind:"shipping",style:"harbor",description:"Export contracts, cargo scheduling, and order management."},
-  {id:"open-expansion-land",name:"Open Expansion Land",icon:"🏗️",x:105,y:590,kind:"plots",style:"directional",description:"Large reserved plots for future company buildings."}
+  {id:"orchard-office",name:"Orchard Office",icon:"🏡",x:72,y:276,kind:"office",style:"wood",description:"Worker harvesting, tractor scheduling, and orchard upgrades."},
+  {id:"waterworks",name:"Waterworks",icon:"💧",x:330,y:276,kind:"waterworks",style:"industrial",description:"Reservoir treatment, irrigation controls, and pump management."},
+  {id:"residential-loop",name:"Residential Loop",icon:"🏘️",x:585,y:276,kind:"neighborhood",style:"professional",description:"Customer houses, worker houses, park, and bus deliveries."},
+  {id:"city-roundabout",name:"Large City Roundabout",icon:"↻",x:360,y:475,kind:"roundabout",style:"directional",description:"The landmark junction linking every central Lemon City district.",signOnly:true},
+  {id:"investor-plaza",name:"Investor Plaza",icon:"⭐",x:72,y:548,kind:"investor",style:"professional",description:"Investor offices, finance reports, and upgrade-star machines.",signOnly:true},
+  {id:"smartphone-center",name:"Smartphone Center",icon:"📱",x:138,y:548,kind:"office",style:"professional",description:"Business phone, messages, worker requests, and special orders."},
+  {id:"central-park",name:"Central Park",icon:"🌳",x:360,y:570,kind:"park",style:"wood",description:"Decorative trees, walking bridge, pond, benches, and public facilities.",signOnly:true},
+  {id:"shopping-street",name:"Shopping Street",icon:"🛍️",x:615,y:505,kind:"shops",style:"professional",description:"Phone, furniture, clothing, tools, and bicycle shops.",signOnly:true},
+  {id:"city-cafe",name:"City Cafe",icon:"☕",x:585,y:548,kind:"cafe",style:"wood",description:"Cafe-order minigame, seating, and kitchen upgrades."},
+  {id:"job-center",name:"Job Center",icon:"📋",x:645,y:548,kind:"hiring",style:"professional",description:"Worker applications, interviews, training, and employee records."},
+  {id:"factory-office",name:"Factory Office",icon:"🏭",x:72,y:704,kind:"factory",style:"industrial",description:"Controls washing, sorting, squeezing, bottling, and packing lines."},
+  {id:"lemon-city-station",name:"Lemon City Station",icon:"🚆",x:360,y:704,kind:"station",style:"industrial",description:"Cargo and passenger platforms, crane, rail office, and loading minigame."},
+  {id:"warehouse-district",name:"Warehouse District",icon:"🏬",x:615,y:675,kind:"warehouse",style:"industrial",description:"Main storage, cold storage, packing supplies, orders, and forklifts."},
+  {id:"shipping-office",name:"Shipping Office",icon:"📑",x:645,y:704,kind:"shipping",style:"harbor",description:"Export contracts, cargo scheduling, and shipping management."},
+  {id:"open-expansion-land",name:"Open Expansion Land",icon:"🏗️",x:105,y:800,kind:"plots",style:"directional",description:"Large empty plots, construction yard, landscaping, and animation tests."},
+  {id:"future-city-expansion",name:"Future City Expansion",icon:"🪧",x:105,y:830,kind:"plots",style:"directional",description:"Reserved southern land for later buildings.",signOnly:true},
+  {id:"export-terminal",name:"Export Terminal",icon:"⚓",x:360,y:835,kind:"shipping",style:"harbor",description:"Three docks, cargo ships, loading cranes, and export handling."},
+  {id:"ferry-terminal",name:"Ferry Terminal",icon:"⛴️",x:615,y:835,kind:"shipping",style:"harbor",description:"Coastal route to the Fruit Islands and tropical farms."}
 ];
 
 const regionRows=[
@@ -115,29 +128,36 @@ const RAW_OUTSIDE_PATHS=[
 ];
 const remapCountryPoint=([x,y])=>{const nearest=RAW_OUTSIDE_REGIONS.toSorted((a,b)=>Math.hypot(x-a.x,y-a.y)-Math.hypot(x-b.x,y-b.y))[0],target=OUTSIDE_REGION_BY_ID[nearest.id];return[target.x+(x-nearest.x)*.62,target.y+(y-nearest.y)*.62];};
 const PATH_OVERRIDES={
-  "starter-loop":[[68,438],[105,422],[180,422],[270,422],[360,422],[480,422],[600,422]],
-  "valley-east-road":[[105,422],[360,422],[600,422]],"orchard-road":[[105,422],[105,365],[105,326],[105,246]],
-  "market-road":[[600,422],[480,422],[360,422]],"ridge-road":[[360,422],[360,370],[360,326],[360,246]],
-  "river-bridge":[[105,422],[160,390],[250,350],[360,326],[480,286],[600,246]],
-  "festival-road":[[105,422],[105,474],[105,522]],"mountain-access-road":[[105,522],[105,470],[105,326],[105,246],[170,200],[300,158]],
-  "lower-mountain-road":[[300,158],[330,146],[295,136],[380,132],[450,126]],
-  "lab-terrace-road":[[450,126],[360,120],[270,112]],"summit-line":[[500,58],[420,40],[360,24]],
-  "citrus-cliff-road":[[360,246],[360,220],[360,184]],"old-town-road":[[360,422],[360,370],[300,346],[105,326]],
-  "junction-spur":[[600,422],[520,474],[430,530],[360,590]],"industrial-freight-road":[[600,422],[480,470],[360,522]],
-  "riverside-farm-road":[[600,246],[560,266],[520,286]],"lemon-coast-road":[[600,590],[600,620],[600,650]],
-  "harbor-coast-road":[[600,510],[600,550],[600,590]],"container-port-road":[[600,590],[550,606],[505,618]],
-  "archipelago-ferry":[[600,650],[615,676],[585,704]],"harbor-rail":[[360,590],[480,590],[600,590]]
+  "starter-loop":[[55,430],[105,410],[170,410],[245,410],[360,410],[490,410],[615,410]],
+  "valley-east-road":[[105,410],[360,410],[615,410]],"orchard-road":[[105,410],[105,340],[105,235],[105,155]],
+  "market-road":[[615,410],[490,410],[360,410]],"ridge-road":[[360,410],[360,340],[360,235],[360,155],[360,105]],
+  "river-bridge":[[105,410],[210,350],[300,285],[360,235]],
+  "festival-road":[[360,410],[360,450],[360,475],[360,540]],"mountain-access-road":[[615,410],[615,340],[615,235],[615,155],[615,110]],
+  "lower-mountain-road":[[615,110],[590,102],[625,96],[585,91],[565,87]],
+  "lab-terrace-road":[[565,87],[530,90],[490,92]],"summit-line":[[565,55],[545,36],[520,20]],
+  "citrus-cliff-road":[[360,235],[360,155],[360,105]],"old-town-road":[[360,410],[480,340],[615,235]],
+  "junction-spur":[[615,410],[520,505],[430,610],[360,675]],"industrial-freight-road":[[615,410],[480,520],[240,610],[105,675]],
+  "riverside-farm-road":[[360,235],[325,240],[290,245]],"lemon-coast-road":[[615,735],[615,800]],
+  "harbor-coast-road":[[360,610],[360,735],[360,800]],"container-port-road":[[360,800],[325,820]],
+  "archipelago-ferry":[[615,800],[615,850],[615,888]],"harbor-rail":[[360,675],[360,735],[360,800]]
 };
 export const COUNTRY_MAIN_ROADS=[
-  path("upper-main-road","Upper Main Road","paved",[[35,286],[685,286]],"","Wide east-west road between the farms and civic districts."),
-  path("office-plaza-road","Office Plaza Road","town",[[105,326],[360,326],[600,326]],"","Connects Old Fruitopia, Investor Plaza, and the Hiring Center."),
-  path("headquarters-walk","Headquarters Walking Plaza","town",[[360,326],[360,370],[360,422]],"","Broad pedestrian plaza linking the office to Market Town."),
-  path("grand-central-road","Grand Central Road","paved",[[35,470],[685,470]],"","The major southern road serving the festival, factory, and shipping center."),
-  path("festival-service-road","Festival Service Road","town",[[105,470],[105,522],[105,590]],"","Festival access and future expansion land."),
-  path("freight-service-road","Freight Road","industrial",[[360,470],[360,522],[360,590]],"","Packing Factory to Train Freight Yard."),
-  path("shipping-center-road","Harbor Road","industrial",[[600,470],[600,510],[600,590]],"","Shipping Center to the harbor docks."),
-  path("waterfall-river","Waterfall and Farm River","water",[[606,184],[606,215],[600,246],[520,286],[360,300],[105,300]],"","Highland water feeds River Farms and the valley."),
-  path("island-sea-route","Fruit Islands Sea Route","ferry",[[600,590],[600,650],[585,704]],"","Harbor ships call at Lemon Coast and the Fruit Islands.")
+  path("north-city-road","North City Road","paved",[[35,155],[685,155]],"","The high road linking Lemon Hill, Research Ridge, and Mountain Expansion."),
+  path("lemon-city-boulevard","Lemon City Boulevard","paved",[[35,340],[685,340]],"","The broad boulevard between orchard, reservoir, neighborhood, and the city core."),
+  path("west-city-road","Orchard Road","town",[[105,155],[105,235],[105,340],[105,410],[105,449]],"","Connects Lemon Hill, the Grand Lemon Orchard, and West City."),
+  path("center-city-road","Reservoir Lane","town",[[360,155],[360,235],[360,340],[360,449]],"","Links Research Ridge, City Reservoir, and City Center."),
+  path("east-city-road","Neighborhood Road","town",[[615,155],[615,235],[615,340],[615,410],[615,449]],"","Links Mountain Road, Sunrise Neighborhood, and East City."),
+  path("large-city-roundabout","Large City Roundabout","town",[[360,449],[375,453],[386,464],[390,475],[386,486],[375,497],[360,501],[345,497],[334,486],[330,475],[334,464],[345,453],[360,449]],"","The central circular junction with four safe road exits."),
+  path("roundabout-west","West Roundabout Link","town",[[330,475],[105,475],[105,520]],"","Business District access."),
+  path("roundabout-east","East Roundabout Link","town",[[390,475],[615,475],[615,520]],"","Shopping Street access."),
+  path("roundabout-south","Park Roundabout Link","town",[[360,501],[360,540],[360,610]],"","Park and Festival Field access."),
+  path("south-commercial-road","South Commercial Road","paved",[[35,610],[685,610]],"","The commercial boundary serving factories, freight, and warehouses."),
+  path("factory-road","Factory Road","industrial",[[105,520],[105,610],[105,675],[105,735],[105,800]],"","Business District to Factory District and expansion land."),
+  path("station-road","Station Road","industrial",[[360,610],[360,675],[360,735],[360,800]],"","Park, Lemon City Station, and Shipping Harbor connection."),
+  path("warehouse-road","Warehouse Road","industrial",[[615,520],[615,610],[615,675],[615,735],[615,800]],"","Shopping Street to warehouses and Lemon Coast."),
+  path("harbor-way","Harbor Way","coastal",[[35,735],[685,735]],"","The wide coastal freight road serving construction, shipping, and beach businesses."),
+  path("coastline","Coastline","coastal",[[35,850],[685,850]],"","The southern shoreline above the ocean."),
+  path("island-sea-route","Fruit Islands Sea Route","ferry",[[360,800],[500,835],[615,850],[615,888]],"","Harbor and ferry traffic reaches the Fruit Islands and tropical lemon farms.")
 ].map(route=>({...route,alwaysOpen:true}));
 export const OUTSIDE_PATHS=[...RAW_OUTSIDE_PATHS.map(route=>({...route,points:PATH_OVERRIDES[route.id]||route.points.map(remapCountryPoint)})),...COUNTRY_MAIN_ROADS];
 export const OUTSIDE_PATH_BY_ID=Object.fromEntries(OUTSIDE_PATHS.map(item=>[item.id,item]));
@@ -179,13 +199,13 @@ const plotRows=[
 ];
 const RAW_OUTSIDE_PLOTS=[...plotRows.map(([name,region,size,x,y,categories,defaultBuilding])=>({id:key(name),name,region,size,x,y,terrain:OUTSIDE_REGION_BY_ID[region]?.elevationBand||"Valley Floor",allowedCategories:categories.split(","),defaultBuilding,utilities:size==="Small"?["road"]:size==="Medium"?["road","water"]:["road","water","electricity"],description:`A ${size.toLowerCase()} ${OUTSIDE_REGION_BY_ID[region]?.elevationBand.toLowerCase()||"valley"} construction site.`})),...EXPANSION_PLOTS];
 const COUNTRY_PLOT_OVERRIDES={
-  "stand-corner":{x:91,y:420},"orchard-shed-yard":{x:76,y:438},"office-clearing":{x:360,y:370},
-  "coin-booth-bend":{x:132,y:438},"valley-storage":{x:55,y:405},"farmers-market-extension":{x:142,y:405},
-  "market-civic-plot":{x:340,y:432},"market-shop-plot":{x:384,y:410},
-  "depot-freight-plot":{x:575,y:434},"depot-workshop-plot":{x:625,y:408},
-  "ridge-lower-lab":{x:338,y:256},"ridge-upper-lab":{x:382,y:232},
-  "festival-attraction-plot":{x:82,y:530},"festival-gateway-plot":{x:132,y:510},
-  "fruit-shipping-harbor-operations-plot":{x:575,y:598},"fruit-shipping-harbor-specialist-plot":{x:625,y:580}
+  "stand-corner":{x:75,y:410},"orchard-shed-yard":{x:72,y:260},"office-clearing":{x:105,y:520},
+  "coin-booth-bend":{x:135,y:430},"valley-storage":{x:55,y:440},"farmers-market-extension":{x:150,y:445},
+  "market-civic-plot":{x:335,y:425},"market-shop-plot":{x:392,y:398},
+  "depot-freight-plot":{x:585,y:425},"depot-workshop-plot":{x:650,y:395},
+  "ridge-lower-lab":{x:335,y:118},"ridge-upper-lab":{x:390,y:92},
+  "festival-attraction-plot":{x:335,y:548},"festival-gateway-plot":{x:390,y:518},
+  "fruit-shipping-harbor-operations-plot":{x:335,y:805},"fruit-shipping-harbor-specialist-plot":{x:395,y:785}
 };
 const remapPlot=plot=>{const oldRegion=RAW_REGION_BY_ID[plot.region],newRegion=OUTSIDE_REGION_BY_ID[plot.region],override=COUNTRY_PLOT_OVERRIDES[plot.id];if(override)return{...plot,...override};if(!oldRegion||!newRegion)return plot;return{...plot,x:newRegion.x+(plot.x-oldRegion.x)*.6,y:newRegion.y+(plot.y-oldRegion.y)*.6};};
 export const OUTSIDE_PLOTS=RAW_OUTSIDE_PLOTS.map(remapPlot);
@@ -220,8 +240,8 @@ export const OUTSIDE_SHORTCUTS=[
   ["Summit Teleporter","teleporter","summit-observatory"],["Sewer Exit Manholes","manhole","starter-valley"]
 ].map(([name,type,region],index)=>({id:key(name),name,type,region,cashCost:120+index*260,materials:index<3?{timber:2,stone:1}:{"metal-parts":2,"electrical-components":index>7?2:0},description:`A permanent ${type} shortcut to ${OUTSIDE_REGION_BY_ID[region]?.name||"another area"}.`}));
 
-export const TRAIN_STATIONS=["Delivery Depot","Market Square","Mountain Base Camp","Frozen Fruit Valley","Fruit Harbor"].map((name,index)=>({id:key(name),name,x:[600,360,300,150,600][index],y:[432,432,158,104,590][index],region:["delivery-industrial-road","market-town","mountain-base-camp","frozen-fruit-valley","fruit-shipping-harbor"][index],cost:900+index*700}));
-export const CABLE_STATIONS=["Grand Fruit Festival","Mountain Base Camp","Alpine Pass","Frozen Valley Junction","Cloud Orchard Plateau","Summit Observatory"].map((name,index)=>({id:key(name),name,x:[105,300,450,150,500,360][index],y:[510,158,126,104,58,24][index],region:["grand-fruit-festival","mountain-base-camp","alpine-pass","frozen-fruit-valley","cloud-orchard-plateau","summit-observatory"][index],cost:750+index*900}));
+export const TRAIN_STATIONS=["Delivery Depot","Market Square","Mountain Base Camp","Frozen Fruit Valley","Fruit Harbor"].map((name,index)=>({id:key(name),name,x:[615,360,615,160,360][index],y:[425,425,110,68,800][index],region:["delivery-industrial-road","market-town","mountain-base-camp","frozen-fruit-valley","fruit-shipping-harbor"][index],cost:900+index*700}));
+export const CABLE_STATIONS=["Grand Fruit Festival","Mountain Base Camp","Alpine Pass","Frozen Valley Junction","Cloud Orchard Plateau","Summit Observatory"].map((name,index)=>({id:key(name),name,x:[360,615,565,160,565,520][index],y:[535,110,87,68,55,20][index],region:["grand-fruit-festival","mountain-base-camp","alpine-pass","frozen-fruit-valley","cloud-orchard-plateau","summit-observatory"][index],cost:750+index*900}));
 
 export const SURFACE_SECRETS=["Old Orchard Tunnel","Hidden Waterfall Cave","Abandoned Mountain Cabin","Golden Tree Clearing","Secret Island Boat Route","Frozen Crystal Cave","Volcano Fruit Chamber","Cloud Bridge","Cosmic Signal Tower","Hidden Summit Flag","Underground Fruit Tunnel Entrance","Fruit Mafia Surface Exit"].map((name,index)=>({id:key(name),name,region:["apple-grove-hills","alpine-pass","alpine-pass","apple-grove-hills","tropical-island","frozen-fruit-valley","volcano-ridge","cloud-orchard-plateau","summit-observatory","summit-observatory","apple-grove-hills","market-town"][index],icon:["🌳","💦","🏚️","🌟","⛵","💎","🔥","🌉","📡","🚩","🕳️","🍇"][index],reward:{xp:25+index*5,coins:index%3===0?1:0}}));
 

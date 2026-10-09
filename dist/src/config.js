@@ -1,8 +1,8 @@
 import {EXPANSION_MINIGAMES} from "./world-expansion-config.js";
 
-export const SAVE_VERSION = 22;
+export const SAVE_VERSION = 23;
 export const SAVE_KEY = `fruitopia-tycoon-v${SAVE_VERSION}`;
-export const LEGACY_SAVE_KEYS = ["fruitopia-tycoon-v21", "fruitopia-tycoon-v20", "fruitopia-tycoon-v19", "fruitopia-tycoon-v18", "fruitopia-tycoon-v17", "fruitopia-tycoon-v16", "fruitopia-tycoon-v15", "fruitopia-tycoon-v14", "fruitopia-tycoon-v13", "fruitopia-tycoon-v12", "fruitopia-tycoon-v11", "fruitopia-tycoon-v10", "fruitopia-tycoon-v9", "fruitopia-tycoon-v8", "fruitopia-tycoon-v7", "fruitopia-tycoon-v6", "fruitopia-tycoon-v5", "fruitopia-tycoon"];
+export const LEGACY_SAVE_KEYS = ["fruitopia-tycoon-v22", "fruitopia-tycoon-v21", "fruitopia-tycoon-v20", "fruitopia-tycoon-v19", "fruitopia-tycoon-v18", "fruitopia-tycoon-v17", "fruitopia-tycoon-v16", "fruitopia-tycoon-v15", "fruitopia-tycoon-v14", "fruitopia-tycoon-v13", "fruitopia-tycoon-v12", "fruitopia-tycoon-v11", "fruitopia-tycoon-v10", "fruitopia-tycoon-v9", "fruitopia-tycoon-v8", "fruitopia-tycoon-v7", "fruitopia-tycoon-v6", "fruitopia-tycoon-v5", "fruitopia-tycoon"];
 
 export * from "./sewer-config.js";
 export * from "./mafia-config.js";
@@ -84,7 +84,7 @@ const districtRows = [
   ["Frozen Fruit Valley","🏔️",11,{district:"tropical-island",completion:50},["Snow Boots","Berry Tunnels","Fruit Sleigh","Flash Freezer","Cocoa Cabin","Crate Ski Lift","Cold Research Dome","Crystal Fruit Palace"],"Berry Slide","frozen fruit, deliveries, storage, research, and rare fruit"],
   ["Grand Fruit Festival","🎪",15,{district:"frozen-fruit-valley",completion:75},["Festival Gate","Carnival Games","Fruit Parade","Festival Kitchen","Orchard Sky Wheel","Golden Arena","Festival Crew Hall","Rainbow Fruit Crown"],"Golden Fruit Frenzy","tickets, crowds, crafting, championships, automation, and endgame progress"]
 ];
-export const DISTRICTS = districtRows.map(([name,icon,level,requirement,upgrades,minigame,summary],index)=>({id:slug(name),name,icon,unlockLevel:level,requirement,upgrades,minigame:slug(minigame),summary,index,x:[112,105,600,360,360,648,150,105][index],y:[400,246,422,422,246,694,104,522][index]}));
+export const DISTRICTS = districtRows.map(([name,icon,level,requirement,upgrades,minigame,summary],index)=>({id:slug(name),name,icon,unlockLevel:level,requirement,upgrades,minigame:slug(minigame),summary,index,x:[105,105,615,360,360,585,160,360][index],y:[390,235,410,410,105,872,68,540][index]}));
 export const DISTRICT_BY_ID = Object.fromEntries(DISTRICTS.map(district=>[district.id,district]));
 
 const buildingCategories = {

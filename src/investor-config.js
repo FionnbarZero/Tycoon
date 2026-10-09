@@ -53,7 +53,7 @@ const investorRows=[
 
 export const INVESTORS=investorRows.map(([name,icon,specialty,personality,centerLevel,cost,baseStarCost,sources],index)=>({
   id:slug(name),name,icon,specialty,personality,centerLevel,cost,baseStarCost,sources,index,
-  desk:{x:345+(index%4)*9,y:318+Math.floor(index/4)*8}
+  desk:{x:60+(index%4)*8,y:540+Math.floor(index/4)*7}
 }));
 export const INVESTOR_BY_ID=Object.fromEntries(INVESTORS.map(item=>[item.id,item]));
 
@@ -113,4 +113,4 @@ export const INVESTOR_MEETINGS=[
   {id:"shipping-route",investorId:"captain-clement",question:"A new route is windy but promising. How should the harbor prepare?",choices:[{id:"crew",label:"Train the crew",effect:"reputation"},{id:"equipment",label:"Upgrade equipment",effect:"temporary"},{id:"wait",label:"Wait for calm seas",effect:"discount"}]}
 ];
 
-export const INVESTOR_CENTER_POSITION={x:360,y:326};
+export const INVESTOR_CENTER_POSITION={x:72,y:548};
