@@ -1,11 +1,15 @@
-export const SAVE_VERSION = 13;
+import {EXPANSION_MINIGAMES} from "./world-expansion-config.js";
+
+export const SAVE_VERSION = 15;
 export const SAVE_KEY = `fruitopia-tycoon-v${SAVE_VERSION}`;
-export const LEGACY_SAVE_KEYS = ["fruitopia-tycoon-v12", "fruitopia-tycoon-v11", "fruitopia-tycoon-v10", "fruitopia-tycoon-v9", "fruitopia-tycoon-v8", "fruitopia-tycoon-v7", "fruitopia-tycoon-v6", "fruitopia-tycoon-v5", "fruitopia-tycoon"];
+export const LEGACY_SAVE_KEYS = ["fruitopia-tycoon-v13", "fruitopia-tycoon-v12", "fruitopia-tycoon-v11", "fruitopia-tycoon-v10", "fruitopia-tycoon-v9", "fruitopia-tycoon-v8", "fruitopia-tycoon-v7", "fruitopia-tycoon-v6", "fruitopia-tycoon-v5", "fruitopia-tycoon"];
 
 export * from "./sewer-config.js";
 export * from "./mafia-config.js";
 export * from "./outside-config.js";
+export * from "./world-expansion-config.js";
 export * from "./upgrade-config.js";
+export * from "./color-config.js";
 
 export const slug = value => String(value).toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
@@ -180,19 +184,24 @@ export const CONTACTS=["Mayor Marigold","Chef Sorrel","Nora North","Ivy Venture"
 export const COMPANY_FUNDS=["Orchard Equipment Fund","Market Expansion Fund","Fruit Research Fund"].map((name,index)=>({id:slug(name),name,rate:[.05,.08,.12][index],seconds:[60,90,120][index]}));
 
 const minigameRows=[
-  ["The Big Ask","Sunny Side Fruit Stand","Read each customer and choose a friendly, fair, bold, or custom price."],
-  ["Basket Blitz","Apple Grove Orchard","Move the basket, catch ripe fruit, and avoid rocks, bugs, and rotten fruit."],
-  ["Delivery Sort","Delivery Depot","Put each fruit crate into its matching Orchard, Beach, or Market route bin."],
-  ["Market Rush","Market Square","Select the shopping-list fruit in the exact displayed order."],
-  ["Perfect Blend","Juice Lab","Memorize an expanding fruit-light sequence and reproduce it."],
-  ["Coconut Splash","Tropical Island","Catch tropical fruit along the beach while dodging coconuts, crabs, and waves."],
-  ["Berry Slide","Frozen Fruit Valley","Move across icy lanes and match the fruit icon to its basket."],
-  ["Watermelon Bowling","Watermelon Water Park","Stop the moving aim marker to bowl strikes through watermelon pins."],
-  ["Fruit Auction","Fruit Exchange","Bid below estimated value, pass overpriced lots, and outsmart a rival."],
-  ["Monkey Trouble","Banana Jungle Tour","Tap banana-stealing monkeys before they escape from the grove."],
-  ["Golden Fruit Frenzy","Grand Fruit Festival","Catch requested festival fruit, avoid hazards, and build a championship combo."]
+  ["The Big Ask","Sunny Side Fruit Stand","Read each customer and choose a friendly, fair, bold, or custom price.","💬",45,1,"district",0,"Price each request before patience runs out.","Complete five fair sales"],
+  ["Basket Blitz","Apple Grove Orchard","Move the basket, catch ripe fruit, and avoid rocks, bugs, rotten fruit, and disease clouds.","🧺",35,1,"district",0,"Move beneath fruit; icons and shapes identify every hazard.","Catch 20 fruit"],
+  ["Delivery Sort","Delivery Depot","Sort fruit crates into labeled Orchard, Beach, Market, Mountain, and Cosmic route bins.","📦",40,2,"district",1,"Match the fruit icon to a named route bin.","Sort ten crates without a mistake"],
+  ["Market Rush","Market Square","Select each shopping-list fruit or crafted product in the exact displayed order.","🛒",40,4,"district",2,"Read left to right; a wrong item resets the order.","Complete three orders"],
+  ["Perfect Blend","Juice Lab","Watch, remember, and reproduce an expanding laboratory fruit sequence.","🧃",45,6,"district",3,"Wait through WATCH and REMEMBER, then select during BLEND.","Reach a sequence of six"],
+  ["Coconut Splash","Tropical Island","Catch tropical fruit along the beach while dodging coconuts, crabs, waves, driftwood, and seaweed.","🥥",38,8,"district",4,"Move the beach basket; hazard icons reset the streak.","Dodge five hazards"],
+  ["Berry Slide","Frozen Fruit Valley","Guide each sliding berry into a basket with the same icon, pattern, and shape.","🫐",42,11,"district",5,"Match icons rather than relying on lane color.","Match ten berries"],
+  ["Watermelon Bowling","Watermelon Water Park","Stop the aim marker in the labeled sweet spot and knock down fruit pins.","🍉",42,6,"attraction",6,"Click, tap, Space, or gamepad A to roll.","Score a strike"],
+  ["Fruit Auction","Fruit Exchange","Buy valuable fictional fruit lots below estimate and pass overpriced lots.","🔨",46,8,"attraction",7,"Inspect value, rival interest, and the score-only current bid.","Make three profitable purchases"],
+  ["Monkey Trouble","Banana Jungle Tour","Catch banana-stealing monkeys before they escape from the grove.","🐒",40,9,"attraction",8,"Tap each distinct monkey icon before its escape timer ends.","Stop ten monkeys"],
+  ["Golden Fruit Frenzy","Grand Fruit Festival","Catch requested festival fruit, avoid icon-marked hazards, and build a championship combo.","🏆",50,15,"district",9,"Follow the written CATCH callout for the largest bonus.","Catch five callout fruit"],
+  ["Pipe Pressure","Red Pipe Quarter","Turn linked valves until every labeled gauge rests inside its SAFE zone.","🔴",45,7,"sewer",3,"Each valve changes two gauges; stabilize all three together.","Stabilize all pressure gauges"],
+  ["Green-Water Mix","Sewer Test Laboratory","Choose a sample and fruit, then control heat and pressure for a stable experiment.","🧪",45,8,"sewer",4,"Ingredients are simulated here; story experiments use the real inventory machine.","Create a stable sewer experiment"],
+  ["Canal Cleanup","Blue Canal Quarter","Sort floating samples and rubbish while avoiding contaminated objects.","🛶",40,8,"sewer",4,"Use written SAMPLE, RUBBISH, and CONTAMINATED labels.","Clean ten canal objects"],
+  ["Construction Rush","Mountain Base Camp","Match timber, metal, glass, and pipes to the correct construction project.","🏗️",42,12,"mountain",5,"Minigame materials are practice cargo and never consume inventory.","Match every construction material"],
+  ["Cable-Car Cargo","Mountain Cable-Car Station","Balance heavy cargo across a moving cable car while wind shifts the load.","🚠",45,13,"mountain",6,"Move crates left or right and keep the balance meter in SAFE.","Balance every cable-car crate"]
 ];
-export const MINIGAMES=minigameRows.map(([name,location,description],index)=>({id:slug(name),name,location,description,icon:["💬","🧺","📦","🛒","🧃","🥥","🫐","🍉","🔨","🐒","🏆"][index],cost:index<2?0:Math.max(1,index-1),duration:30,unlockLevel:Math.max(1,index+1)}));
+export const MINIGAMES=[...minigameRows.map(([name,location,description,icon,duration,unlockLevel,category,cost,instruction,quest])=>({id:slug(name),name,location,description,icon,duration,unlockLevel,category,cost,instructions:[instruction,"Build a streak, watch the timer, then collect the completed run reward exactly once."],quest,controls:["Keyboard","Mouse","Touch","Gamepad"],rewards:["Cash","Empire XP","Fruit Coins"],physicalTravel:false})),...EXPANSION_MINIGAMES];
 
 export const EVENTS=["Fruit Rush","Double Harvest","Heavy Rain","Heat Wave","Golden Customer","Celebrity Visit","Giant Fruit","Fruit Coin Shower","Delivery Traffic","Machine Breakdown","Monkey Invasion","Market Festival","Rare Seed Merchant","Investor Visit","Surprise Inspection","Worker Birthday","Power Outage","Rainbow Weather","Meteor Fruit","Mysterious Phone Call"].map((name,index)=>({id:slug(name),name,icon:["📈","🍎","🌧️","☀️","🌟","📸","🍉","🪙","🚧","🔧","🐒","🎪","🌱","💼","📋","🎂","🔌","🌈","☄️","☎️"][index],duration:90,effect:index%5===0?"sale":index%5===1?"harvest":index%5===2?"growth":index%5===3?"delivery":"research"}));
 export const SECRETS=["Hidden Office Basement","Underground Fruit Tunnels","The Locked Contact","Secret Island","The Wandering Golden Tree","The Orchard Investor","Forgotten Fruit Laboratory","Midnight Ghost Fruit","The Six-Peel Code","The Cosmic Signal","Secret Championship"].map((name,index)=>({id:slug(name),name,clue:`Clue ${index+1}: ${index%2?"a worker remembers an unusual route":"an old Fruitopia record mentions this mystery"}.`,cashCost:100+index*150,researchCost:2+index,unlock:`Secret reward ${index+1}`}));

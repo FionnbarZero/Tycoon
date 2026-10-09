@@ -3,5 +3,7 @@
 dist/*
 !dist/src/
 dist/src/*
+!dist/src/color-config.js
+!dist/src/world-expansion-config.js
 !dist/src/outside-config.js
 !dist/src/upgrade-config.js

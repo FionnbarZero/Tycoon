@@ -1,0 +1,21 @@
+{
+  "name": "Fruitopia Tycoon",
+  "short_name": "Fruitopia",
+  "description": "Grow a one-dollar roadside fruit stand into a world-spanning fruit empire.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f7f9e9",
+  "theme_color": "#43c96b",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "icons/apple-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -5,7 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#8bd45a">
   <meta name="description" content="Grow a roadside fruit stand into the brightest fruit company in the world.">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Fruitopia Tycoon</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/apple-icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-icon.svg">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -101,6 +107,7 @@
 
     <footer class="statusbar">
       <span><i class="save-dot"></i><span id="saveStatus">Local save ready</span></span>
+      <span id="connectionStatus" class="connection-status" role="status" aria-live="polite"><i aria-hidden="true">●</i> Connecting…</span>
       <span id="districtStatus">Sunny Side Fruit Stand · 0% complete</span>
       <span>WASD / arrows / click / touch / gamepad</span>
     </footer>

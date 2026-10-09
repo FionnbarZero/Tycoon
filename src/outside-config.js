@@ -1,6 +1,8 @@
+import {EXPANSION_REGIONS,EXPANSION_PATHS,EXPANSION_PLOTS,EXPANSION_NPCS} from "./world-expansion-config.js";
+
 const key=value=>String(value).toLowerCase().replace(/&/g,"and").replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
 
-export const OUTSIDE_WORLD={width:480,height:340,worldWidth:4800,worldHeight:3400,unitScale:10,layoutId:"fruitopia-country-v1"};
+export const OUTSIDE_WORLD={width:720,height:500,worldWidth:7200,worldHeight:5000,unitScale:10,layoutId:"fruitopia-country-v2"};
 
 const regionRows=[
   ["Starter Valley","🌻",56,278,92,58,"#a9dc6e","#f7d76b","Valley Floor",120,1,"The welcoming valley where six apple trees, the stand, office, river, and first building sites begin."],
@@ -40,7 +42,7 @@ const regionRequirements={
   "cosmic-summit":{level:18,secret:"cosmic-signal-tower",region:"summit-observatory",completion:75}
 };
 
-export const OUTSIDE_REGIONS=regionRows.map(([name,icon,x,y,w,h,color,accent,elevationBand,elevation,level,description],index)=>({id:key(name),name,icon,x,y,w,h,color,accent,elevationBand,elevation,unlockLevel:level,description,index,requirements:regionRequirements[key(name)]||{}}));
+export const OUTSIDE_REGIONS=[...regionRows.map(([name,icon,x,y,w,h,color,accent,elevationBand,elevation,level,description],index)=>({id:key(name),name,icon,x,y,w,h,color,accent,elevationBand,elevation,unlockLevel:level,description,index,requirements:regionRequirements[key(name)]||{},terrain:`${elevationBand} Fruitopia terrain`,fruits:[],buildings:[],activities:[],music:`${name} Theme`,sounds:"Local wildlife, workers, and transportation",quest:`Develop ${name}.`,specialInteraction:"Inspect the regional landmark.",revisitReason:"Construction, quests, harvests, and local rewards continue here."})),...EXPANSION_REGIONS].map((item,index)=>({...item,index}));
 export const OUTSIDE_REGION_BY_ID=Object.fromEntries(OUTSIDE_REGIONS.map(region=>[region.id,region]));
 
 const path=(id,name,type,points,requirement="",description="")=>({id,name,type,points,requirement,description});
@@ -64,7 +66,8 @@ export const OUTSIDE_PATHS=[
   path("cosmic-route","Cosmic Skyway","portal",[[246,8],[330,9],[409,12]],"cosmic-signal-tower","A late-game portal route beyond the summit."),
   path("river","Fruitopia River","water",[[0,302],[55,301],[112,313],[168,322],[230,327],[300,319],[342,296],[480,292]],"","A broad boundary and irrigation source."),
   path("rail-main","Fruit Train Main Line","rail",[[184,265],[226,217],[215,164],[216,125],[178,87],[126,55]],"train-track-main","Depot, Market, Base Camp, and Frozen Valley line."),
-  path("rail-harbor","Fruit Harbor Branch","rail",[[184,265],[265,279],[342,281]],"train-track-harbor","Connects the freight network to Fruit Harbor.")
+  path("rail-harbor","Fruit Harbor Branch","rail",[[184,265],[265,279],[342,281]],"train-track-harbor","Connects the freight network to Fruit Harbor."),
+  ...EXPANSION_PATHS
 ];
 export const OUTSIDE_PATH_BY_ID=Object.fromEntries(OUTSIDE_PATHS.map(item=>[item.id,item]));
 
@@ -103,7 +106,7 @@ const plotRows=[
   ["Cosmic Launch Plot","cosmic-summit","Landmark",388,13,"Delivery,Late Game","rocket-launchpad"],["Moon Orchard Plot","cosmic-summit","Landmark",412,7,"Farming,Late Game","moon-orchard"],
   ["Cosmic Station Plot","cosmic-summit","Landmark",435,15,"Research,Late Game","cosmic-fruit-station"],["Fruitopia Palace Plot","cosmic-summit","Landmark",458,8,"Business,Late Game","fruitopia-palace"]
 ];
-export const OUTSIDE_PLOTS=plotRows.map(([name,region,size,x,y,categories,defaultBuilding])=>({id:key(name),name,region,size,x,y,terrain:OUTSIDE_REGION_BY_ID[region]?.elevationBand||"Valley Floor",allowedCategories:categories.split(","),defaultBuilding,utilities:size==="Small"?["road"]:size==="Medium"?["road","water"]:["road","water","electricity"],description:`A ${size.toLowerCase()} ${OUTSIDE_REGION_BY_ID[region]?.elevationBand.toLowerCase()||"valley"} construction site.`}));
+export const OUTSIDE_PLOTS=[...plotRows.map(([name,region,size,x,y,categories,defaultBuilding])=>({id:key(name),name,region,size,x,y,terrain:OUTSIDE_REGION_BY_ID[region]?.elevationBand||"Valley Floor",allowedCategories:categories.split(","),defaultBuilding,utilities:size==="Small"?["road"]:size==="Medium"?["road","water"]:["road","water","electricity"],description:`A ${size.toLowerCase()} ${OUTSIDE_REGION_BY_ID[region]?.elevationBand.toLowerCase()||"valley"} construction site.`})),...EXPANSION_PLOTS];
 export const OUTSIDE_PLOT_BY_ID=Object.fromEntries(OUTSIDE_PLOTS.map(plot=>[plot.id,plot]));
 
 const mountainBuildingGroups={
@@ -140,12 +143,13 @@ export const CABLE_STATIONS=["Grand Fruit Festival","Mountain Base Camp","Alpine
 
 export const SURFACE_SECRETS=["Old Orchard Tunnel","Hidden Waterfall Cave","Abandoned Mountain Cabin","Golden Tree Clearing","Secret Island Boat Route","Frozen Crystal Cave","Volcano Fruit Chamber","Cloud Bridge","Cosmic Signal Tower","Hidden Summit Flag","Underground Fruit Tunnel Entrance","Fruit Mafia Surface Exit"].map((name,index)=>({id:key(name),name,region:["apple-grove-hills","alpine-pass","alpine-pass","apple-grove-hills","tropical-island","frozen-fruit-valley","volcano-ridge","cloud-orchard-plateau","summit-observatory","summit-observatory","apple-grove-hills","market-town"][index],icon:["🌳","💦","🏚️","🌟","⛵","💎","🔥","🌉","📡","🚩","🕳️","🍇"][index],reward:{xp:25+index*5,coins:index%3===0?1:0}}));
 
-export const OUTSIDE_NPCS=[
+const BASE_OUTSIDE_NPCS=[
   ["Mara Measure","Surveyor","mountain-base-camp","Explains terrain surveys and safer plots.","📐"],["Bo Bridge","Bridge Builder","mountain-base-camp","Organizes timber and bridge repairs.","👷"],
   ["Elle Current","Electrician","alpine-pass","Connects utilities and repairs switchboards.","⚡"],["Snowy Sprout","Snowplow Driver","frozen-fruit-valley","Keeps the snow road open.","🚜"],
   ["Cliff Clementine","Mountain Climber","alpine-pass","Shares weather advice and hidden-path clues.","🧗"],["Professor Cirrus","Cloud Researcher","cloud-orchard-plateau","Studies Cloudberries and weather.","🧑‍🔬"],
   ["Harbor Holly","Ferry Captain","tropical-coast","Runs the island ferry and secret boat clues.","🧑‍✈️"],["Permit Pear","Safety Inspector","grand-fruit-festival","Issues fictional mountain building permits.","🦺"]
 ].map(([name,role,region,dialogue,icon],index)=>({id:key(name),name,role,region,dialogue,icon,routeRadius:4+index%3}));
+export const OUTSIDE_NPCS=[...BASE_OUTSIDE_NPCS,...EXPANSION_NPCS];
 
 export const MOUNTAIN_WEATHER=["Heavy Rain","Thick Fog","Snowstorm","Strong Wind","Rockslide","Frozen Road","Heat Vent","Aurora","Meteor Shower","Rainbow Weather"].map((name,index)=>({id:key(name),name,icon:["🌧️","🌫️","🌨️","💨","🪨","🧊","♨️","🌌","☄️","🌈"][index],effect:index<7?"Slows unprotected construction and transportation.":"Improves rare fruit or research rewards.",protection:["Weather Station","Road Shelter","Snowplow Garage","Retaining Wall","Heated Tunnel","Worker Rescue Station","Weather-Control Center"][Math.min(6,index)]}));
 

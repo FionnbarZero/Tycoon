@@ -59,7 +59,7 @@ export const MOUNTAIN_UPGRADE_INDEX=Object.entries(mountainGroups).flatMap(([gro
 
 export const PHONE_FOLDERS=[
   ["company","Company",["messages","contacts","orders","workers","applicants","construction","upgrade-planner"]],
-  ["operations","Operations",["deliveries","production","fruit-market","company-bank","research","laboratories"]],
+  ["operations","Operations",["deliveries","shipping","production","fruit-market","company-bank","research","laboratories"]],
   ["world","World",["surface-map","mountain-map","sewer-journal","quests","achievements","secrets"]],
   ["entertainment","Entertainment",["arcade","fruit-mafia-club","high-scores","events"]],
   ["system","System",["settings","save","help"]]
@@ -67,7 +67,7 @@ export const PHONE_FOLDERS=[
 
 const appRows=[
   ["Messages","💬"],["Contacts","👥"],["Orders","🧾"],["Workers","🧑‍🌾"],["Applicants","📋"],["Construction","🏗️"],["Upgrade Planner","✨"],
-  ["Deliveries","🚚"],["Production","🥤"],["Fruit Market","📈"],["Company Bank","🏦"],["Research","🧬"],["Laboratories","🔬"],
+  ["Deliveries","🚚"],["Shipping","⚓"],["Production","🥤"],["Fruit Market","📈"],["Company Bank","🏦"],["Research","🧬"],["Laboratories","🔬"],
   ["Surface Map","🗺️"],["Mountain Map","🏔️"],["Sewer Journal","🕳️"],["Quests","📌"],["Achievements","🏆"],["Secrets","🔐"],
   ["Arcade","🎮"],["Fruit Mafia Club","🍇"],["High Scores","🥇"],["Events","🎉"],["Settings","⚙️"],["Save","💾"],["Help","❓"]
 ];
