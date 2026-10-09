@@ -10,7 +10,7 @@ npm run build
 python3 -m http.server 8080 --directory dist
 ```
 
-Open `http://127.0.0.1:8080` in a modern WebGL-capable browser. Progress is stored locally under the version-17 Fruitopia save key; older saves migrate automatically and no account or backend is required. The hosted game installs an offline app shell, including its 3D modules, after the first successful visit, so temporary connection loss does not interrupt play.
+Open `http://127.0.0.1:8080` in a modern WebGL-capable browser. Progress is stored locally under the version-18 Fruitopia save key; older saves migrate automatically and no account or backend is required. The hosted game installs an offline app shell, including its 3D modules, after the first successful visit, so temporary connection loss does not interrupt play.
 
 ## Controls
 
@@ -35,7 +35,8 @@ Shadows, render distance, model quality, effects quality, reduced motion, sound,
 ## Game systems
 
 - Eight developing districts with 64 working improvements, hidden crates, teleporters, workers, completion bonuses, and district minigames
-- A real perspective 3D world with rolling terrain, tall mountains, individual fruit trees, modeled buildings, roads, bridges, water, workers, vehicles, physical purchase pads, camera collision, and distance-based detail culling
+- A real perspective 3D world with rolling terrain, tall mountains, individual fruit trees, modeled buildings, broad roads, bridges, water, workers, vehicles, physical purchase pads, camera collision, and distance-based detail culling
+- Country-scale district spacing with landscaped building lots, entrances, sidewalks, delivery lanes, open scenery, a two-row starter orchard, mounted high-resolution text signs, road directions, and proximity-faded supplemental labels
 - Smooth saved first-person, close third-person, normal third-person, and wide third-person camera distances on the surface and underground
 - A connected 7,200 × 5,000 Fruitopia country with 40 regions, 88 buildable plots, distinct terrain and sound identities, illustrated map layers, and progression-based fast travel
 - Berrywood Forest, Melon Wetlands, Peach Blossom Hills, Citrus Highlands, Old Fruitopia Town, Railway Junction, a clean fruit-themed Industrial District, Lemon Coast, Coconut Bay, Dragon Fruit Desert, Starfruit Observatory Basin, Frozen Peaks, and a five-island Fruit Archipelago

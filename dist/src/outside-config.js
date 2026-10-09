@@ -2,7 +2,7 @@ import {EXPANSION_REGIONS,EXPANSION_PATHS,EXPANSION_PLOTS,EXPANSION_NPCS} from "
 
 const key=value=>String(value).toLowerCase().replace(/&/g,"and").replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
 
-export const OUTSIDE_WORLD={width:720,height:500,worldWidth:7200,worldHeight:5000,unitScale:10,layoutId:"fruitopia-country-v2"};
+export const OUTSIDE_WORLD={width:720,height:500,worldWidth:7200,worldHeight:5000,unitScale:10,layoutId:"fruitopia-country-v3-spaced"};
 
 const regionRows=[
   ["Starter Valley","🌻",56,278,92,58,"#a9dc6e","#f7d76b","Valley Floor",120,1,"The welcoming valley where six apple trees, the stand, office, river, and first building sites begin."],

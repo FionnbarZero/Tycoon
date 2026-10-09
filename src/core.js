@@ -41,7 +41,7 @@ export const levelForXp=xp=>clamp(1+Math.floor(Math.sqrt(Math.max(0,xp)/100)),1,
 export const xpForLevel=level=>Math.pow(Math.max(0,level-1),2)*100;
 export const levelTitle=level=>[...LEVEL_TITLES].reverse().find(([required])=>level>=required)?.[1]||"Stand Starter";
 
-const initialTrees=()=>Array.from({length:6},(_,index)=>({id:`apple-tree-${index+1}`,fruit:"apple",status:"ripe",readyAt:0,watered:false,fertilized:false,diseased:false,golden:false,x:104+(index%3)*6,y:215+Math.floor(index/3)*8,harvests:0}));
+const initialTrees=()=>Array.from({length:6},(_,index)=>({id:`apple-tree-${index+1}`,fruit:"apple",status:"ripe",readyAt:0,watered:false,fertilized:false,diseased:false,golden:false,x:34+(index%3)*7,y:258+Math.floor(index/3)*9,harvests:0}));
 const initialDistricts=()=>Object.fromEntries(DISTRICTS.map((district,index)=>[district.id,{unlocked:index<2,upgrades:[],crateFound:false,teleporter:false,visits:0}]));
 const initialFruit=()=>Object.fromEntries(FRUITS.map(fruit=>[fruit.id,0]));
 const initialProducts=()=>Object.fromEntries(RECIPES.map(recipe=>[recipe.id,0]));
@@ -142,6 +142,7 @@ export function createDefaultState(now=Date.now()){
 export function migrateSave(raw,now=Date.now()){
   const defaults=createDefaultState(now);
   if(!raw||typeof raw!=="object") return defaults;
+  const sourceVersion=Math.max(0,Number(raw.version)||0);
   const repaired=mergeDefaults(defaults,raw);
   repaired.version=SAVE_VERSION;
   const nonNegative=["cash","fruitCoins","xp","lifetimeCash","researchPoints","reputation","tickets","goldenSeeds","deliveryReputation","deliverySubscribers","deliveryStreak","completedContracts"];
@@ -151,6 +152,7 @@ export function migrateSave(raw,now=Date.now()){
   repaired.level=levelForXp(repaired.xp);repaired.stats.level=repaired.level;
   repaired.trees=Array.isArray(repaired.trees)&&repaired.trees.length?repaired.trees:initialTrees();
   repaired.trees=repaired.trees.map((tree,index)=>{const safe=tree&&typeof tree==="object"?tree:{};return{...initialTrees()[index%6],...safe,status:["empty","growing","almost-ready","ripe","watered","fertilized","diseased","golden","locked"].includes(safe.status)?safe.status:"growing"};});
+  if(sourceVersion<18)repaired.trees=repaired.trees.map(tree=>{const match=/^apple-tree-([1-6])$/.exec(tree.id||""),slot=match?Number(match[1])-1:-1,isStarter=slot>=0&&Number(tree.x)>=100&&Number(tree.x)<=118&&Number(tree.y)>=210&&Number(tree.y)<=226;return isStarter?{...tree,x:34+(slot%3)*7,y:258+Math.floor(slot/3)*9}:tree;});
   repaired.activeDeliveries=(repaired.activeDeliveries||[]).filter(delivery=>delivery&&!delivery.paid);
   repaired.sewer=mergeDefaults(initialSewer(),repaired.sewer);
   repaired.sewer.layoutId=SEWER_WORLD.layoutId;repaired.sewer.maze.fixedLayout=SEWER_WORLD.layoutId;
