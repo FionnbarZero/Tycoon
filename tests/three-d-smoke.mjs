@@ -70,11 +70,11 @@ await evaluate(`(()=>{const g=__FRUITOPIA__;g.core.state.sewer.entrances['sunny-
 const sewer=await evaluate(`(()=>{const w=__FRUITOPIA__.world;w.setCameraDistance(18);return{mode:w.worldMode,maxed:w.targetDistance,exits:w.entities.filter(item=>item.type==='sewer-exit').length,pumps:w.entities.filter(item=>item.type==='sewer-pump').length,water:w.entities.filter(item=>item.type==='water-point').length,networkMaps:w.entities.filter(item=>item.type==='sewer-network-map').length,northMaps:w.entities.filter(item=>item.type==='sewer-north-map').length,signTexts:w.physicalSigns.map(item=>item.object.userData.signText),fog:w.scene.fog?.isFogExp2===true}})()`);
 expect(sewer.mode==="sewer"&&sewer.maxed===8&&sewer.exits>=1&&sewer.pumps===4&&sewer.water>=5&&sewer.fog,"Sewer did not rebuild as a constrained 3D underground world");
 expect(sewer.networkMaps===1,"Central Sewer Hub is missing its interactive underground network map");
-expect(sewer.northMaps===1,"North Pipe Maze is missing its interactive annex plan");
-for(const text of ["WEST SEWER TUNNEL","CENTRAL SEWER HUB","EAST SEWER TUNNEL","MAFIA ENTRANCE","NORTH PIPE MAZE","GREEN-WATER CAVE","MAFIA CARD ROOM","D1 DEAD END","LAB LIFT","UNDERGROUND MACHINE ROOM"])expect(sewer.signTexts.includes(text),`Missing readable sewer sign: ${text}`);
+expect(sewer.northMaps===1,"E Maze Entrance is missing its interactive fixed plan");
+for(const text of ["WEST SEWER TUNNEL","CENTRAL SEWER HUB","EAST SEWER TUNNEL","M · MAFIA ENTRANCE","C · MAFIA CARD ROOM","J · JACKPOT MACHINE ROOM","1 · GATE ONE TURNAROUND","W · GREEN-WATER CAVE","H · HIDDEN ROOT HUB","F · FORGOTTEN FRUIT LABORATORY","P · POWER QUARTER","L · LABORATORY LIFT","X · BLACK-PIPE CENTER","R · RED PRESSURE ROOM","E · SEWER MAZE ENTRANCE"])expect(sewer.signTexts.includes(text),`Missing readable sewer sign: ${text}`);
 
 await evaluate(`(()=>{const g=__FRUITOPIA__;g.core.leaveSewer();g.world.setCameraDistance(14);g.world.yaw=.73;g.core.state.camera.yaw=.73;g.save();return true;})()`);
-expect(await evaluate(`(()=>{const saved=JSON.parse(localStorage.getItem(__FRUITOPIA__.Config.SAVE_KEY));return saved.camera.distance===14&&Math.abs(saved.camera.yaw-.73)<.001&&saved.version===21})()`),"Selected camera distance and facing were not serialized");
+expect(await evaluate(`(()=>{const saved=JSON.parse(localStorage.getItem(__FRUITOPIA__.Config.SAVE_KEY));return saved.camera.distance===14&&Math.abs(saved.camera.yaw-.73)<.001&&saved.version===22})()`),"Selected camera distance and facing were not serialized");
 await command("Page.reload",{ignoreCache:true});await wait(1000);expect(await ready(),"3D game did not reopen from the camera save");
 expect(await evaluate("__FRUITOPIA__.world.targetDistance===14 && Math.abs(__FRUITOPIA__.world.yaw-.73)<.001"),"Saved camera distance or facing did not restore after reopening");
 

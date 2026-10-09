@@ -1,83 +1,117 @@
-export const SEWER_WORLD={width:240,height:180,worldWidth:2400,worldHeight:1800,unitScale:10,layoutId:"fruitopia-sewer-fixed-v4-north-annex"};
+export const SEWER_WORLD={width:240,height:190,worldWidth:2400,worldHeight:1900,unitScale:10,layoutId:"fruitopia-sewer-fixed-v5-country-maze"};
 
 export const SEWER_LAYOUT_POINTS={
   westEntrance:{x:35,y:20},centralEntrance:{x:120,y:20},eastEntrance:{x:205,y:20},overviewMap:{x:116,y:19},
-  mafiaEntrance:{x:45,y:52},northPipeMaze:{x:120,y:52},greenWaterCave:{x:205,y:52},
-  cardRoom:{x:45,y:84},deadEndD1:{x:120,y:84},labLift:{x:205,y:84},
-  mazeMap:{x:120,y:105},mazeStart:{x:120,y:113},testLab:{x:205,y:115},maintenance:{x:165,y:112},
-  machineRoom:{x:45,y:118},mafiaGameRoom:{x:45,y:84}
+  mafiaEntrance:{x:30,y:52},cardRoom:{x:120,y:52},machineRoom:{x:210,y:52},northPipeMaze:{x:120,y:76},
+  deadEndD1:{x:45,y:85},greenWaterCave:{x:215,y:85},hiddenHub:{x:120,y:105},forgottenLab:{x:25,y:115},
+  maintenance:{x:52,y:130},powerRoom:{x:25,y:130},gateTwo:{x:145,y:130},labLift:{x:215,y:130},
+  blackCenter:{x:170,y:145},redRoom:{x:25,y:165},testLab:{x:215,y:160},garden:{x:205,y:174},
+  mazeMap:{x:120,y:178},mazeStart:{x:120,y:170},mafiaGameRoom:{x:120,y:52}
 };
+
+// The entrance board and 3D passages share this one fixed topology. North is
+// the top of the board (smaller y); the map never regenerates between visits.
+export const SEWER_MAZE_PATHS=[
+  [[120,178],[120,170],[100,170],[100,164],[80,164],[80,156],[55,156],[55,148],[25,148],[25,130]],
+  [[25,130],[25,115],[42,115],[42,105],[24,105],[24,94],[45,94],[45,85]],
+  [[45,85],[45,72],[30,72],[30,52]],
+  [[30,52],[58,52],[58,60],[82,60],[82,52],[120,52]],
+  [[120,52],[120,64],[104,64],[104,76],[136,76],[136,88],[120,88],[120,105]],
+  [[120,105],[140,105],[140,118],[158,118],[158,145],[170,145]],
+  [[170,145],[190,145],[190,130],[215,130]],
+  [[215,130],[215,116],[204,116],[204,101],[215,101],[215,85]],
+  [[215,85],[200,85],[200,72],[215,72],[215,52],[210,52]],
+  [[210,52],[185,52],[185,60],[160,60],[160,52],[120,52]],
+  [[120,178],[145,178],[145,166],[170,166],[170,145]],
+  [[100,164],[120,164],[120,154],[145,154],[145,130]],
+  [[55,148],[80,148],[80,138],[105,138],[105,124],[120,124],[120,105]],
+  [[42,105],[70,105],[70,94],[45,94]],
+  [[82,60],[82,68],[104,68]],
+  [[136,88],[165,88],[165,76],[185,76],[185,60]],
+  [[165,88],[185,88],[185,101],[204,101]],
+  [[145,166],[145,150],[170,150]],
+  [[25,148],[25,158],[14,158],[14,165],[25,165],[50,165],[50,156],[80,156]],
+  [[25,130],[52,130],[52,122],[78,122],[78,112],[105,112]],
+  [[170,166],[195,166],[195,174],[205,174]],
+  [[215,130],[215,145],[215,160]]
+];
+
+export const SEWER_MAZE_MARKERS=[
+  {code:"M",name:"Mafia Entrance",x:30,y:52,section:"mafia-entrance",tone:"mafia"},
+  {code:"C",name:"Mafia Card Room",x:120,y:52,section:"fruit-mafia-club",tone:"mafia"},
+  {code:"J",name:"Jackpot Machine Room",x:210,y:52,section:"underground-machine-room",tone:"mafia"},
+  {code:"1",name:"Gate One Turnaround",x:45,y:85,section:"north-dead-end-d1",tone:"warning"},
+  {code:"W",name:"Green-Water Cave",x:215,y:85,section:"green-water-canals",tone:"water"},
+  {code:"H",name:"Hidden Root Hub",x:120,y:105,section:"green-root-quarter",tone:"root"},
+  {code:"F",name:"Forgotten Fruit Laboratory",x:25,y:115,section:"forgotten-fruit-laboratory",tone:"secret"},
+  {code:"P",name:"Power Quarter",x:25,y:130,section:"yellow-maintenance-quarter",tone:"power"},
+  {code:"2",name:"Gate Two Turnaround",x:145,y:130,section:"north-pipe-maze",tone:"warning"},
+  {code:"L",name:"Laboratory Lift",x:215,y:130,section:"lab-lift",tone:"lab"},
+  {code:"X",name:"Black-Pipe Center",x:170,y:145,section:"black-pipe-center",tone:"center"},
+  {code:"R",name:"Red Pressure Room",x:25,y:165,section:"red-pipe-quarter",tone:"pressure"},
+  {code:"E",name:"Maze Entrance",x:120,y:178,section:"maze-entrance",tone:"entry"}
+];
 
 export const SEWER_ENTRANCES=[
   {id:"sunny-manhole",name:"Manhole A · West Sewer Tunnel",x:105,y:476,sewerX:35,sewerY:20,zone:"front-drain-entrance",unlock:"Discover a sewer clue, speak with Bruno Bramble, or inspect the Hidden Office Basement."},
   {id:"market-manhole",name:"Manhole B · Central Sewer Hub",x:360,y:476,sewerX:120,sewerY:20,zone:"central-pump-station",unlock:"Open it from inside the Yellow Maintenance Quarter."},
   {id:"depot-manhole",name:"Manhole C · East Sewer Tunnel",x:600,y:476,sewerX:205,sewerY:20,zone:"surface-exit-network",unlock:"Repair the first pump from underground."},
-  {id:"juice-manhole",name:"Research Ridge Drain Manhole",x:372,y:255,sewerX:205,sewerY:115,zone:"sewer-test-laboratory",unlock:"Complete the first safe Green-Water experiment."},
-  {id:"mafia-alley-manhole",name:"Golden Grape Manhole",x:132,y:330,sewerX:45,sewerY:84,zone:"fruit-mafia-club",unlock:"Become a permanent Fruit Mafia Club member.",undergroundOnly:true}
+  {id:"juice-manhole",name:"Research Ridge Drain Manhole",x:372,y:255,sewerX:215,sewerY:160,zone:"sewer-test-laboratory",unlock:"Complete the first safe Green-Water experiment."},
+  {id:"mafia-alley-manhole",name:"Golden Grape Manhole",x:132,y:330,sewerX:120,sewerY:52,zone:"fruit-mafia-club",unlock:"Become a permanent Fruit Mafia Club member.",undergroundOnly:true}
 ];
 export const SEWER_ENTRANCE_BY_ID=Object.fromEntries(SEWER_ENTRANCES.map(item=>[item.id,item]));
 
 export const SEWER_SECTIONS=[
   ["front-drain-entrance","West Sewer Tunnel",35,20,50,24,"#68746d","#72e58b","💧","Slow dripping, road rumbles, and small green pools","Manhole A · Sample Pool · Maintenance Desk","Safe sample collection and first-tunnel tutorial","First bottles and a clear route east to the hub"],
   ["central-pump-station","Central Sewer Hub",120,20,50,24,"#4e6267","#77d6d1","⚙️","Rotating pumps, map-room hum, and checkpoint bell","Manhole B · Network Map · Four Great Pumps · Save Point","Restores routes, lights, and passive green water","Main junction for every underground branch"],
-  ["surface-exit-network","East Sewer Tunnel",205,20,50,24,"#555e61","#e3a75c","🪜","Large pipeline rumbles and hidden-supply echoes","Manhole C · Large Pipelines · Supply Alcove","Persistent east-side exit and supply route","Direct access to the North Annex"],
-  ["mafia-entrance","Mafia Entrance",45,52,46,24,"#29242c","#e8b640","🕴️","Quiet pipes, a guarded door, and a velvet-rope click","Guarded Doorway · $100 Membership Pad · Golden Grape","One-time fictional-Cash membership checkpoint","Opens the Card Room and underground machines permanently"],
-  ["north-pipe-maze","North Pipe Maze",120,52,46,24,"#414a4d","#d6e2cf","🧭","Pipe knocks, distant water, and hollow northern echoes","North Plan Board · Three-Way Junction · D1 Marker","Recognizable northern junction connecting the annex","Routes toward the Card Room, cave, D1, and deeper maze"],
-  ["green-water-canals","Green-Water Cave",205,52,46,24,"#356b59","#68f08c","🌊","Cave drips, bubbling green water, and pipe echoes","Glow Pool · Sample Shelf · Mixing Materials","Container-based renewable sample collection","Supplies laboratory experiments and maze puzzles"],
-  ["fruit-mafia-club","Mafia Card Room",45,84,46,24,"#493554","#e9c45d","🃏","Muffled club music, cards, crate mechanisms, and table chatter","Card Tables · Mystery Crate · Spectator Rail","Original event-driven Fruit Mafia survival game","Club reputation, card collection, and game rewards"],
-  ["north-dead-end-d1","D1 Dead End",120,84,34,18,"#555d5a","#ff9f43","D1","A dry echo and the rattle of a hidden supply box","D1 Wall Mark · Dead-End Cache · Chalk Turnaround","Optional navigation landmark and one-time cache","Rewards careful exploration without hiding progression"],
-  ["lab-lift","Lab Lift",205,84,28,18,"#315c66","#54d9e8","↕","Lift cables, relays, and a laboratory arrival bell","Lift Platform · Power Relay · LAB Sign","Persistent shortcut between the cave and Test Lab","Fast access to Green-Water experiments"],
-  ["sewer-test-laboratory","Sewer Test Laboratory",205,115,38,24,"#536c75","#89f7c8","🧪","Electrical hum, bubbling, and warning beeps","Mixing Chamber · Observation Window · Plant Chamber","Timed experiments and recipe discovery","Connects Fruit Labs, workers, and the Research Ridge drain"],
-  ["abandoned-maintenance-wing","Abandoned Maintenance Wing",165,112,26,22,"#6d655d","#f5ba63","🧰","Loose chains and rolling maintenance carts","Rusted Lockers · Equipment Cage · Collapsed Hall","Repair puzzle and navigation equipment","Opens the deeper maze preparation room"],
-  ["maze-entrance","Sewer Maze Entrance",120,105,28,16,"#5b625f","#efe0a0","🗺️","Quiet echoes and Bruno's warning radio","Hand-Drawn Map · Supply Table · Start Line","Entrance-only full map and emergency preparation","Only complete navigational overview"],
-  ["yellow-maintenance-quarter","Yellow Gate Maze",110,122,26,16,"#736536","#ffe36e","🟡","Flickering current and generator clacks","Locked Gates · Fuse Wall · Sparking Junction","Parts and switchboard puzzle","Yellow Emblem, Test Lab power, and Manhole B"],
-  ["red-pipe-quarter","Red Pipe Maze",75,140,34,22,"#6f403d","#ff736a","🔴","Steam bursts and hot pipe knocks","Triple Red Valve · Steam Clock · Broken Boiler","Pressure puzzle and turning bridge route","Red Emblem and Forgotten Lab shortcut"],
-  ["blue-canal-quarter","Blue Canal Maze",170,140,36,22,"#36586f","#64c6ff","🔵","Drips, waterfalls, and hollow canal echoes","Blue Waterfall · Drain Gates · Turning Bridge","Three-stage water-level puzzle","Blue Emblem and Green-Water Cave shortcut"],
-  ["black-pipe-center","Black-Pipe Maze Center",125,143,24,20,"#2e3138","#e7bd57","⚫","Deep machinery and heartbeat-like pipes","Four-Color Door · Pressure Machine · Golden Grape","Insert four persistent emblems","Mafia access, reward chest, and permanent shortcut"],
-  ["green-root-quarter","Green Root Maze",140,162,34,16,"#3c6747","#74e47c","🟢","Root creaks, insects, and soft glowing tones","Giant Root Arch · Mushroom Circle · Living Bridge","Water testing and irrigation puzzle","Green Emblem and Underground Garden"],
-  ["forgotten-fruit-laboratory","Forgotten Fruit Laboratory",45,162,42,16,"#584f69","#cda2ff","👻","Old tanks, glass chimes, and faint signal static","Hybrid Vault · Ghost Tank · Cosmic Receiver","Recover lost formula and secret research","Hybrid clue, decoration, and Lyra conversation"],
-  ["underground-fruit-garden","Underground Fruit Garden",205,162,42,16,"#426c50","#9cff95","🌱","Peaceful music, irrigation, and tiny insects","Mutant Plots · Pipe Orchard · Greenhouse Controls","Renewable sewer ingredient farming","Sewer recipes, rare plants, and worker requests"],
-  ["underground-machine-room","Underground Machine Room",45,118,46,18,"#302b37","#e8b640","🎰","Jackpot bells, fruit reels, gears, and prize-counter chatter","Jackpot Machine · Fruit Slots · Reward Counter · Hidden Storage","Fictional Club Chip machines and one-time prize collection","Club Chips, prizes, history, and secret storage"]
+  ["surface-exit-network","East Sewer Tunnel",205,20,50,24,"#555e61","#e3a75c","🪜","Large pipeline rumbles and hidden-supply echoes","Manhole C · Large Pipelines · Supply Alcove","Persistent east-side exit and supply route","Direct access to the fixed northern maze rooms"],
+  ["mafia-entrance","M · Mafia Entrance",30,52,24,16,"#29242c","#e8b640","M","Quiet pipes, a guarded door, and a velvet-rope click","Guarded Doorway · $100 Membership Pad · Golden Grape","One-time fictional-Cash membership checkpoint","Opens the Card Room and underground machines permanently"],
+  ["fruit-mafia-club","C · Mafia Card Room",120,52,28,16,"#493554","#e9c45d","C","Muffled club music, cards, crate mechanisms, and table chatter","Card Tables · Mystery Crate · Spectator Rail","Original event-driven Fruit Mafia survival game","Club reputation, card collection, and game rewards"],
+  ["underground-machine-room","J · Jackpot Machine Room",210,52,24,16,"#302b37","#e8b640","J","Jackpot bells, fruit reels, gears, and prize-counter chatter","Jackpot Machine · Fruit Slots · Reward Counter · Hidden Storage","Fictional Club Chip machines and one-time prize collection","Club Chips, prizes, history, and secret storage"],
+  ["north-pipe-maze","North Pipe Maze",120,76,24,16,"#414a4d","#d6e2cf","🧭","Pipe knocks, distant water, and hollow northern echoes","Fixed Turns · Gate Two · Landmark Codes","Recognizable fixed labyrinth with multiple loops","Connects every coded room without regenerating"],
+  ["north-dead-end-d1","1 · Gate One Turnaround",45,85,18,14,"#555d5a","#ff9f43","1","A dry echo and the rattle of a hidden supply box","Gate One Mark · Turnaround Cache · Chalk Arrow","Optional navigation landmark and one-time cache","Rewards careful exploration without hiding progression"],
+  ["green-water-canals","W · Green-Water Cave",215,85,26,18,"#356b59","#68f08c","W","Cave drips, bubbling green water, and pipe echoes","Glow Pool · Sample Shelf · Mixing Materials","Container-based renewable sample collection","Supplies laboratory experiments and maze puzzles"],
+  ["green-root-quarter","H · Hidden Root Hub",120,105,24,16,"#3c6747","#74e47c","H","Root creaks, insects, and soft glowing tones","Giant Root Arch · Mushroom Circle · Living Bridge","Water testing and irrigation puzzle","Green Emblem and Underground Garden"],
+  ["forgotten-fruit-laboratory","F · Forgotten Fruit Laboratory",25,115,22,16,"#584f69","#cda2ff","F","Old tanks, glass chimes, and faint signal static","Hybrid Vault · Ghost Tank · Cosmic Receiver","Recover lost formula and secret research","Hybrid clue, decoration, and Lyra conversation"],
+  ["yellow-maintenance-quarter","P · Power Quarter",25,130,22,16,"#736536","#ffe36e","P","Flickering current and generator clacks","Broken Generator · Fuse Wall · Sparking Junction","Parts and switchboard puzzle","Yellow Emblem, Test Lab power, and Manhole B"],
+  ["abandoned-maintenance-wing","Abandoned Maintenance Wing",52,130,22,16,"#6d655d","#f5ba63","🧰","Loose chains and rolling maintenance carts","Rusted Lockers · Equipment Cage · Collapsed Hall","Repair puzzle and navigation equipment","Opens the deeper maze preparation room"],
+  ["lab-lift","L · Laboratory Lift",215,130,20,16,"#315c66","#54d9e8","L","Lift cables, relays, and a laboratory arrival bell","Lift Platform · Power Relay · LAB Sign","Persistent shortcut between the cave and Test Lab","Fast access to Green-Water experiments"],
+  ["black-pipe-center","X · Black-Pipe Center",170,145,24,18,"#2e3138","#e7bd57","X","Deep machinery and heartbeat-like pipes","Four-Color Door · Pressure Machine · Golden Grape","Insert four persistent emblems","Mafia access, reward chest, and permanent shortcut"],
+  ["blue-canal-quarter","Blue Canal Maze",188,112,24,16,"#36586f","#64c6ff","🔵","Drips, waterfalls, and hollow canal echoes","Blue Waterfall · Drain Gates · Turning Bridge","Three-stage water-level puzzle","Blue Emblem and Green-Water Cave shortcut"],
+  ["sewer-test-laboratory","Sewer Test Laboratory",215,160,28,18,"#536c75","#89f7c8","🧪","Electrical hum, bubbling, and warning beeps","Mixing Chamber · Observation Window · Plant Chamber","Timed experiments and recipe discovery","Connects Fruit Labs, workers, and the Research Ridge drain"],
+  ["underground-fruit-garden","Underground Fruit Garden",205,174,28,14,"#426c50","#9cff95","🌱","Peaceful music, irrigation, and tiny insects","Mutant Plots · Pipe Orchard · Greenhouse Controls","Renewable sewer ingredient farming","Sewer recipes, rare plants, and worker requests"],
+  ["red-pipe-quarter","R · Red Pressure Room",25,165,22,16,"#6f403d","#ff736a","R","Steam bursts and hot pipe knocks","Triple Red Valve · Steam Clock · Broken Boiler","Pressure puzzle and turning bridge route","Red Emblem and Forgotten Lab shortcut"],
+  ["maze-entrance","E · Sewer Maze Entrance",120,178,26,16,"#5b625f","#efe0a0","E","Quiet echoes and Bruno's warning radio","Hand-Drawn Map · Supply Table · Start Line","Entrance-only full map and emergency preparation","Only complete navigational overview"]
 ].map(([id,name,x,y,w,h,color,accent,icon,sound,landmarks,system,reward])=>({id,name,x,y,w,h,color,accent,icon,sound,landmarks:landmarks.split(" · "),system,reward,description:`${system}. ${reward}.`,maze:["red-pipe-quarter","blue-canal-quarter","yellow-maintenance-quarter","green-root-quarter","black-pipe-center"].includes(id)}));
 export const SEWER_SECTION_BY_ID=Object.fromEntries(SEWER_SECTIONS.map(item=>[item.id,item]));
 
 // Fixed hub-and-branch graph. The recognizable macro layout mirrors the three
 // surface manholes while the detailed maze retains loops, quarters, and shortcuts.
-export const SEWER_PATHS=[
-  [[35,20],[75,20],[120,20],[165,20],[205,20]],
-  [[35,20],[35,36],[45,52]],[[120,20],[120,36],[120,52]],[[205,20],[205,36],[205,52]],
-  [[45,52],[80,52],[120,52],[165,52],[205,52]],
-  [[45,52],[45,68],[45,84]],[[120,52],[120,68],[120,84],[120,105]],[[205,52],[205,68],[205,84],[205,115]],
-  [[45,84],[45,101],[45,118]],[[205,115],[185,112],[165,112],[142,108],[120,105]],
-  [[120,113],[110,122],[75,140],[100,145],[125,143]],
-  [[120,113],[145,123],[170,140],[148,149],[125,143]],
-  [[110,122],[125,143],[140,162],[170,140],[110,122]],
-  [[75,140],[58,151],[45,162]],[[170,140],[188,151],[205,162]],[[140,162],[170,162],[205,162]],
-  [[125,143],[104,124],[92,101],[70,74],[45,52]],[[45,118],[72,126],[100,136],[125,143]]
-];
+export const SEWER_PATHS=[[[35,20],[75,20],[120,20],[165,20],[205,20]],[[35,20],[35,35],[30,52]],[[120,20],[120,35],[120,52]],[[205,20],[205,35],[210,52]],...SEWER_MAZE_PATHS];
 
 export const SEWER_ROOMS=[
   ["west-tunnel-room",35,20,46,20],["central-hub-room",120,20,46,20],["east-tunnel-room",205,20,46,20],
-  ["mafia-entry-room",45,52,42,20],["north-pipe-room",120,52,42,20],["green-water-cave-room",205,52,42,20],
-  ["card-room",45,84,42,20],["dead-end-d1-room",120,84,30,14],["lab-lift-room",205,84,24,14],
-  ["machine-room",45,118,42,14],["maze-prep-room",120,105,24,12],["maintenance-room",165,112,22,18],["test-lab-room",205,115,34,20],
-  ["yellow-generator-room",110,122,22,12],["red-boiler-room",75,140,30,18],["blue-control-room",170,140,32,18],
-  ["center-room",125,143,20,16],["green-root-room",140,162,30,12],["forgotten-lab-room",45,162,38,12],["garden-room",205,162,38,12]
+  ["mafia-entry-room",30,52,20,12],["card-room",120,52,24,12],["machine-room",210,52,20,12],
+  ["gate-one-room",45,85,14,10],["green-water-cave-room",215,85,22,14],["hidden-hub-room",120,105,20,12],
+  ["forgotten-lab-room",25,115,18,12],["power-room",25,130,18,12],["maintenance-room",52,130,18,12],
+  ["lab-lift-room",215,130,16,12],["center-room",170,145,20,14],["test-lab-room",215,160,24,14],
+  ["red-boiler-room",25,165,18,12],["maze-prep-room",120,178,22,12],["garden-room",205,174,24,10]
 ].map(([id,x,y,w,h])=>({id,x,y,w,h}));
 
 export const SEWER_LANDMARKS=[
   ["sewer-overview-board","Underground Network Map","🗺️",116,19,"central-pump-station"],["four-pumps","Four Great Pumps","⚙️",128,26,"central-pump-station"],
   ["west-sample-pool","West Sample Pool","💧",27,24,"front-drain-entrance"],["east-supply-alcove","Hidden Supply Alcove","📦",216,24,"surface-exit-network"],
-  ["velvet-desk","Guarded Velvet Door","🎩",45,52,"mafia-entrance"],["north-layout-board","North Annex Plan","🧭",120,52,"north-pipe-maze"],["glow-pool","Glowing Pool","💚",205,52,"green-water-canals"],
-  ["mystery-crate-table","Mystery Crate Table","📦",45,84,"fruit-mafia-club"],["d1-wall-mark","D1 Dead End Marker","D1",120,84,"north-dead-end-d1"],
-  ["mixing-machine","Mixing Machine","🧪",205,115,"sewer-test-laboratory"],["rusted-lockers","Rusted Lockers","🗄️",165,112,"abandoned-maintenance-wing"],["maze-board","Maze Entrance Board","📍",120,105,"maze-entrance"],
-  ["triple-red-valve","Triple Red Valve","🔴",75,140,"red-pipe-quarter"],["steam-clock","Steam Clock","🕰️",68,136,"red-pipe-quarter"],
-  ["blue-waterfall","Blue Waterfall","🌊",170,140,"blue-canal-quarter"],["maintenance-boat","Turning Bridge","🌉",176,145,"blue-canal-quarter"],
-  ["broken-generator","Broken Generator","⚡",110,122,"yellow-maintenance-quarter"],["yellow-fuse-wall","Yellow Fuse Wall","🔌",116,125,"yellow-maintenance-quarter"],
-  ["giant-root-arch","Giant Root Arch","🌿",140,162,"green-root-quarter"],["mushroom-circle","Glowing Mushroom Circle","🍄",148,165,"green-root-quarter"],
-  ["four-color-door","Four-Color Valve Door","🚪",125,143,"black-pipe-center"],["golden-grape","Golden Grape Symbol","🍇",129,146,"black-pipe-center"],
-  ["ghost-tank","Ghost Fruit Tank","👻",45,162,"forgotten-fruit-laboratory"],["pipe-orchard","Pipe Orchard","🌳",205,162,"underground-fruit-garden"],
-  ["jackpot-pipe","Jackpot Machine","🎰",39,118,"underground-machine-room"],["hidden-prize-storage","Hidden Prize Storage","🎁",53,121,"underground-machine-room"]
+  ["velvet-desk","M · Guarded Velvet Door","M",30,52,"mafia-entrance"],["north-layout-board","Fixed Country Maze Plan","🧭",112,176,"maze-entrance"],["glow-pool","W · Glowing Pool","W",215,85,"green-water-canals"],
+  ["mystery-crate-table","C · Mystery Crate Table","C",120,52,"fruit-mafia-club"],["d1-wall-mark","1 · Gate One Marker","1",45,85,"north-dead-end-d1"],
+  ["gate-two-mark","2 · Gate Two Marker","2",145,130,"north-pipe-maze"],["hidden-hub-mark","H · Hidden Root Hub","H",120,105,"green-root-quarter"],
+  ["mixing-machine","Mixing Machine","🧪",215,160,"sewer-test-laboratory"],["rusted-lockers","Rusted Lockers","🗄️",52,130,"abandoned-maintenance-wing"],["maze-board","E · Maze Entrance Board","E",120,178,"maze-entrance"],
+  ["triple-red-valve","R · Triple Red Valve","R",25,165,"red-pipe-quarter"],["steam-clock","Steam Clock","🕰️",20,162,"red-pipe-quarter"],
+  ["blue-waterfall","Blue Waterfall","🌊",188,112,"blue-canal-quarter"],["maintenance-boat","Turning Bridge","🌉",185,101,"blue-canal-quarter"],
+  ["broken-generator","P · Broken Generator","P",25,130,"yellow-maintenance-quarter"],["yellow-fuse-wall","Yellow Fuse Wall","🔌",30,133,"yellow-maintenance-quarter"],
+  ["giant-root-arch","H · Giant Root Arch","H",120,105,"green-root-quarter"],["mushroom-circle","Glowing Mushroom Circle","🍄",125,108,"green-root-quarter"],
+  ["four-color-door","X · Four-Color Valve Door","X",170,145,"black-pipe-center"],["golden-grape","Golden Grape Symbol","🍇",174,148,"black-pipe-center"],
+  ["ghost-tank","F · Ghost Fruit Tank","F",25,115,"forgotten-fruit-laboratory"],["pipe-orchard","Pipe Orchard","🌳",205,174,"underground-fruit-garden"],
+  ["jackpot-pipe","J · Jackpot Machine","J",206,52,"underground-machine-room"],["hidden-prize-storage","Hidden Prize Storage","🎁",214,55,"underground-machine-room"]
 ].map(([id,name,icon,x,y,section])=>({id,name,icon,x,y,section}));
 
 export const SEWER_CONTAINERS=[
@@ -88,14 +122,14 @@ export const SEWER_CONTAINERS=[
 export const SEWER_CONTAINER_BY_ID=Object.fromEntries(SEWER_CONTAINERS.map(item=>[item.id,item]));
 export const WATER_POINTS=[
   {id:"entrance-drip",name:"West Tunnel Sample Pool",water:"murky-green-water",quality:"Murky Green Water",x:27,y:24,cooldown:35,requiredContainer:"empty-bottle",available:1,depth:"shallow"},
-  {id:"shallow-canal",name:"Green-Water Cave Shelf",water:"murky-green-water",quality:"Murky Green Water",x:196,y:50,cooldown:45,requiredContainer:"empty-bottle",available:2,depth:"shallow"},
+  {id:"shallow-canal",name:"W Cave Sample Shelf",water:"murky-green-water",quality:"Murky Green Water",x:207,y:85,cooldown:45,requiredContainer:"empty-bottle",available:2,depth:"shallow"},
   {id:"pump-reservoir",name:"Central Hub Pump Reservoir",water:"filtered-sewer-water",quality:"Filtered Green Water",x:134,y:26,cooldown:60,requiredContainer:"sample-jar",available:2,depth:"shallow",requires:"pumps-full"},
-  {id:"glow-channel",name:"Green-Water Cave Glow Pool",water:"glowing-green-water",quality:"Glowing Green Water",x:211,y:55,cooldown:70,requiredContainer:"reinforced-flask",available:1,depth:"deep"},
-  {id:"purifier-outlet",name:"Laboratory Purifier",water:"filtered-sewer-water",quality:"Filtered Green Water",x:211,y:117,cooldown:55,requiredContainer:"sample-jar",available:2,depth:"shallow",requires:"lab-electricity"},
-  {id:"warning-pipe",name:"Red Maze Warning Pipe",water:"radioactive-looking-fruit-water",quality:"Radioactive-Looking Fruit Water",x:72,y:144,cooldown:80,requiredContainer:"reinforced-flask",available:1,depth:"shallow"},
-  {id:"blue-vault-pool",name:"Blue Maze Vault Pool",water:"glowing-green-water",quality:"Glowing Green Water",x:176,y:143,cooldown:90,requiredContainer:"reinforced-flask",available:1,depth:"deep",requires:"blue-water-emblem"},
-  {id:"ancient-pipe",name:"Ancient Root Pipe Spring",water:"ancient-pipe-water",quality:"Ancient Pipe Water",x:144,y:164,cooldown:110,requiredContainer:"laboratory-container",available:1,depth:"deep"},
-  {id:"cosmic-seep",name:"Garden Cosmic Drain",water:"cosmic-green-water",quality:"Cosmic Green Water",x:211,y:164,cooldown:180,requiredContainer:"large-sample-tank",available:1,depth:"deep",requires:"cosmic-age"}
+  {id:"glow-channel",name:"W Cave Glow Pool",water:"glowing-green-water",quality:"Glowing Green Water",x:218,y:85,cooldown:70,requiredContainer:"reinforced-flask",available:1,depth:"deep"},
+  {id:"purifier-outlet",name:"Laboratory Purifier",water:"filtered-sewer-water",quality:"Filtered Green Water",x:218,y:160,cooldown:55,requiredContainer:"sample-jar",available:2,depth:"shallow",requires:"lab-electricity"},
+  {id:"warning-pipe",name:"R Pressure Warning Pipe",water:"radioactive-looking-fruit-water",quality:"Radioactive-Looking Fruit Water",x:22,y:165,cooldown:80,requiredContainer:"reinforced-flask",available:1,depth:"shallow"},
+  {id:"blue-vault-pool",name:"Blue Maze Vault Pool",water:"glowing-green-water",quality:"Glowing Green Water",x:190,y:112,cooldown:90,requiredContainer:"reinforced-flask",available:1,depth:"deep",requires:"blue-water-emblem"},
+  {id:"ancient-pipe",name:"H Root Pipe Spring",water:"ancient-pipe-water",quality:"Ancient Pipe Water",x:124,y:106,cooldown:110,requiredContainer:"laboratory-container",available:1,depth:"deep"},
+  {id:"cosmic-seep",name:"Garden Cosmic Drain",water:"cosmic-green-water",quality:"Cosmic Green Water",x:210,y:174,cooldown:180,requiredContainer:"large-sample-tank",available:1,depth:"deep",requires:"cosmic-age"}
 ];
 export const WATER_POINT_BY_ID=Object.fromEntries(WATER_POINTS.map(item=>[item.id,item]));
 
@@ -132,40 +166,40 @@ export const SEWER_VALVES=[
   {id:"red-valve",name:"Red Hub Valve",x:110,y:28,order:1,effect:"Starts the central hub pressure sequence."},
   {id:"blue-valve",name:"Blue Hub Valve",x:120,y:28,order:2,effect:"Balances the hub water pressure."},
   {id:"yellow-valve",name:"Yellow Hub Valve",x:130,y:28,order:3,effect:"Completes the hub pressure sequence."},
-  {id:"waterfall-valve",name:"Green-Water Cave Valve",x:205,y:62,order:0,effect:"Redirects cave water and reveals the blue-vault walkway."}
+  {id:"waterfall-valve",name:"W Cave Waterfall Valve",x:215,y:92,order:0,effect:"Redirects cave water and reveals the blue-vault walkway."}
 ];
 export const SEWER_GATES=[
   {id:"channel-gate",name:"West-to-Hub Gate",x:78,y:20,requires:"entrance-valve",hint:"Turn the West Tunnel Brass Valve."},
-  {id:"pressure-gate",name:"Sewer Maze Gate",x:120,y:113,requires:"pump-and-repair",hint:"Restore all four pumps and repair the collapsed Maintenance Wing route."},
-  {id:"charged-gate",name:"Charged Inner Grate",x:116,y:128,requires:"charged-sewer-sample",hint:"Insert a Charged Sewer Sample."},
-  {id:"center-door",name:"Four-Color Valve Door",x:125,y:143,requires:"four-emblems",hint:"Collect and insert all four quarter emblems."},
-  {id:"forgotten-lab-door",name:"Forgotten Laboratory Door",x:58,y:151,requires:"center-open",hint:"Activate Black-Pipe Center."},
-  {id:"mafia-gate",name:"Fruit Mafia Guarded Door",x:45,y:68,requires:"center-open",hint:"Open Black-Pipe Center and inspect the Golden Grape symbol."}
+  {id:"pressure-gate",name:"E · Sewer Maze Gate",x:120,y:170,requires:"pump-and-repair",hint:"Restore all four pumps and repair the collapsed Maintenance Wing route."},
+  {id:"charged-gate",name:"2 · Charged Inner Grate",x:145,y:130,requires:"charged-sewer-sample",hint:"Insert a Charged Sewer Sample."},
+  {id:"center-door",name:"X · Four-Color Valve Door",x:170,y:145,requires:"four-emblems",hint:"Collect and insert all four quarter emblems."},
+  {id:"forgotten-lab-door",name:"F · Forgotten Laboratory Door",x:42,y:115,requires:"center-open",hint:"Activate Black-Pipe Center."},
+  {id:"mafia-gate",name:"M · Fruit Mafia Guarded Door",x:30,y:65,requires:"center-open",hint:"Open Black-Pipe Center and inspect the Golden Grape symbol."}
 ];
 export const SEWER_SHORTCUTS=[
-  {id:"lab-drain",name:"Test Lab Drain Shortcut",x:195,y:115,requires:"maintenance-key"},
-  {id:"lab-lift",name:"Cave-to-Lab Lift",x:205,y:84,requires:"maintenance-key",destination:"sewer-test-laboratory"},
-  {id:"maze-cart",name:"Maintenance Cart Shortcut",x:155,y:108,requires:"rivet-or-key"},
-  {id:"blue-pump",name:"Blue Maze Cave Shortcut",x:185,y:132,requires:"blue-water-emblem"},{id:"red-lab",name:"Red Maze Lab Shortcut",x:58,y:151,requires:"red-pressure-emblem"},
-  {id:"center-ring",name:"Black-Pipe Center Shortcut",x:136,y:143,requires:"center-open"},{id:"garden-root",name:"Living Root Shortcut",x:181,y:160,requires:"green-root-emblem"},
-  {id:"club-pipe",name:"Velvet Pipe Shortcut",x:45,y:101,requires:"membership"}
+  {id:"lab-drain",name:"Test Lab Drain Shortcut",x:205,y:160,requires:"maintenance-key"},
+  {id:"lab-lift",name:"L · Cave-to-Lab Lift",x:215,y:130,requires:"maintenance-key",destination:"sewer-test-laboratory"},
+  {id:"maze-cart",name:"Maintenance Cart Shortcut",x:52,y:130,requires:"rivet-or-key"},
+  {id:"blue-pump",name:"W Cave Pump Shortcut",x:204,y:101,requires:"blue-water-emblem"},{id:"red-lab",name:"R-to-F Laboratory Shortcut",x:25,y:150,requires:"red-pressure-emblem"},
+  {id:"center-ring",name:"X Center Ring Shortcut",x:180,y:145,requires:"center-open"},{id:"garden-root",name:"Living Root Shortcut",x:195,y:166,requires:"green-root-emblem"},
+  {id:"club-pipe",name:"C · Velvet Pipe Shortcut",x:120,y:64,requires:"membership"}
 ];
 export const SEWER_TREASURES=[
   {id:"entrance-bottles",name:"West Tunnel Bottle Shelf",x:26,y:20,reward:{item:"empty-bottle",amount:2}},
-  {id:"mushroom-cache",name:"Green-Water Cave Mushroom Cache",x:196,y:56,reward:{item:"strange-mushroom",amount:2}},
-  {id:"d1-cache",name:"D1 Turnaround Cache",x:120,y:84,reward:{cash:35,item:"chalk-marker",amount:2}},
-  {id:"coin-nook",name:"Red Maze Fruit Coin Nook",x:68,y:144,reward:{coins:4}},{id:"old-toolbox",name:"Old Maintenance Toolbox",x:165,y:112,reward:{item:"maintenance-key",amount:1}},
-  {id:"marker-locker",name:"Maze Navigation Locker",x:114,y:105,reward:{item:"chalk-marker",amount:4}},{id:"red-boiler-vault",name:"Boiler Vault",x:80,y:145,reward:{research:8,item:"replacement-pump-fuse",amount:1}},
-  {id:"blue-drain-cache",name:"Flooded Drain Cache",x:176,y:145,reward:{coins:3,item:"copper-wire",amount:1}},
-  {id:"yellow-parts-bin",name:"Generator Parts Bin",x:116,y:125,reward:{item:"generator-gear",amount:1}},
-  {id:"green-seed-nest",name:"Root-Wrapped Seed Nest",x:147,y:164,reward:{item:"rare-seed",amount:1}},
-  {id:"ancient-crate",name:"Ancient Pipe Crate",x:136,y:164,reward:{research:8,item:"rare-seed",amount:1}},
-  {id:"center-chest",name:"Black-Pipe Reward Chest",x:128,y:146,reward:{cash:150,coins:8,research:15,chips:12}},
-  {id:"forgotten-vault",name:"Forgotten Research Vault",x:48,y:164,reward:{research:20,item:"forgotten-formula",amount:1}},
-  {id:"garden-cache",name:"Pipe Orchard Basket",x:208,y:164,reward:{item:"mutant-seed",amount:2}},
-  {id:"velvet-box",name:"Hidden Machine-Room Prize Box",x:53,y:121,reward:{chips:12,item:"plinko-prize-ticket",amount:1}}
+  {id:"mushroom-cache",name:"W Cave Mushroom Cache",x:208,y:88,reward:{item:"strange-mushroom",amount:2}},
+  {id:"d1-cache",name:"Gate One Turnaround Cache",x:45,y:85,reward:{cash:35,item:"chalk-marker",amount:2}},
+  {id:"coin-nook",name:"R Room Fruit Coin Nook",x:20,y:168,reward:{coins:4}},{id:"old-toolbox",name:"Old Maintenance Toolbox",x:52,y:130,reward:{item:"maintenance-key",amount:1}},
+  {id:"marker-locker",name:"E Maze Navigation Locker",x:114,y:178,reward:{item:"chalk-marker",amount:4}},{id:"red-boiler-vault",name:"R Boiler Vault",x:29,y:165,reward:{research:8,item:"replacement-pump-fuse",amount:1}},
+  {id:"blue-drain-cache",name:"Blue Flooded Drain Cache",x:188,y:112,reward:{coins:3,item:"copper-wire",amount:1}},
+  {id:"yellow-parts-bin",name:"P Generator Parts Bin",x:30,y:130,reward:{item:"generator-gear",amount:1}},
+  {id:"green-seed-nest",name:"H Root-Wrapped Seed Nest",x:124,y:108,reward:{item:"rare-seed",amount:1}},
+  {id:"ancient-crate",name:"H Ancient Pipe Crate",x:116,y:108,reward:{research:8,item:"rare-seed",amount:1}},
+  {id:"center-chest",name:"X Black-Pipe Reward Chest",x:174,y:148,reward:{cash:150,coins:8,research:15,chips:12}},
+  {id:"forgotten-vault",name:"F Forgotten Research Vault",x:28,y:115,reward:{research:20,item:"forgotten-formula",amount:1}},
+  {id:"garden-cache",name:"Pipe Orchard Basket",x:208,y:174,reward:{item:"mutant-seed",amount:2}},
+  {id:"velvet-box",name:"J Hidden Prize Box",x:214,y:55,reward:{chips:12,item:"plinko-prize-ticket",amount:1}}
 ];
-export const SEWER_CHECKPOINTS=[{id:"front-bell",name:"West Tunnel Emergency Bell",x:25,y:20,section:"front-drain-entrance"},{id:"pump-bell",name:"Central Hub Save Bell",x:120,y:16,section:"central-pump-station"},{id:"maze-bell",name:"Maze Entrance Bell",x:120,y:105,section:"maze-entrance"},{id:"center-bell",name:"Center Maintenance Bell",x:125,y:143,section:"black-pipe-center"}];
+export const SEWER_CHECKPOINTS=[{id:"front-bell",name:"West Tunnel Emergency Bell",x:25,y:20,section:"front-drain-entrance"},{id:"pump-bell",name:"Central Hub Save Bell",x:120,y:16,section:"central-pump-station"},{id:"maze-bell",name:"E · Maze Entrance Bell",x:120,y:178,section:"maze-entrance"},{id:"center-bell",name:"X · Center Maintenance Bell",x:170,y:145,section:"black-pipe-center"}];
 export const SEWER_QUARTERS={
   red:{id:"red",name:"Red Pressure Quarter",emblem:"red-pressure-emblem",solution:[2,1,3],landmarks:["Triple Red Valve","Steam Clock","Melted Apple Sign","Broken Boiler","Red Pipe Bridge"]},
   blue:{id:"blue",name:"Blue Canal Quarter",emblem:"blue-water-emblem",solution:["high","middle","low"],landmarks:["Blue Waterfall","Three Drain Gates","Maintenance Boat","Blueberry Mosaic","Flood-Control Wheel"]},
@@ -176,15 +210,15 @@ export const CHALK_SYMBOLS=["left","right","dead-end","important","treasure","ex
 
 export const SEWER_CHARACTERS=[
   ["maintenance-worker","Mossy Max","Maintenance Worker","🧑‍🔧",112,26,"These hub pumps are older than Mayor Marigold's favorite hat."],
-  ["sewer-researcher","Drip Drop Dahlia","Sewer Researcher","👩‍🔬",201,115,"Green water is scientifically weird—and weird is data."],
-  ["lost-delivery-driver","Denny Detour","Lost Delivery Driver","🧑‍✈️",115,84,"I followed a crate marked D1. It was definitely a dead end."],
-  ["mushroom-grower","Marnie Morel","Mushroom Grower","🧑‍🌾",201,164,"The mushrooms prefer compliments and low lighting."],
-  ["fruit-mafia-bouncer","Big Fig","Fruit Mafia Bouncer","🕴️",45,60,"Password? No? Cash and good manners also work."],
-  ["fruit-mafia-dealer","Cherry Chips","Club Chip Host","🍒",43,86,"The Mystery Crate uses strategy and luck—not real money."],
-  ["prize-counter-worker","Perry Prize","Prize Counter Worker","🎁",49,120,"Tickets, trinkets, and absolutely no real-money value."],
-  ["mysterious-plumber","P. Lumb","Mysterious Plumber","🪠",127,138,"Every pipe tells a story. Most of them say glub."],
-  ["former-lab-scientist","Professor Pulp","Former Laboratory Scientist","🧑‍🔬",45,164,"The failed mixtures were only failures at being boring."],
-  ["maze-explorer","Navi Nectar","Maze Explorer","🧭",116,105,"Study the entrance map. Inside, colored pipes and landmarks are your friends."]
+  ["sewer-researcher","Drip Drop Dahlia","Sewer Researcher","👩‍🔬",211,160,"Green water is scientifically weird—and weird is data."],
+  ["lost-delivery-driver","Denny Detour","Lost Delivery Driver","🧑‍✈️",45,88,"I followed the wall marked 1. It was definitely a turnaround."],
+  ["mushroom-grower","Marnie Morel","Mushroom Grower","🧑‍🌾",201,174,"The mushrooms prefer compliments and low lighting."],
+  ["fruit-mafia-bouncer","Big Fig","Fruit Mafia Bouncer","🕴️",30,56,"Password? No? Cash and good manners also work."],
+  ["fruit-mafia-dealer","Cherry Chips","Club Chip Host","🍒",116,54,"The Mystery Crate uses strategy and luck—not real money."],
+  ["prize-counter-worker","Perry Prize","Prize Counter Worker","🎁",212,54,"Tickets, trinkets, and absolutely no real-money value."],
+  ["mysterious-plumber","P. Lumb","Mysterious Plumber","🪠",166,142,"Every pipe tells a story. Most of them say glub."],
+  ["former-lab-scientist","Professor Pulp","Former Laboratory Scientist","🧑‍🔬",25,118,"The failed mixtures were only failures at being boring."],
+  ["maze-explorer","Navi Nectar","Maze Explorer","🧭",116,178,"Study the entrance map. Inside, coded letters and landmark colors are your friends."]
 ].map(([id,name,role,icon,x,y,dialogue])=>({id,name,role,icon,x,y,dialogue}));
 
 export const SEWER_QUESTS=[
