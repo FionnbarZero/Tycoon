@@ -9,7 +9,8 @@ try{
   expect(registrationReady,"Fruitopia must install its offline service worker before an offline reload");
   await command("Network.emulateNetworkConditions",{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});
   await command("Page.reload",{ignoreCache:true});
-  await wait(1800);
+  await wait(350);
+  for(let attempt=0;attempt<120;attempt++){if(await evaluate("Boolean(window.__FRUITOPIA__?.world)"))break;await wait(100);}
   const offline=await evaluate(`({
     title:document.title,
     game:Boolean(window.__FRUITOPIA__),

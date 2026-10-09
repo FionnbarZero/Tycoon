@@ -117,7 +117,7 @@ export function createDefaultState(now=Date.now()){
     cash:1,fruitCoins:0,xp:0,level:1,lifetimeCash:1,researchPoints:0,reputation:50,tickets:0,goldenSeeds:0,season:1,evolutionAge:0,
     deliveryReputation:0,deliverySubscribers:0,deliveryStreak:0,completedContracts:0,
     basketCapacity:12,warehouseCapacity:10,fruitInventory:initialFruit(),productInventory:initialProducts(),fruitQuality:initialQualities(),discoveredFruit:initialDiscovered(),
-    trees:initialTrees(),districts:initialDistricts(),player:{x:57,y:278,district:"sunny-side-fruit-stand"},camera:{x:57,y:278,zoom:3.2},
+    trees:initialTrees(),districts:initialDistricts(),player:{x:57,y:278,district:"sunny-side-fruit-stand",facing:0},camera:{x:57,y:278,zoom:3.5,distance:8,normalDistance:8,yaw:0,pitch:-.18,mode:"third-person"},
     buildings:{"roadside-fruit-stand":{level:1,state:"open",builtAt:now},"orchard-shed":{level:1,state:"open",builtAt:now},"tiny-office":{level:1,state:"open",builtAt:now}},
     production:[],researchJobs:[],patents:[],researchNotebook:[],studies:{},hybridTrees:[],
     vehicles:{},activeDeliveries:[],deliveryHistory:[],serviceTier:1,
@@ -131,7 +131,7 @@ export function createDefaultState(now=Date.now()){
     quests:DEFAULT_QUESTS.map(quest=>({...clone(quest),claimed:false})),milestones:{},achievements:{},
     minigames:{highScores:{},bestStreaks:{},plays:{},completions:{},badges:{},runs:0,rewardedRuns:[],selectedDifficulty:"normal"},secrets:Object.fromEntries(SECRETS.map(secret=>[secret.id,{clues:0,investigated:false,discovered:false}])),
     event:{active:null,endsAt:0,history:[]},featured:{type:"fruit",id:"apple",endsAt:0},marketDay:1,marketPrices:{},marketStalls:[null,null,null],
-    settings:{sound:true,music:false,reducedMotion:false,autosave:true,colorblindMode:false,highContrast:false,walkOnPurchasing:true,purchaseCountdown:"normal",confirmExpensivePurchases:true,showBuildingPreviews:true,showUpgradeEffects:true,simplifiedPurchasePads:false,reducedPurchaseAnimations:false,showWorldIncomeTimers:true},
+    settings:{sound:true,music:false,reducedMotion:false,autosave:true,colorblindMode:false,highContrast:false,walkOnPurchasing:true,purchaseCountdown:"normal",confirmExpensivePurchases:true,showBuildingPreviews:true,showUpgradeEffects:true,simplifiedPurchasePads:false,reducedPurchaseAnimations:false,showWorldIncomeTimers:true,shadows:true,renderDistance:"high",effectsQuality:"high",modelQuality:"high",cameraSensitivity:1},
     permanent:Object.fromEntries(GOLDEN_SEED_UPGRADES.map(upgrade=>[upgrade.id,0])),
     stats:{harvested:0,cashEarned:0,fruitCoinsEarned:0,sold:0,crafted:0,deliveries:0,orders:0,minigames:0,improvements:0,buildings:3,highScore:0,level:1,treesWatered:0,treesFertilized:0,diseasesTreated:0,studies:0,workersHired:1},
     timers:{lastPassiveAt:now,lastAutoSaleAt:now,lastOrchardAutomationAt:now,lastEventAt:now,lastWorkerVisitAt:now,lastQuestDay:new Date(now).toDateString()},
@@ -167,7 +167,7 @@ export function migrateSave(raw,now=Date.now()){
   repaired.outside.layoutId=OUTSIDE_WORLD.layoutId;
   for(const key of Object.keys(repaired.outside.materials))repaired.outside.materials[key]=Math.max(0,Math.floor(Number(repaired.outside.materials[key])||0));
   if(!hadOutside){
-    repaired.player={x:57,y:278,district:"sunny-side-fruit-stand"};repaired.camera={x:57,y:278,zoom:3.2};
+    repaired.player={x:57,y:278,district:"sunny-side-fruit-stand",facing:0};repaired.camera={x:57,y:278,zoom:3.2,distance:10,normalDistance:10,yaw:0,pitch:-.18,mode:"third-person"};
     repaired.trees=repaired.trees.map((tree,index)=>{if(Number(tree.x)<=100&&Number(tree.y)<=80){const fruit=FRUIT_BY_ID[tree.fruit],anchor=DISTRICTS.find(district=>district.name===fruit?.source)||DISTRICT_BY_ID["apple-grove-orchard"];return{...tree,x:anchor.x-14+(index%5)*5,y:anchor.y+7+Math.floor(index/5)*5};}return tree;});
     const legacyPlacements={"roadside-fruit-stand":"stand-corner","orchard-shed":"orchard-shed-yard","tiny-office":"office-clearing"};for(const plot of OUTSIDE_PLOTS)if(plot.defaultBuilding&&repaired.buildings[plot.defaultBuilding])legacyPlacements[plot.defaultBuilding]=plot.id;
     for(const [buildingId,plotId] of Object.entries(legacyPlacements))if(repaired.buildings[buildingId])Object.assign(repaired.outside.plots[plotId],{buildingId,level:repaired.buildings[buildingId].level||1,state:"open",builtAt:repaired.buildings[buildingId].builtAt||now});
@@ -190,6 +190,17 @@ export function migrateSave(raw,now=Date.now()){
   repaired.purchasePads.hidden=repaired.purchasePads.hidden&&typeof repaired.purchasePads.hidden==="object"?repaired.purchasePads.hidden:{};
   repaired.purchasePads.plotSelections=repaired.purchasePads.plotSelections&&typeof repaired.purchasePads.plotSelections==="object"?repaired.purchasePads.plotSelections:{};
   if(!["short","normal","long"].includes(repaired.settings.purchaseCountdown))repaired.settings.purchaseCountdown="normal";
+  repaired.player.facing=Number.isFinite(Number(repaired.player.facing))?Number(repaired.player.facing):0;
+  const legacyDistance=clamp(31-Math.max(1,Number(repaired.camera.zoom)||3.2)*6.5,3,18);
+  repaired.camera.distance=clamp(Number.isFinite(Number(repaired.camera.distance))?Number(repaired.camera.distance):legacyDistance,0,22);
+  repaired.camera.normalDistance=clamp(Number.isFinite(Number(repaired.camera.normalDistance))?Number(repaired.camera.normalDistance):10,5,18);
+  repaired.camera.yaw=Number.isFinite(Number(repaired.camera.yaw))?Number(repaired.camera.yaw):repaired.player.facing;
+  repaired.camera.pitch=clamp(Number.isFinite(Number(repaired.camera.pitch))?Number(repaired.camera.pitch):-.18,-.95,.5);
+  repaired.camera.mode=repaired.camera.distance<.65?"first-person":"third-person";
+  if(!["low","medium","high"].includes(repaired.settings.renderDistance))repaired.settings.renderDistance="high";
+  if(!["low","medium","high"].includes(repaired.settings.effectsQuality))repaired.settings.effectsQuality="high";
+  if(!["low","medium","high"].includes(repaired.settings.modelQuality))repaired.settings.modelQuality="high";
+  repaired.settings.cameraSensitivity=clamp(Number(repaired.settings.cameraSensitivity)||1,.35,2);
   repaired.minigames.rewardedRuns=[...new Set((repaired.minigames.rewardedRuns||[]).filter(Boolean))];
   for(const field of ["highScores","bestStreaks","plays","completions","badges"])repaired.minigames[field]=repaired.minigames[field]&&typeof repaired.minigames[field]==="object"?repaired.minigames[field]:{};
   if(!MINIGAME_DIFFICULTIES[repaired.minigames.selectedDifficulty])repaired.minigames.selectedDifficulty="normal";

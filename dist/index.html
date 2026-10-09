@@ -38,7 +38,10 @@
 
     <main class="game-layout">
       <section class="world-card" aria-label="Fruitopia world">
-        <canvas id="world" tabindex="0" aria-label="Walkable Fruitopia world. Use WASD, arrow keys, click, touch controls, or a gamepad."></canvas>
+        <canvas id="world" tabindex="0" aria-label="Playable three-dimensional Fruitopia world. Use WASD or arrows to move, mouse or touch to look, mouse wheel to change view, E to interact, V to switch camera, Shift to run, and Space to jump."></canvas>
+        <div id="crosshair" class="crosshair" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div id="cameraIndicator" class="camera-indicator" role="status" aria-live="polite"><span aria-hidden="true">🎥</span><b>Third Person</b></div>
+        <div id="controlHint" class="control-hint">WASD to move · Mouse to look · Wheel to change view · E to interact · V to switch camera</div>
         <div class="world-top-left">
           <div class="weather-chip"><span id="weatherIcon">☀️</span><span><b id="eventName">Bright Morning</b><small id="eventTimer">No active event</small></span></div>
           <button class="round-map" data-action="open-map" aria-label="Open world map">🗺️</button>
@@ -56,6 +59,13 @@
           <button data-move="left" aria-label="Move left">◀</button>
           <button data-move="down" aria-label="Move down">▼</button>
           <button data-move="right" aria-label="Move right">▶</button>
+        </div>
+        <div id="mobileActions" class="mobile-actions" aria-label="Mobile camera and interaction controls">
+          <button data-camera="closer" aria-label="Move camera closer">＋ View</button>
+          <input id="cameraDistance" type="range" min="0" max="18" step="1" value="10" aria-label="Camera distance">
+          <button data-camera="farther" aria-label="Move camera farther">− View</button>
+          <button data-control="interact" aria-label="Interact">E · Use</button>
+          <button data-control="jump" aria-label="Jump">↥ Jump</button>
         </div>
       </section>
 

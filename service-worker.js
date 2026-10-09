@@ -1,4 +1,4 @@
-const CACHE_NAME="fruitopia-tycoon-v16.0";
+const CACHE_NAME="fruitopia-tycoon-v17.0.1";
 const APP_SHELL=[
   "./",
   "./index.html",
@@ -17,6 +17,9 @@ const APP_SHELL=[
   "./src/mafia-game.js",
   "./src/core.js",
   "./src/world.js",
+  "./src/world3d.js",
+  "./node_modules/three/build/three.module.min.js",
+  "./node_modules/three/build/three.core.min.js",
   "./src/minigames.js"
 ];
 
