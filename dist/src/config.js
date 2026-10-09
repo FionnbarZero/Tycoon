@@ -1,8 +1,8 @@
 import {EXPANSION_MINIGAMES} from "./world-expansion-config.js";
 
-export const SAVE_VERSION = 20;
+export const SAVE_VERSION = 21;
 export const SAVE_KEY = `fruitopia-tycoon-v${SAVE_VERSION}`;
-export const LEGACY_SAVE_KEYS = ["fruitopia-tycoon-v19", "fruitopia-tycoon-v18", "fruitopia-tycoon-v17", "fruitopia-tycoon-v16", "fruitopia-tycoon-v15", "fruitopia-tycoon-v14", "fruitopia-tycoon-v13", "fruitopia-tycoon-v12", "fruitopia-tycoon-v11", "fruitopia-tycoon-v10", "fruitopia-tycoon-v9", "fruitopia-tycoon-v8", "fruitopia-tycoon-v7", "fruitopia-tycoon-v6", "fruitopia-tycoon-v5", "fruitopia-tycoon"];
+export const LEGACY_SAVE_KEYS = ["fruitopia-tycoon-v20", "fruitopia-tycoon-v19", "fruitopia-tycoon-v18", "fruitopia-tycoon-v17", "fruitopia-tycoon-v16", "fruitopia-tycoon-v15", "fruitopia-tycoon-v14", "fruitopia-tycoon-v13", "fruitopia-tycoon-v12", "fruitopia-tycoon-v11", "fruitopia-tycoon-v10", "fruitopia-tycoon-v9", "fruitopia-tycoon-v8", "fruitopia-tycoon-v7", "fruitopia-tycoon-v6", "fruitopia-tycoon-v5", "fruitopia-tycoon"];
 
 export * from "./sewer-config.js";
 export * from "./mafia-config.js";

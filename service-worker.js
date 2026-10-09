@@ -1,4 +1,4 @@
-const CACHE_NAME="fruitopia-tycoon-v20.0.0";
+const CACHE_NAME="fruitopia-tycoon-v21.0.0";
 const APP_SHELL=[
   "./",
   "./index.html",
