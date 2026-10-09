@@ -1,6 +1,6 @@
 {
   "name": "fruitopia-tycoon",
-  "version": "18.0.0",
+  "version": "19.0.0",
   "private": true,
   "type": "module",
   "description": "A cheerful, offline-capable browser fruit-company tycoon.",
