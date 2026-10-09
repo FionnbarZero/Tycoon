@@ -1,4 +1,4 @@
-const CACHE_NAME="fruitopia-tycoon-v15.1";
+const CACHE_NAME="fruitopia-tycoon-v16.0";
 const APP_SHELL=[
   "./",
   "./index.html",
@@ -10,6 +10,7 @@ const APP_SHELL=[
   "./src/color-config.js",
   "./src/world-expansion-config.js",
   "./src/upgrade-config.js",
+  "./src/investor-config.js",
   "./src/outside-config.js",
   "./src/sewer-config.js",
   "./src/mafia-config.js",

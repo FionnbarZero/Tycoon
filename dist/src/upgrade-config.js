@@ -58,7 +58,7 @@ export const MOUNTAIN_UPGRADE_INDEX=Object.entries(mountainGroups).flatMap(([gro
 })));
 
 export const PHONE_FOLDERS=[
-  ["company","Company",["messages","contacts","orders","workers","applicants","construction","upgrade-planner"]],
+  ["company","Company",["messages","contacts","orders","workers","applicants","construction","upgrade-planner","investors"]],
   ["operations","Operations",["deliveries","shipping","production","fruit-market","company-bank","research","laboratories"]],
   ["world","World",["surface-map","mountain-map","sewer-journal","quests","achievements","secrets"]],
   ["entertainment","Entertainment",["arcade","fruit-mafia-club","high-scores","events"]],
@@ -66,7 +66,7 @@ export const PHONE_FOLDERS=[
 ].map(([id,name,apps])=>({id,name,apps}));
 
 const appRows=[
-  ["Messages","💬"],["Contacts","👥"],["Orders","🧾"],["Workers","🧑‍🌾"],["Applicants","📋"],["Construction","🏗️"],["Upgrade Planner","✨"],
+  ["Messages","💬"],["Contacts","👥"],["Orders","🧾"],["Workers","🧑‍🌾"],["Applicants","📋"],["Construction","🏗️"],["Upgrade Planner","✨"],["Investors","📊"],
   ["Deliveries","🚚"],["Shipping","⚓"],["Production","🥤"],["Fruit Market","📈"],["Company Bank","🏦"],["Research","🧬"],["Laboratories","🔬"],
   ["Surface Map","🗺️"],["Mountain Map","🏔️"],["Sewer Journal","🕳️"],["Quests","📌"],["Achievements","🏆"],["Secrets","🔐"],
   ["Arcade","🎮"],["Fruit Mafia Club","🍇"],["High Scores","🥇"],["Events","🎉"],["Settings","⚙️"],["Save","💾"],["Help","❓"]
@@ -84,5 +84,6 @@ export const PHONE_NOTIFICATION_TYPES=[
   ["delivery","Delivery returned","deliveries",3],["subscriber","Subscriber gained","deliveries",1],["production","Product batch complete","production",3],["research","Research complete","research",3],
   ["lab","Lab study available","laboratories",1],["construction","Building construction complete","construction",3],["mountain-plot","Mountain plot unlocked","construction",2],
   ["sewer-sample","Sewer sample respawned","sewer-journal",1],["maze-clue","Maze clue discovered","sewer-journal",2],["mafia-reward","Fruit Mafia reward ready","fruit-mafia-club",2],
-  ["quest","Quest completed","quests",2],["achievement","Achievement unlocked","achievements",2],["event","Event started","events",2]
+  ["quest","Quest completed","quests",2],["achievement","Achievement unlocked","achievements",2],["event","Event started","events",2],
+  ["investor","Investor update","investors",2],["investor-meeting","Investor meeting ready","investors",3]
 ].map(([id,name,app,priority])=>({id,name,app,priority}));

@@ -1,8 +1,8 @@
 import {EXPANSION_MINIGAMES} from "./world-expansion-config.js";
 
-export const SAVE_VERSION = 15;
+export const SAVE_VERSION = 16;
 export const SAVE_KEY = `fruitopia-tycoon-v${SAVE_VERSION}`;
-export const LEGACY_SAVE_KEYS = ["fruitopia-tycoon-v13", "fruitopia-tycoon-v12", "fruitopia-tycoon-v11", "fruitopia-tycoon-v10", "fruitopia-tycoon-v9", "fruitopia-tycoon-v8", "fruitopia-tycoon-v7", "fruitopia-tycoon-v6", "fruitopia-tycoon-v5", "fruitopia-tycoon"];
+export const LEGACY_SAVE_KEYS = ["fruitopia-tycoon-v15", "fruitopia-tycoon-v14", "fruitopia-tycoon-v13", "fruitopia-tycoon-v12", "fruitopia-tycoon-v11", "fruitopia-tycoon-v10", "fruitopia-tycoon-v9", "fruitopia-tycoon-v8", "fruitopia-tycoon-v7", "fruitopia-tycoon-v6", "fruitopia-tycoon-v5", "fruitopia-tycoon"];
 
 export * from "./sewer-config.js";
 export * from "./mafia-config.js";
@@ -10,6 +10,7 @@ export * from "./outside-config.js";
 export * from "./world-expansion-config.js";
 export * from "./upgrade-config.js";
 export * from "./color-config.js";
+export * from "./investor-config.js";
 
 export const slug = value => String(value).toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
