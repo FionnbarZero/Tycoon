@@ -10,7 +10,7 @@ npm run build
 python3 -m http.server 8080 --directory dist
 ```
 
-Open `http://127.0.0.1:8080` in a modern WebGL-capable browser. Progress is stored locally under the version-19 Fruitopia save key; older saves migrate automatically and no account or backend is required. The hosted game installs an offline app shell, including its 3D modules, after the first successful visit, so temporary connection loss does not interrupt play.
+Open `http://127.0.0.1:8080` in a modern WebGL-capable browser. Progress is stored locally under the version-20 Fruitopia save key; older saves migrate automatically and no account or backend is required. The hosted game installs an offline app shell, including its 3D modules, after the first successful visit, so temporary connection loss does not interrupt play.
 
 ## Controls
 
@@ -53,7 +53,7 @@ Shadows, render distance, model quality, effects quality, reduced motion, sound,
 - A 27-app smartphone with messages, contacts, negotiated orders, shipping, construction, fictional market/bank features, research, maps, settings, and secrets
 - 27 replayable timed minigames across districts, attractions, sewers, mountains, shipping, and the Fruit Mafia Club, with keyboard/touch/pointer control, high scores, and one-time run rewards
 - 20 timed events, 11 discoverable secrets, daily quests, milestones, achievements, and seasonal Golden Seed prestige
-- Five modeled surface manholes and a separate 3D underground world with 15 zones, brick rooms, tunnels, green water, pipes, landmarks, characters, puzzles, gates, shortcuts, and one-time treasures
+- Five modeled surface manholes and a separate 17-zone 3D underground world organized around Manholes A–C, the West and East Tunnels, Central Sewer Hub, Green-Water Cave, persistent maze, guarded Mafia Entrance, Mystery Crate game room, and Underground Machine Room
 - Container-based Green Sewer Water collection, eight discoverable mixing recipes, timed offline experiments, 17 sewer quests, and six additional underground secrets
 - A hidden, family-friendly Fruit Mafia Club with permanent $100 fictional membership, non-purchasable Club Chips, visible daily limits, posted prize tables, Plinko, and fruit slots
 - Fruit Mafia: The Mystery Crate, an original members-only one-hit survival game for one player and 3–9 strategic computer opponents, with 23 timed/automatic/manual/reaction cards, 16 crate events, rebound chains, spectators, family-friendly object mode, AI memories, and one-time round rewards
