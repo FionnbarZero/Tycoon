@@ -1,0 +1,22 @@
+import {writeFile} from "node:fs/promises";
+import {connect,expect} from "./cdp.mjs";
+
+const browser=await connect();
+const{command,evaluate,wait,exceptions,consoleErrors}=browser;
+await evaluate(`(()=>{const g=__FRUITOPIA__,w=g.world;if(g.core.state.sewer.active)g.core.leaveSewer();g.core.state.player.x=118;g.core.state.player.y=428;w.yaw=0;w.pitch=-.08;w.setCameraDistance(6);w.currentDistance=6;w.rebuild(true);w.findPlayer();w.update(.016,performance.now());return true;})()`);
+await wait(1200);
+const info=await evaluate(`(()=>{const w=__FRUITOPIA__.world,item=w.physicalSigns.find(item=>item.object.userData.signText==='WELCOME TO LEMON CITY'),point=w.perspectiveCamera.position.clone();item.object.children[1].getWorldPosition(point);point.project(w.perspectiveCamera);return{visible:item.object.visible,screenX:point.x,screenY:point.y,distance:w.targetDistance,entries:item.object.userData.directoryEntries};})()`);
+expect(info.visible,"The Lemon City directory is not visible from the starter approach");
+expect(Math.abs(info.screenX)<.6&&Math.abs(info.screenY)<.75,"The Lemon City directory is not framed clearly at normal third-person distance");
+expect(info.entries.length===8,"The Lemon City directory is missing a route");
+const shot=await command("Page.captureScreenshot",{format:"png",captureBeyondViewport:false});
+await writeFile("/tmp/fruitopia-lemon-directory.png",Buffer.from(shot.data,"base64"));
+await evaluate(`(()=>{const g=__FRUITOPIA__,w=g.world;g.core.state.player.x=118;g.core.state.player.y=426;w.yaw=0;w.pitch=.15;w.findPlayer();w.setCameraDistance(-1);w.currentDistance=0;w.update(.016,performance.now());return true;})()`);
+await wait(500);
+const firstPerson=await evaluate(`(()=>{const w=__FRUITOPIA__.world,item=w.physicalSigns.find(item=>item.object.userData.signText==='WELCOME TO LEMON CITY'),point=w.perspectiveCamera.position.clone();item.object.children[1].getWorldPosition(point);point.project(w.perspectiveCamera);return{visible:item.object.visible,screenX:point.x,screenY:point.y,distance:w.targetDistance};})()`);
+expect(firstPerson.visible&&firstPerson.distance===0,`The Lemon City directory is not available in first-person view: ${JSON.stringify(firstPerson)}`);
+expect(Math.abs(firstPerson.screenX)<.5&&Math.abs(firstPerson.screenY)<.7,"The Lemon City directory is not readable when approached in first person");
+expect(exceptions.length===0,`Directory runtime exceptions:\n${exceptions.join("\n")}`);
+expect(consoleErrors.length===0,`Directory console errors:\n${consoleErrors.join("\n")}`);
+browser.close();
+console.log(JSON.stringify({ok:true,...info,firstPerson,screenshot:"/tmp/fruitopia-lemon-directory.png"},null,2));

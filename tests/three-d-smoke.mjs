@@ -3,7 +3,7 @@ import {connect,expect} from "./cdp.mjs";
 
 const browser=await connect();
 const{command,evaluate,wait,exceptions,consoleErrors}=browser;
-const ready=async()=>{await wait(350);for(let attempt=0;attempt<120;attempt++){if(await evaluate("Boolean(window.__FRUITOPIA__?.world?.perspectiveCamera)"))return true;await wait(100);}return false;};
+const ready=async()=>{await wait(350);let stableChecks=0;for(let attempt=0;attempt<140;attempt++){const found=await evaluate("Boolean(window.__FRUITOPIA__?.world?.perspectiveCamera)").catch(()=>false);stableChecks=found?stableChecks+1:0;if(stableChecks>=5)return true;await wait(100);}return false;};
 
 await command("Page.reload",{ignoreCache:true});
 expect(await ready(),"Perspective 3D world did not initialize");
@@ -22,6 +22,8 @@ const initial=await evaluate(`(()=>{const g=__FRUITOPIA__,w=g.world;return{
   physicalSignCount:w.physicalSigns.length,
   visiblePhysicalSigns:w.physicalSigns.filter(item=>item.object.visible).length,
   signTexts:w.physicalSigns.map(item=>item.object.userData.signText),
+  lemonCityDirectory:w.physicalSigns.find(item=>item.object.userData.signText==='WELCOME TO LEMON CITY')?.object.userData.directoryEntries||[],
+  lemonCityDirectoryPosition:w.physicalSigns.find(item=>item.object.userData.signText==='WELCOME TO LEMON CITY')?.object.userData.directoryPosition||[],
   proximityLabelCount:w.proximityLabels.length,
   visibleProximityLabels:w.proximityLabels.filter(item=>item.object.visible).length,
   treeRows:g.core.state.trees.slice(0,6).map(tree=>[tree.x,tree.y]),
@@ -34,6 +36,9 @@ expect(initial.playerVisible&&initial.indicator.includes("Third Person"),"Game d
 expect(initial.controls.includes("Wheel to change view")&&initial.mobile,"Camera controls or mobile fallback are missing");
 expect(initial.countrySpacing>=2.2,"The surface world was not expanded to country-scale spacing");
 for(const text of ["STARTER LEMON STAND","GRAND LEMON ORCHARD","OFFICE HEADQUARTERS","DELIVERY DISTRICT","FRUIT RESEARCH LAB","LEMON MARKET SQUARE","SHIPPING HARBOR ↓","MOUNTAIN EXPANSION ↑","LEMON CITY PARK ↓"])expect(initial.signTexts.includes(text),`Missing readable physical sign: ${text}`);
+expect(initial.signTexts.includes("WELCOME TO LEMON CITY"),"The starter approach is missing its Lemon City welcome directory");
+expect(JSON.stringify(initial.lemonCityDirectory)===JSON.stringify(["STARTER STAND ← WEST","MARKET SQUARE ↑ STRAIGHT","DELIVERY DISTRICT → EAST","RESEARCH RIDGE ↑ NORTH","FACTORY DISTRICT ↓ SOUTH","SHIPPING HARBOR ↓ SOUTH","GRAND ORCHARD ↖ NORTHWEST","RESIDENTIAL AREA ↗ NORTHEAST"]),"The Lemon City directory does not contain the requested destinations and directions");
+expect(JSON.stringify(initial.lemonCityDirectoryPosition)===JSON.stringify([118,418]),"The welcome directory is not placed at the starter approach");
 expect(initial.physicalSignCount>=25&&initial.visiblePhysicalSigns<initial.physicalSignCount,"Physical signs are missing or distant signs are not being culled");
 expect(initial.proximityLabelCount>0&&initial.visibleProximityLabels<initial.proximityLabelCount,"Supplemental labels are not proximity-controlled");
 expect(JSON.stringify(initial.treeRows)===JSON.stringify([[78,425],[87,425],[96,425],[78,436],[87,436],[96,436]]),"Starter apple trees are not arranged in two walkable rows");
